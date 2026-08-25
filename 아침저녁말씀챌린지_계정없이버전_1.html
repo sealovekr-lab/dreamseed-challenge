@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>드림씨드 아침저녁 말씀 챌린지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FFF8EC;
+    --card: #FFFFFF;
+    --ink: #2B2A45;
+    --ink-soft: #6B6780;
+    --muted: #C9C2AE;
+    --dawn: #E4574A;
+    --dawn-soft: #FCE0DC;
+    --dusk: #3B72D9;
+    --dusk-soft: #DCE7FA;
+    --leaf: #3F9C6E;
+    --leaf-soft: #DEF3E7;
+    --gold: #F0AE2E;
+    --danger: #D9584C;
+    --radius: 22px;
+    --shadow: 0 8px 24px rgba(43,42,69,0.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Noto Sans KR', sans-serif;
+    min-height:100vh;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .display{font-family:'Jua', sans-serif; font-weight:400;}
+  #app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    padding-bottom:96px;
+  }
+  .hidden{display:none !important;}
+
+  /* ---------- Top gear / settings trigger ---------- */
+  .gear-btn{
+    position:fixed;
+    top:14px; right:calc(50% - 240px + 14px);
+    width:40px;height:40px;border-radius:50%;
+    background:rgba(255,255,255,0.85);
+    border:1px solid var(--muted);
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px; cursor:pointer; z-index:40;
+    box-shadow:var(--shadow);
+  }
+  @media (max-width:480px){
+    .gear-btn{ right:14px; }
+  }
+
+  /* ---------- Sky arc header ---------- */
+  .sky{
+    position:relative;
+    height:150px;
+    overflow:hidden;
+    border-radius:0 0 32px 32px;
+    background:linear-gradient(180deg,var(--dawn-soft),var(--bg));
+  }
+  .sky.dusk{ background:linear-gradient(180deg,var(--dusk-soft),var(--bg)); }
+  .sky svg{position:absolute; bottom:0; left:0; width:100%; height:100%;}
+  .greeting{
+    position:relative; z-index:2;
+    padding:20px 22px 0;
+  }
+  .greeting .hello{font-size:14px; color:var(--ink-soft); margin:0 0 2px;}
+  .greeting h1{margin:0; font-size:26px;}
+  .greeting .date{font-size:13px; color:var(--ink-soft); margin-top:4px;}
+
+  /* ---------- Screens ---------- */
+  .screen{padding:18px 20px 10px;}
+
+  /* Select screen */
+  .select-title{text-align:center; margin-top:28px;}
+  .select-title h1{font-size:28px; margin:0 0 6px;}
+  .select-title p{color:var(--ink-soft); font-size:14px; margin:0;}
+  .roster-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+    margin:24px 0;
+  }
+  .roster-chip{
+    background:var(--card); border:2px solid var(--muted);
+    border-radius:18px; padding:14px 6px; text-align:center;
+    cursor:pointer; font-size:14px; font-weight:700; color:var(--ink);
+    transition:transform .12s ease, border-color .12s ease;
+  }
+  .roster-chip:active{transform:scale(0.95);}
+  .roster-chip .avatar{font-size:26px; display:block; margin-bottom:6px;}
+  .add-child-box{
+    background:var(--card); border-radius:var(--radius);
+    padding:16px; box-shadow:var(--shadow); margin-top:10px;
+  }
+  .add-child-box label{font-size:13px; color:var(--ink-soft); display:block; margin-bottom:8px;}
+  .row-input{display:flex; gap:8px;}
+  input[type=text], input[type=number], input[type=password]{
+    flex:1; padding:12px 14px; border-radius:14px; border:2px solid var(--muted);
+    font-size:15px; font-family:inherit; background:#fff; color:var(--ink);
+  }
+  input:focus{outline:2px solid var(--dawn); outline-offset:1px;}
+
+  button{font-family:inherit; cursor:pointer;}
+  .btn{
+    border:none; border-radius:16px; padding:13px 18px;
+    font-size:15px; font-weight:700; color:#fff; background:var(--ink);
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn.primary{background:var(--dawn);}
+  .btn.dusk{background:var(--dusk);}
+  .btn.leaf{background:var(--leaf);}
+  .btn.gold{background:var(--gold);}
+  .btn.bright-green{background:#22C55E; color:#fff;}
+  .btn.yellow{background:#FFD400; color:var(--ink);}
+  .btn.ghost{background:transparent; color:var(--ink); border:2px solid var(--muted);}
+  .btn.block{width:100%;}
+  .btn.danger{background:var(--danger);}
+  .btn:disabled{opacity:0.5; cursor:default;}
+
+  /* Home stats */
+  .stats-row{display:flex; gap:10px; margin:16px 0;}
+  .stat-card{
+    flex:1; background:var(--card); border-radius:16px; padding:12px;
+    text-align:center; box-shadow:var(--shadow);
+  }
+  .stat-card .num{font-size:22px; display:block;}
+  .stat-card .label{font-size:12px; color:var(--ink-soft);}
+
+  .session-card{
+    background:var(--card); border-radius:var(--radius);
+    padding:18px; margin-bottom:14px; box-shadow:var(--shadow);
+    display:flex; align-items:center; gap:14px;
+    border:2px solid transparent;
+  }
+  .session-card.done{ background:var(--leaf-soft); border-color:var(--leaf); }
+  .session-card .icon{font-size:34px;}
+  .session-card .body{flex:1;}
+  .session-card .body h3{margin:0 0 2px; font-size:17px;}
+  .session-card .body p{margin:0; font-size:12.5px; color:var(--ink-soft);}
+  .session-card .action{flex-shrink:0;}
+  .badge-done{color:var(--leaf); font-weight:700; font-size:13px;}
+
+  .switch-link{
+    display:block; text-align:center; margin-top:6px;
+    color:var(--ink-soft); font-size:13px; text-decoration:underline; background:none; border:none;
+  }
+
+  /* Bottom nav */
+  .bottom-nav{
+    position:fixed; bottom:0; left:0; right:0;
+    max-width:480px; margin:0 auto;
+    background:var(--card); border-top:1px solid var(--muted);
+    display:flex; z-index:30;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .nav-btn{
+    flex:1; border:none; background:none; padding:12px 0 10px;
+    font-size:12px; color:var(--ink-soft); font-weight:700;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+  }
+  .nav-btn .ic{font-size:20px;}
+  .nav-btn.active{color:var(--dawn);}
+
+  /* Leaderboard */
+  .lb-row{
+    display:flex; align-items:center; gap:12px;
+    background:var(--card); border-radius:16px; padding:12px 14px; margin-bottom:8px;
+    box-shadow:var(--shadow);
+  }
+  .lb-row.me{ border:2px solid var(--dawn); }
+  .lb-rank{ width:30px; text-align:center; font-size:16px; font-weight:700; color:var(--ink-soft); }
+  .lb-rank.medal{font-size:22px;}
+  .lb-name{flex:1; font-weight:700; font-size:15px;}
+  .lb-streak{font-size:11px; color:var(--ink-soft);}
+  .lb-points{font-weight:700; color:var(--gold); font-size:15px;}
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0; background:rgba(43,42,69,0.55);
+    display:flex; align-items:flex-end; justify-content:center; z-index:100;
+  }
+  .modal{
+    background:var(--bg); width:100%; max-width:480px;
+    border-radius:26px 26px 0 0; padding:26px 22px 30px;
+    text-align:center; animation:slideUp .22s ease;
+  }
+  @keyframes slideUp{ from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+  .modal.center{ align-self:center; border-radius:26px; margin:0 20px; }
+  .modal h2{margin:0 0 6px; font-size:20px;}
+  .modal p{color:var(--ink-soft); font-size:14px; margin:0 0 18px;}
+  .mic-btn{
+    width:96px; height:96px; border-radius:50%; border:none;
+    background:var(--dawn); color:#fff; font-size:38px;
+    box-shadow:0 6px 18px rgba(228,87,74,0.5);
+    margin:6px 0 16px;
+  }
+  .mic-btn.dusk{ background:var(--dusk); box-shadow:0 6px 18px rgba(59,114,217,0.5); }
+  .mic-btn.recording{ background:var(--danger); animation:pulse 1.2s infinite; }
+  @keyframes pulse{ 0%{box-shadow:0 0 0 0 rgba(217,88,76,0.5);} 70%{box-shadow:0 0 0 18px rgba(217,88,76,0);} 100%{box-shadow:0 0 0 0 rgba(217,88,76,0);} }
+  .timer{font-size:26px; font-family:'Jua',sans-serif; margin:8px 0 18px;}
+  .modal audio{width:100%; margin-bottom:16px;}
+  .modal-actions{display:flex; flex-direction:column; gap:10px;}
+  .close-x{
+    position:absolute; top:14px; right:14px; background:none; border:none;
+    font-size:20px; color:var(--ink-soft);
+  }
+  .modal-wrap{position:relative;}
+
+  .celebrate{font-size:52px; margin:6px 0 4px;}
+  .points-earned{ font-family:'Jua',sans-serif; font-size:24px; color:var(--gold); margin:6px 0 2px;}
+
+  /* Settings */
+  .settings-section{
+    background:var(--card); border-radius:18px; padding:16px; margin-bottom:14px; box-shadow:var(--shadow);
+  }
+  .settings-section h3{margin:0 0 12px; font-size:15px;}
+  .field-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
+  .field-row label{font-size:13.5px; color:var(--ink-soft); flex:1;}
+  .field-row input{max-width:90px; text-align:center;}
+  .roster-manage-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 0; border-bottom:1px solid #F1EBDD; gap:8px;
+  }
+  .roster-manage-row:last-child{border-bottom:none;}
+  .x-btn{ background:none; border:none; color:var(--danger); font-size:13px; font-weight:700; white-space:nowrap; }
+  .archive-btn{ color:var(--dusk) !important; }
+  .archive-box{ background:#FAF7EF; border-radius:12px; padding:8px 10px; margin:4px 0 10px; }
+  .listen-btn{
+    background:none; border:none; color:var(--dusk); font-size:12px; font-weight:700;
+    text-decoration:underline; padding:2px 0 0; display:inline-block;
+  }
+
+  .toast{
+    position:fixed; bottom:96px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:#fff; padding:10px 18px; border-radius:20px;
+    font-size:13.5px; z-index:200; box-shadow:var(--shadow);
+    opacity:0; transition:opacity .25s ease;
+  }
+  .toast.show{opacity:1;}
+
+  .loading-wrap{ text-align:center; padding:80px 20px; color:var(--ink-soft); }
+  .spinner{
+    width:34px; height:34px; border-radius:50%;
+    border:4px solid var(--muted); border-top-color:var(--dawn);
+    animation:spin 0.8s linear infinite; margin:0 auto 14px;
+  }
+  @keyframes spin{ to{transform:rotate(360deg);} }
+
+  .caption{font-size:11.5px; color:var(--ink-soft); text-align:center; margin-top:10px; line-height:1.5;}
+
+  /* ---------- Dopamine bits: confetti, badges, milestone celebration ---------- */
+  .confetti-layer{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:5; }
+  .confetti-piece{
+    position:absolute; top:-24px; font-size:20px; will-change:transform, opacity;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall{
+    to{ transform:translateY(115vh) rotate(360deg); opacity:0.85; }
+  }
+  .milestone-modal{
+    background:radial-gradient(circle at 50% 20%, #FFF3D6, var(--bg) 70%);
+    text-align:center;
+  }
+  .milestone-flame{ font-size:56px; animation:milestonePop .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes milestonePop{ 0%{ transform:scale(0.3); opacity:0; } 60%{ transform:scale(1.15); opacity:1; } 100%{ transform:scale(1); } }
+  .milestone-title{ font-size:24px; margin:8px 0 4px; }
+  .badge-row{ display:flex; gap:8px; overflow-x:auto; padding:2px 2px 14px; -webkit-overflow-scrolling:touch; }
+  .badge-chip{
+    flex:0 0 auto; background:var(--card); border-radius:14px; padding:8px 10px;
+    text-align:center; font-size:10.5px; box-shadow:var(--shadow); min-width:50px; color:var(--ink-soft); font-weight:700;
+  }
+  .badge-chip .b-emoji{ font-size:20px; display:block; margin-bottom:2px; }
+  .badge-chip.locked{ opacity:0.4; }
+  .streak-flame-big{ font-size:20px; line-height:1; }
+  .combo-banner{
+    background:linear-gradient(90deg, var(--dawn-soft), var(--dusk-soft));
+    border-radius:14px; padding:8px 12px; font-size:12.5px; font-weight:700; color:var(--ink);
+    margin:4px 0 2px; text-align:center;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <button class="gear-btn" id="gearBtn" aria-label="설정" title="설정">⚙️</button>
+
+  <div id="loadingScreen" class="loading-wrap">
+    <div class="spinner"></div>
+    불러오는 중이에요...
+  </div>
+
+  <!-- SELECT CHILD SCREEN -->
+  <div id="screenSelect" class="screen hidden">
+    <div class="select-title">
+      <h1 class="display">🌱 드림씨드 아침저녁 말씀 챌린지</h1>
+      <p>이름을 눌러서 시작해요</p>
+    </div>
+    <div class="roster-grid" id="rosterGrid"></div>
+    <div class="add-child-box">
+      <label>내 이름이 목록에 없나요? 새로 등록해요</label>
+      <div class="row-input">
+        <input type="text" id="newChildName" placeholder="이름을 입력하세요" maxlength="12">
+      </div>
+      <div class="row-input" style="margin-top:8px;">
+        <input type="password" inputmode="numeric" pattern="\d*" id="newChildPin" placeholder="4자리 비밀번호" maxlength="4">
+        <button class="btn primary" id="addChildBtn">등록</button>
+      </div>
+      <p class="caption" style="text-align:left; margin-top:8px;">비밀번호는 다른 친구가 내 기록을 못 만지게 지켜줘요. 잊어버리면 선생님께 초기화를 요청하세요.</p>
+    </div>
+  </div>
+
+  <!-- HOME SCREEN -->
+  <div id="screenHome" class="screen hidden">
+    <div class="sky" id="skyArc">
+      <svg viewBox="0 0 480 150" preserveAspectRatio="none">
+        <path d="M -20 130 Q 240 -20 500 130" stroke="#ffffffaa" stroke-width="2" fill="none" stroke-dasharray="6 8"/>
+      </svg>
+      <div class="greeting">
+        <p class="hello" id="helloText">안녕하세요</p>
+        <h1 class="display" id="childNameText">친구</h1>
+        <p class="date" id="dateText"></p>
+        <p class="hello" id="specialDayNote" style="display:none; color:var(--ink); font-weight:700; margin-top:6px;"></p>
+      </div>
+    </div>
+
+    <div class="screen" style="padding-top:6px;">
+      <div class="stats-row">
+        <div class="stat-card"><span class="num display" id="statPoints">0</span><span class="label">총 포인트</span></div>
+        <div class="stat-card"><span class="num display" id="statStreak">0</span><span class="label" id="statStreakLabel">연속 완료일</span></div>
+      </div>
+      <p class="caption" id="exchangeHint" style="display:none; text-align:center; margin:-6px 0 14px; font-weight:700; color:var(--gold);"></p>
+      <div class="badge-row" id="badgeRow"></div>
+
+      <div class="session-card" id="cardMorning">
+        <div class="icon">🌅</div>
+        <div class="body">
+          <h3>아침 말씀</h3>
+          <p id="morningStatus">오늘 말씀을 읽고 인증해요</p>
+        </div>
+        <div class="action"><button class="btn primary" id="btnMorning">도전하기</button></div>
+      </div>
+
+      <div class="session-card" id="cardEvening">
+        <div class="icon">🌙</div>
+        <div class="body">
+          <h3>저녁 말씀</h3>
+          <p id="eveningStatus">하루를 말씀으로 마무리해요</p>
+        </div>
+        <div class="action"><button class="btn dusk" id="btnEvening">도전하기</button></div>
+      </div>
+
+      <div class="session-card" id="cardZoom">
+        <div class="icon">💻</div>
+        <div class="body">
+          <h3>목요일 줌수업</h3>
+          <p id="zoomStatus">줌수업에 참석했으면 체크해요</p>
+        </div>
+        <div class="action"><button class="btn bright-green" id="btnZoom">출석 체크</button></div>
+      </div>
+
+      <div class="session-card" id="cardSunday">
+        <div class="icon">⛪</div>
+        <div class="body">
+          <h3>주일 오프라인 수업</h3>
+          <p id="sundayStatus">수업에 참석했으면 체크해요</p>
+        </div>
+        <div class="action"><button class="btn yellow" id="btnSunday">출석 체크</button></div>
+      </div>
+
+      <button class="switch-link" id="switchChildBtn">다른 친구로 전환하기</button>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD SCREEN -->
+  <div id="screenLeaderboard" class="screen hidden">
+    <div class="select-title" style="margin-top:14px;">
+      <h1 class="display">🏆 순위표</h1>
+      <p>모두의 포인트를 확인해요</p>
+    </div>
+    <div id="lbList" style="margin-top:16px;"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav hidden" id="bottomNav">
+    <button class="nav-btn" id="navHome"><span class="ic">🏠</span>오늘</button>
+    <button class="nav-btn" id="navBoard"><span class="ic">🏆</span>순위표</button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ============================================================
+   [관리자 전용 설정] 클로드 로그인 없이 쓰기 위한 무료 저장소 연결
+   ------------------------------------------------------------
+   1) https://console.firebase.google.com 접속 → Google 계정으로 로그인(무료)
+   2) "프로젝트 추가"로 새 프로젝트 생성 (애널리틱스는 꺼도 됨)
+   3) 왼쪽 메뉴 Build > Realtime Database > "데이터베이스 만들기"
+   4) 보안 규칙(Rules) 탭에서 아래 내용으로 바꾸고 "게시(Publish)":
+      {
+        "rules": {
+          "storage": { ".read": true, ".write": true }
+        }
+      }
+   5) Realtime Database 화면 맨 위에 보이는 주소
+      (예: https://내프로젝트-default-rtdb.asia-southeast1.firebasedatabase.app)
+      를 복사해서 바로 아래 큰따옴표 안에 붙여넣기
+   ============================================================ */
+var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.firebasedatabase.app"; // 예: "https://my-project-default-rtdb.firebaseio.com"
+
+(function(){
+  "use strict";
+  var BASE = (FIREBASE_DB_URL || "").trim().replace(/\/+$/, "");
+
+  function urlFor(segments){
+    var p = segments.map(encodeURIComponent).join("/");
+    return BASE + "/storage" + (p ? "/" + p : "") + ".json";
+  }
+  function keySegments(key){ return String(key).split(":"); }
+  function flattenTree(obj, prefixParts, out){
+    if(obj === null || typeof obj !== "object"){
+      out.push(prefixParts.join(":"));
+      return;
+    }
+    Object.keys(obj).forEach(function(k){
+      flattenTree(obj[k], prefixParts.concat([decodeURIComponent(k)]), out);
+    });
+  }
+
+  window.storage = {
+    __notConfigured: !BASE,
+    get: async function(key, shared){
+      if(!BASE) throw new Error("storage not configured");
+      var res = await fetch(urlFor(keySegments(key)));
+      if(!res.ok) throw new Error("storage get failed: " + res.status);
+      var val = await res.json();
+      if(val === null || typeof val === "undefined") throw new Error("key not found");
+      return { key: key, value: val, shared: !!shared };
+    },
+    set: async function(key, value, shared){
+      if(!BASE) return null;
+      try{
+        var res = await fetch(urlFor(keySegments(key)), {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(value)
+        });
+        if(!res.ok) return null;
+        return { key: key, value: value, shared: !!shared };
+      }catch(e){ return null; }
+    },
+    delete: async function(key, shared){
+      if(!BASE) return null;
+      try{
+        var res = await fetch(urlFor(keySegments(key)), { method: "DELETE" });
+        if(!res.ok) return null;
+        return { key: key, deleted: true, shared: !!shared };
+      }catch(e){ return null; }
+    },
+    list: async function(prefix, shared){
+      if(!BASE) return { keys: [], prefix: prefix, shared: !!shared };
+      var parts = String(prefix || "").split(":").filter(function(s){ return s.length > 0; });
+      var res = await fetch(urlFor(parts));
+      if(!res.ok) throw new Error("storage list failed: " + res.status);
+      var data = await res.json();
+      var out = [];
+      if(data !== null && typeof data !== "undefined"){
+        flattenTree(data, parts, out);
+      }
+      return { keys: out, prefix: prefix, shared: !!shared };
+    }
+  };
+})();
+
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "app_state";
+  var state = null;
+  var currentChildId = null;
+  var currentScreen = "select"; // select | home | leaderboard
+  var recordingSession = null; // 'morning' | 'evening'
+  var mediaRecorder = null, mediaChunks = [], mediaStream = null, recordTimerInterval = null, recordSeconds = 0;
+  var lastRecordedBlob = null;
+
+  function maxRecordSeconds(){ return (state && state.settings && state.settings.recordMaxSeconds) || 300; }
+  function maxRecordMinutesLabel(){ return Math.round(maxRecordSeconds()/60 * 10) / 10; }
+
+  var els = {
+    loading: document.getElementById('loadingScreen'),
+    select: document.getElementById('screenSelect'),
+    home: document.getElementById('screenHome'),
+    leaderboard: document.getElementById('screenLeaderboard'),
+    bottomNav: document.getElementById('bottomNav'),
+    rosterGrid: document.getElementById('rosterGrid'),
+    newChildName: document.getElementById('newChildName'),
+    newChildPin: document.getElementById('newChildPin'),
+    addChildBtn: document.getElementById('addChildBtn'),
+    helloText: document.getElementById('helloText'),
+    childNameText: document.getElementById('childNameText'),
+    dateText: document.getElementById('dateText'),
+    specialDayNote: document.getElementById('specialDayNote'),
+    statPoints: document.getElementById('statPoints'),
+    statStreak: document.getElementById('statStreak'),
+    statStreakLabel: document.getElementById('statStreakLabel'),
+    exchangeHint: document.getElementById('exchangeHint'),
+    badgeRow: document.getElementById('badgeRow'),
+    cardMorning: document.getElementById('cardMorning'),
+    cardEvening: document.getElementById('cardEvening'),
+    morningStatus: document.getElementById('morningStatus'),
+    eveningStatus: document.getElementById('eveningStatus'),
+    btnMorning: document.getElementById('btnMorning'),
+    btnEvening: document.getElementById('btnEvening'),
+    cardZoom: document.getElementById('cardZoom'),
+    zoomStatus: document.getElementById('zoomStatus'),
+    btnZoom: document.getElementById('btnZoom'),
+    cardSunday: document.getElementById('cardSunday'),
+    sundayStatus: document.getElementById('sundayStatus'),
+    btnSunday: document.getElementById('btnSunday'),
+    switchChildBtn: document.getElementById('switchChildBtn'),
+    lbList: document.getElementById('lbList'),
+    navHome: document.getElementById('navHome'),
+    navBoard: document.getElementById('navBoard'),
+    gearBtn: document.getElementById('gearBtn'),
+    skyArc: document.getElementById('skyArc'),
+    toast: document.getElementById('toast')
+  };
+
+  var AVATARS = ['🐥','🐻','🐶','🐱','🦊','🐰','🐯','🦁','🐨','🐼','🐷','🐸','🦄','🐢','🐬','🦖'];
+  function avatarFor(id){
+    var h = 0;
+    for(var i=0;i<id.length;i++){ h = (h*31 + id.charCodeAt(i)) >>> 0; }
+    return AVATARS[h % AVATARS.length];
+  }
+
+  function pad(n){ return n < 10 ? '0'+n : ''+n; }
+  function todayStr(d){ d = d || new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function shiftedDateStr(days){ var d = new Date(); d.setDate(d.getDate()+days); return todayStr(d); }
+  function nowTimeStr(){ var d = new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()); }
+  function formatDateLabel(dateStr){
+    var parts = dateStr.split('-');
+    var d = new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, parseInt(parts[2],10));
+    var days = ['일','월','화','수','목','금','토'];
+    return (d.getMonth()+1) + '/' + d.getDate() + '(' + days[d.getDay()] + ')';
+  }
+  function computeExchange(totalPoints, per, won){
+    per = per || 5000; won = won || 5000;
+    var units = Math.floor((totalPoints||0) / per);
+    return { units: units, won: units * won, remaining: (totalPoints||0) - units * per };
+  }
+  function isLastSundayOfMonth(d){
+    d = d || new Date();
+    if(d.getDay() !== 0) return false;
+    var next = new Date(d.getTime());
+    next.setDate(d.getDate() + 7);
+    return next.getMonth() !== d.getMonth();
+  }
+
+  // ---------- Dopamine bits: streaks, badges, confetti, sound ----------
+  var STREAK_MILESTONES = [3,7,14,21,30,50,75,100,150,200,365];
+  var PRAISE_PHRASES = [
+    '참 잘했어요! 👏', '오늘도 해냈네요! ✨', '멋져요! 계속 가봐요 🚀',
+    '말씀 파워 충전 완료! 💪', '최고예요! 🌟', '꾸준함이 최고의 힘이에요 🔥',
+    '오늘 미션 클리어! 🎯', '역시 대단해요! 😊', '한 걸음 더 성장했어요 🌱'
+  ];
+  function randomPraise(){ return PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)]; }
+
+  function getStreakVisual(streak){
+    if(streak >= 60) return { emoji:'👑🔥👑', tier:'legend' };
+    if(streak >= 30) return { emoji:'🌟🔥🌟', tier:'gold' };
+    if(streak >= 14) return { emoji:'✨🔥✨', tier:'bright' };
+    if(streak >= 7)  return { emoji:'🔥🔥🔥', tier:'triple' };
+    if(streak >= 3)  return { emoji:'🔥🔥', tier:'double' };
+    if(streak >= 1)  return { emoji:'🔥', tier:'single' };
+    return { emoji:'⭐', tier:'none' };
+  }
+
+  function nextMilestone(streak){
+    for(var i=0;i<STREAK_MILESTONES.length;i++){ if(STREAK_MILESTONES[i] > streak) return STREAK_MILESTONES[i]; }
+    return null;
+  }
+
+  function spawnConfetti(container, count, big){
+    var emojis = big ? ['🎉','✨','🔥','⭐','🎊','👑'] : ['✨','⭐','🎉'];
+    var layer = document.createElement('div');
+    layer.className = 'confetti-layer';
+    for(var i=0;i<count;i++){
+      var piece = document.createElement('span');
+      piece.className = 'confetti-piece';
+      piece.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      piece.style.left = Math.random()*100 + '%';
+      piece.style.fontSize = (big ? (18 + Math.random()*20) : (14 + Math.random()*10)) + 'px';
+      var duration = (big ? 1.6 : 1.1) + Math.random()*1.0;
+      piece.style.animationDuration = duration + 's';
+      piece.style.animationDelay = (Math.random()*0.4) + 's';
+      layer.appendChild(piece);
+    }
+    container.appendChild(layer);
+    setTimeout(function(){ if(layer.parentNode) layer.parentNode.removeChild(layer); }, 3200);
+  }
+
+  function playChime(tier){
+    try{
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return;
+      var ctx = new Ctx();
+      var now = ctx.currentTime;
+      var freqs = tier === 'milestone' ? [523.25,659.25,783.99,1046.5]
+                : tier === 'combo' ? [659.25, 987.77]
+                : [880];
+      freqs.forEach(function(f, i){
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = f;
+        var t0 = now + i*0.09;
+        gain.gain.setValueAtTime(0.0001, t0);
+        gain.gain.exponentialRampToValueAtTime(0.22, t0+0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0+0.32);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(t0); osc.stop(t0+0.34);
+      });
+      setTimeout(function(){ try{ ctx.close(); }catch(e){} }, 900);
+    }catch(e){ /* audio unavailable, ignore silently */ }
+  }
+
+  function renderBadgeShelf(child){
+    var earned = child.celebratedMilestones || [];
+    var html = '';
+    STREAK_MILESTONES.forEach(function(m){
+      var done = earned.indexOf(m) !== -1;
+      html += '<div class="badge-chip'+(done?'':' locked')+'"><span class="b-emoji">'+(done?'🏅':'🔒')+'</span>'+m+'일</div>';
+    });
+    els.badgeRow.innerHTML = html;
+  }
+
+  function loadScriptOnce(src){
+    return new Promise(function(resolve, reject){
+      if(document.querySelector('script[data-xlsx-lib]')){ resolve(); return; }
+      var s = document.createElement('script');
+      s.src = src;
+      s.setAttribute('data-xlsx-lib', '1');
+      s.onload = function(){ resolve(); };
+      s.onerror = function(){ reject(new Error('script load failed')); };
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensureXlsxLib(){
+    if(window.XLSX) return;
+    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+  }
+  function uid(){ return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+
+  function blobToDataUrl(blob){
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      reader.onloadend = function(){ resolve(reader.result); };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function toast(msg){
+    els.toast.textContent = msg;
+    els.toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function(){ els.toast.classList.remove('show'); }, 2200);
+  }
+
+  function defaultState(){
+    return {
+      settings: { morningPoints:100, eveningPoints:100, zoomPoints:500, sundayPoints:500, bothBonus:0, streakEvery:7, streakBonus:0, pin:"1234", recordMaxSeconds:180, recordingRetentionDays:1, lastCleanupRun:null, settingsVersion:6, pointsPerUnit:5000, wonPerUnit:5000 },
+      children: [],
+      exchangeLog: [],
+      recordingBytesTotal: 0
+    };
+  }
+
+  // ---------- Storage ----------
+  async function loadState(){
+    var loaded = null;
+    try{
+      var res = await window.storage.get(STORAGE_KEY, true);
+      if(res && res.value){
+        loaded = JSON.parse(res.value);
+      }
+    }catch(e){ /* not found or error -> fall through to default */ }
+    if(!loaded){
+      var fresh = defaultState();
+      try{ await window.storage.set(STORAGE_KEY, JSON.stringify(fresh), true); }catch(e){ console.error(e); }
+      return fresh;
+    }
+    // merge in any new default settings fields that older saved data may be missing
+    var defaults = defaultState();
+    loaded.settings = Object.assign({}, defaults.settings, loaded.settings || {});
+    loaded.children = loaded.children || [];
+    loaded.exchangeLog = loaded.exchangeLog || [];
+    // one-time migrations for older saved data
+    var origVersion = loaded.settings.settingsVersion || 0;
+    if(origVersion < 2){
+      loaded.settings.morningPoints = 100;
+      loaded.settings.eveningPoints = 100;
+      loaded.settings.zoomPoints = 500;
+      loaded.settings.sundayPoints = 500;
+    }
+    if(origVersion < 3){
+      loaded.settings.wonPerUnit = 5000; // 5000 points = 5,000 won (not 10,000)
+    }
+    if(origVersion < 4){
+      loaded.settings.bothBonus = 0;
+      loaded.settings.streakBonus = 0;
+    }
+    if(origVersion < 5){
+      // storage safety: cap recording length and retention so 20MB/artifact budget survives daily use at scale
+      loaded.settings.recordMaxSeconds = 60;
+      loaded.settings.recordingRetentionDays = 1;
+    }
+    if(origVersion < 6){
+      // audio bitrate lowered further, so 3 minutes now fits the same safe budget as 1 minute did before
+      loaded.settings.recordMaxSeconds = 180;
+    }
+    loaded.recordingBytesTotal = loaded.recordingBytesTotal || 0;
+    if(origVersion < 6){
+      loaded.settings.settingsVersion = 6;
+      try{ await window.storage.set(STORAGE_KEY, JSON.stringify(loaded), true); }catch(e){ console.error(e); }
+    }
+    return loaded;
+  }
+
+  async function saveState(s){
+    try{
+      var res = await window.storage.set(STORAGE_KEY, JSON.stringify(s), true);
+      if(!res){ throw new Error('save returned null'); }
+      return true;
+    }catch(e){
+      console.error(e);
+      toast('저장에 실패했어요. 인터넷 연결을 확인해주세요.');
+      return false;
+    }
+  }
+
+  async function refreshFromServer(){
+    try{
+      var res = await window.storage.get(STORAGE_KEY, true);
+      if(res && res.value){ state = JSON.parse(res.value); }
+    }catch(e){ /* keep local state if fetch fails */ }
+    return state;
+  }
+
+  function getChild(id){
+    return state.children.find(function(c){ return c.id === id; });
+  }
+
+  // ---------- Screen management ----------
+  function showScreen(name){
+    currentScreen = name;
+    els.select.classList.toggle('hidden', name !== 'select');
+    els.home.classList.toggle('hidden', name !== 'home');
+    els.leaderboard.classList.toggle('hidden', name !== 'leaderboard');
+    els.bottomNav.classList.toggle('hidden', name === 'select');
+    els.navHome.classList.toggle('active', name === 'home');
+    els.navBoard.classList.toggle('active', name === 'leaderboard');
+    if(name === 'leaderboard'){ renderLeaderboard(); }
+    if(name === 'home'){ renderHome(); }
+    if(name === 'select'){ renderSelect(); }
+  }
+
+  // ---------- Render: Select ----------
+  function renderSelect(){
+    var sorted = state.children.slice().sort(function(a,b){ return a.name.localeCompare(b.name, 'ko'); });
+    els.rosterGrid.innerHTML = '';
+    if(sorted.length === 0){
+      els.rosterGrid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--ink-soft); font-size:13px;">아직 등록된 친구가 없어요.<br>아래에서 처음으로 등록해보세요!</p>';
+      return;
+    }
+    sorted.forEach(function(c){
+      var chip = document.createElement('button');
+      chip.className = 'roster-chip';
+      chip.innerHTML = '<span class="avatar">'+avatarFor(c.id)+'</span>'+escapeHtml(c.name);
+      chip.addEventListener('click', async function(){
+        await refreshFromServer();
+        var fresh = getChild(c.id) || c;
+        if(!fresh.pin){
+          openSetupChildPinModal(fresh);
+        } else {
+          openChildLoginPinModal(fresh);
+        }
+      });
+      els.rosterGrid.appendChild(chip);
+    });
+  }
+
+  function escapeHtml(str){
+    var d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  async function selectChild(id){
+    await refreshFromServer();
+    currentChildId = id;
+    showScreen('home');
+  }
+
+  function openChildLoginPinModal(child){
+    var overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.id = 'childPinOverlay';
+    overlay.innerHTML =
+      '<div class="modal center modal-wrap">' +
+        '<button class="close-x" id="closeChildPinModal">✕</button>' +
+        '<h2 class="display">'+avatarFor(child.id)+' '+escapeHtml(child.name)+'</h2>' +
+        '<p>비밀번호 4자리를 입력해주세요</p>' +
+        '<input type="password" inputmode="numeric" pattern="\\d*" id="childPinInput" maxlength="4" placeholder="••••" style="text-align:center; font-size:24px; letter-spacing:10px; margin-bottom:14px;">' +
+        '<button class="btn primary block" id="childPinSubmitBtn">확인</button>' +
+        '<p class="caption">비밀번호를 잊어버렸다면 선생님께 초기화를 요청하세요.</p>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById('closeChildPinModal').addEventListener('click', function(){ overlay.remove(); });
+    document.getElementById('childPinSubmitBtn').addEventListener('click', function(){ checkChildPin(child.id); });
+    var pinInput = document.getElementById('childPinInput');
+    pinInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') checkChildPin(child.id); });
+    setTimeout(function(){ pinInput.focus(); }, 60);
+  }
+
+  async function checkChildPin(childId){
+    await refreshFromServer();
+    var fresh = getChild(childId);
+    var input = document.getElementById('childPinInput');
+    var val = input ? input.value : '';
+    if(fresh && fresh.pin && val === fresh.pin){
+      var overlay = document.getElementById('childPinOverlay');
+      if(overlay) overlay.remove();
+      currentChildId = fresh.id;
+      showScreen('home');
+    } else {
+      toast('비밀번호가 올바르지 않아요.');
+      if(input){ input.value = ''; input.focus(); }
+    }
+  }
+
+  function openSetupChildPinModal(child){
+    var overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.id = 'childPinOverlay';
+    overlay.innerHTML =
+      '<div class="modal center modal-wrap">' +
+        '<button class="close-x" id="closeChildPinModal">✕</button>' +
+        '<h2 class="display">'+avatarFor(child.id)+' '+escapeHtml(child.name)+'</h2>' +
+        '<p>처음 접속이네요! 사용할 4자리 비밀번호를 새로 만들어주세요</p>' +
+        '<input type="password" inputmode="numeric" pattern="\\d*" id="childPinSetupInput" maxlength="4" placeholder="••••" style="text-align:center; font-size:24px; letter-spacing:10px; margin-bottom:14px;">' +
+        '<button class="btn primary block" id="childPinSetupBtn">비밀번호 만들기</button>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById('closeChildPinModal').addEventListener('click', function(){ overlay.remove(); });
+    document.getElementById('childPinSetupBtn').addEventListener('click', function(){ setupChildPin(child.id); });
+    var pinInput = document.getElementById('childPinSetupInput');
+    pinInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') setupChildPin(child.id); });
+    setTimeout(function(){ pinInput.focus(); }, 60);
+  }
+
+  async function setupChildPin(childId){
+    var input = document.getElementById('childPinSetupInput');
+    var val = input ? input.value : '';
+    if(!/^\d{4}$/.test(val)){
+      toast('4자리 숫자로 만들어주세요.');
+      return;
+    }
+    await refreshFromServer();
+    var fresh = getChild(childId);
+    if(!fresh){ toast('친구 정보를 찾을 수 없어요.'); return; }
+    fresh.pin = val;
+    var ok = await saveState(state);
+    if(ok){
+      var overlay = document.getElementById('childPinOverlay');
+      if(overlay) overlay.remove();
+      currentChildId = fresh.id;
+      toast('비밀번호가 설정됐어요!');
+      showScreen('home');
+    }
+  }
+
+  els.addChildBtn.addEventListener('click', async function(){
+    var name = els.newChildName.value.trim();
+    var pin = els.newChildPin.value.trim();
+    if(!name){ toast('이름을 입력해주세요.'); return; }
+    if(name.length > 12){ toast('이름은 12자 이내로 입력해주세요.'); return; }
+    if(!/^\d{4}$/.test(pin)){ toast('비밀번호는 4자리 숫자로 입력해주세요.'); return; }
+    els.addChildBtn.disabled = true;
+    await refreshFromServer();
+    var existing = state.children.find(function(c){ return c.name === name; });
+    if(existing){
+      toast('이미 등록된 이름이에요. 위 목록에서 이름을 눌러 로그인해주세요.');
+      els.addChildBtn.disabled = false;
+      return;
+    }
+    var child = { id: uid(), name: name, pin: pin, totalPoints:0, streak:0, lastFullDate:null, streakMilestones:[], celebratedMilestones:[], sessions:{} };
+    state.children.push(child);
+    await saveState(state);
+    currentChildId = child.id;
+    toast(name+'(으)로 등록됐어요!');
+    els.newChildName.value = '';
+    els.newChildPin.value = '';
+    els.addChildBtn.disabled = false;
+    showScreen('home');
+  });
+
+  els.newChildName.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ els.newChildPin.focus(); }
+  });
+  els.newChildPin.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ els.addChildBtn.click(); }
+  });
+
+  // ---------- Render: Home ----------
+  function renderHome(){
+    var child = getChild(currentChildId);
+    if(!child){ showScreen('select'); return; }
+    var hour = new Date().getHours();
+    els.skyArc.classList.toggle('dusk', hour >= 17 || hour < 5);
+    els.helloText.textContent = (hour < 12 ? '좋은 아침이에요' : hour < 18 ? '오늘도 힘내요' : '오늘 하루도 수고했어요');
+    els.childNameText.textContent = avatarFor(child.id) + ' ' + child.name;
+    els.dateText.textContent = new Intl.DateTimeFormat('ko-KR', { month:'long', day:'numeric', weekday:'long' }).format(new Date());
+    els.statPoints.textContent = child.totalPoints;
+    els.statStreak.textContent = child.streak || 0;
+    var flameVis = getStreakVisual(child.streak || 0);
+    var nm = nextMilestone(child.streak || 0);
+    els.statStreak.innerHTML = '<span class="streak-flame-big">'+flameVis.emoji+'</span> ' + (child.streak||0);
+    els.statStreakLabel.textContent = nm ? ('연속일 · '+nm+'일까지 '+(nm-(child.streak||0))+'일 남음') : '연속 완료일';
+    renderBadgeShelf(child);
+
+    var ex = computeExchange(child.totalPoints, state.settings.pointsPerUnit, state.settings.wonPerUnit);
+    if(ex.units > 0){
+      els.exchangeHint.textContent = '🎁 이번 환전 가능 금액: ' + ex.won.toLocaleString() + '원 (환전 후 ' + ex.remaining + 'P 남아요)';
+      els.exchangeHint.style.display = 'block';
+    } else {
+      els.exchangeHint.style.display = 'none';
+    }
+
+    var today = todayStr();
+    var todaySessions = child.sessions[today] || {};
+    var dow = new Date().getDay(); // 0=Sun ... 4=Thu
+
+    setSessionCard('morning', todaySessions.morning, els.cardMorning, els.morningStatus, els.btnMorning, today);
+    setSessionCard('evening', todaySessions.evening, els.cardEvening, els.eveningStatus, els.btnEvening, today);
+    setSessionCard('zoom', todaySessions.zoom, els.cardZoom, els.zoomStatus, els.btnZoom, today);
+    setSessionCard('sunday', todaySessions.sunday, els.cardSunday, els.sundayStatus, els.btnSunday, today);
+
+    if(dow === 4){
+      els.specialDayNote.textContent = '오늘은 목요일! 줌수업 출석 체크를 잊지 마세요 💻';
+      els.specialDayNote.style.display = 'block';
+    } else if(dow === 0){
+      if(isLastSundayOfMonth()){
+        els.specialDayNote.textContent = '오늘은 이번 달 마지막 주일! 포인트 환전일이에요 💰⛪';
+      } else {
+        els.specialDayNote.textContent = '오늘은 주일이에요! 오프라인 수업 출석 체크를 잊지 마세요 ⛪';
+      }
+      els.specialDayNote.style.display = 'block';
+    } else {
+      els.specialDayNote.style.display = 'none';
+    }
+  }
+
+  function setSessionCard(session, data, cardEl, statusEl, btnEl, today){
+    var defaultLabels = {
+      morning: '오늘 말씀을 읽고 인증해요',
+      evening: '하루를 말씀으로 마무리해요',
+      zoom: '목요일 줌수업에 참석해요',
+      sunday: '주일 오프라인 수업에 참석해요'
+    };
+    if(data && data.done){
+      cardEl.classList.add('done');
+      statusEl.innerHTML = '<span class="badge-done">완료 ✅ '+formatDateLabel(today)+' '+data.at+'</span><br>';
+      btnEl.textContent = '완료!';
+      btnEl.disabled = true;
+      btnEl.className = 'btn ghost';
+      if(data.hasRecording){
+        attachListenButton(statusEl, 'rec:'+currentChildId+':'+today+':'+session);
+      }
+    } else {
+      cardEl.classList.remove('done');
+      statusEl.textContent = defaultLabels[session] || '';
+      btnEl.textContent = session === 'zoom' || session === 'sunday' ? '출석 체크' : '도전하기';
+      btnEl.disabled = false;
+      btnEl.className = session === 'morning' ? 'btn primary' : session === 'evening' ? 'btn dusk' : session === 'zoom' ? 'btn bright-green' : 'btn yellow';
+    }
+  }
+
+  function attachListenButton(container, recKey){
+    var btn = document.createElement('button');
+    btn.className = 'listen-btn';
+    btn.textContent = '▶ 다시듣기';
+    btn.addEventListener('click', async function(){
+      btn.disabled = true; btn.textContent = '불러오는 중...';
+      try{
+        var res = await window.storage.get(recKey, true);
+        if(res && res.value){
+          var audio = document.createElement('audio');
+          audio.controls = true; audio.autoplay = true; audio.src = res.value;
+          audio.style.cssText = 'width:100%; margin-top:6px;';
+          btn.replaceWith(audio);
+        } else {
+          btn.textContent = '녹음을 찾을 수 없어요';
+        }
+      }catch(e){
+        btn.textContent = '불러오기 실패';
+      }
+    });
+    container.appendChild(btn);
+  }
+
+  els.btnMorning.addEventListener('click', function(){ openRecordModal('morning'); });
+  els.btnEvening.addEventListener('click', function(){ openRecordModal('evening'); });
+  els.btnZoom.addEventListener('click', function(){ openAttendanceModal('zoom'); });
+  els.btnSunday.addEventListener('click', function(){ openAttendanceModal('sunday'); });
+  els.switchChildBtn.addEventListener('click', function(){ currentChildId = null; showScreen('select'); });
+  els.navHome.addEventListener('click', function(){ showScreen('home'); });
+  els.navBoard.addEventListener('click', function(){ showScreen('leaderboard'); });
+
+  // ---------- Render: Leaderboard ----------
+  function renderLeaderboard(){
+    var sorted = state.children.slice().sort(function(a,b){ return b.totalPoints - a.totalPoints; });
+    els.lbList.innerHTML = '';
+    if(sorted.length === 0){
+      els.lbList.innerHTML = '<p style="text-align:center; color:var(--ink-soft); font-size:13px;">아직 아무도 등록하지 않았어요.</p>';
+      return;
+    }
+    var medals = ['🥇','🥈','🥉'];
+    sorted.forEach(function(c, idx){
+      var row = document.createElement('div');
+      row.className = 'lb-row' + (c.id === currentChildId ? ' me' : '');
+      row.innerHTML =
+        '<div class="lb-rank'+(idx<3?' medal':'')+'">'+(idx<3 ? medals[idx] : (idx+1))+'</div>' +
+        '<div style="font-size:22px;">'+avatarFor(c.id)+'</div>' +
+        '<div class="lb-name">'+escapeHtml(c.name)+'<div class="lb-streak">🔥 '+(c.streak||0)+'일 연속</div></div>' +
+        '<div class="lb-points">'+c.totalPoints+'P</div>';
+      els.lbList.appendChild(row);
+    });
+  }
+
+  // ---------- Recording modal ----------
+  function openRecordModal(session){
+    var child = getChild(currentChildId);
+    var today = todayStr();
+    if(child.sessions[today] && child.sessions[today][session] && child.sessions[today][session].done){
+      toast('오늘은 이미 완료했어요!');
+      return;
+    }
+    recordingSession = session;
+    var label = session === 'morning' ? '아침' : '저녁';
+    var overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.id = 'recordOverlay';
+    overlay.innerHTML =
+      '<div class="modal modal-wrap">' +
+        '<button class="close-x" id="closeRecordModal">✕</button>' +
+        '<h2 class="display">'+label+' 말씀 읽기</h2>' +
+        '<p>마이크 버튼을 누르고 말씀을 소리 내어 읽어보세요</p>' +
+        '<div id="recordStage"></div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById('closeRecordModal').addEventListener('click', closeRecordModal);
+    renderStageIdle();
+  }
+
+  function openAttendanceModal(session){
+    var child = getChild(currentChildId);
+    var today = todayStr();
+    if(child.sessions[today] && child.sessions[today][session] && child.sessions[today][session].done){
+      toast('오늘은 이미 완료했어요!');
+      return;
+    }
+    recordingSession = session;
+    var label = session === 'zoom' ? '목요일 줌수업' : '주일 오프라인 수업';
+    var icon = session === 'zoom' ? '💻' : '⛪';
+    var overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.id = 'recordOverlay';
+    overlay.innerHTML =
+      '<div class="modal modal-wrap">' +
+        '<button class="close-x" id="closeRecordModal">✕</button>' +
+        '<h2 class="display">'+label+' 출석</h2>' +
+        '<p>오늘 '+label+'에 참석했나요?</p>' +
+        '<div id="recordStage">' +
+          '<div style="font-size:44px; margin:8px 0 16px;">'+icon+'</div>' +
+          '<button class="btn leaf block" id="attendConfirmBtn">네, 참석했어요 ✅</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById('closeRecordModal').addEventListener('click', closeRecordModal);
+    document.getElementById('attendConfirmBtn').addEventListener('click', function(){
+      submitSession(session, 'attendance');
+    });
+  }
+
+  function closeRecordModal(){
+    stopMediaTracks();
+    clearInterval(recordTimerInterval);
+    var overlay = document.getElementById('recordOverlay');
+    if(overlay) overlay.remove();
+    recordingSession = null;
+  }
+
+  function stopMediaTracks(){
+    if(mediaStream){
+      mediaStream.getTracks().forEach(function(t){ t.stop(); });
+      mediaStream = null;
+    }
+  }
+
+  function stage(){ return document.getElementById('recordStage'); }
+
+  function renderStageIdle(){
+    stage().innerHTML =
+      '<button class="mic-btn'+(recordingSession==='evening'?' dusk':'')+'" id="micStartBtn">🎙️</button>' +
+      '<p class="caption">녹음은 최대 '+maxRecordMinutesLabel()+'분까지 가능하고, 제출하면 저장돼요.</p>';
+    document.getElementById('micStartBtn').addEventListener('click', startRecording);
+  }
+
+  function renderStageFallback(){
+    stage().innerHTML =
+      '<div style="font-size:40px; margin:10px 0;">🎤</div>' +
+      '<p style="font-size:13.5px;">이 기기에서는 마이크를 사용할 수 없어요.<br>말씀을 소리 내어 읽었다면 아래를 눌러주세요.</p>' +
+      '<div class="modal-actions">' +
+        '<button class="btn leaf block" id="fallbackSubmitBtn">읽었어요, 체크할게요 ✅</button>' +
+      '</div>';
+    document.getElementById('fallbackSubmitBtn').addEventListener('click', function(){
+      submitSession(recordingSession, 'manual');
+    });
+  }
+
+  async function startRecording(){
+    stage().innerHTML = '<div class="spinner" style="margin:20px auto;"></div><p class="caption">마이크를 준비하고 있어요...</p>';
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined'){
+      renderStageFallback();
+      return;
+    }
+    try{
+      mediaStream = await navigator.mediaDevices.getUserMedia({ audio:true });
+    }catch(e){
+      renderStageFallback();
+      return;
+    }
+    mediaChunks = [];
+    var options = { audioBitsPerSecond: 8000 };
+    try{
+      if(MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/webm;codecs=opus')){
+        options.mimeType = 'audio/webm;codecs=opus';
+      }
+      mediaRecorder = new MediaRecorder(mediaStream, options);
+    }catch(e){
+      try{ mediaRecorder = new MediaRecorder(mediaStream); }
+      catch(e2){ renderStageFallback(); return; }
+    }
+    mediaRecorder.ondataavailable = function(e){ if(e.data && e.data.size > 0) mediaChunks.push(e.data); };
+    mediaRecorder.onstop = function(){ onRecordingStopped(); };
+    mediaRecorder.start();
+    recordSeconds = 0;
+    renderStageRecording();
+    recordTimerInterval = setInterval(function(){
+      recordSeconds++;
+      var timerEl = document.getElementById('recTimer');
+      if(timerEl) timerEl.textContent = pad(Math.floor(recordSeconds/60)) + ':' + pad(recordSeconds % 60);
+      if(recordSeconds >= maxRecordSeconds()){ stopRecording(); }
+    }, 1000);
+  }
+
+  function renderStageRecording(){
+    stage().innerHTML =
+      '<button class="mic-btn recording" id="micStopBtn">⏹</button>' +
+      '<div class="timer" id="recTimer">00:00</div>' +
+      '<p class="caption">읽고 있어요... 다 읽었으면 정지를 눌러요 (최대 '+maxRecordMinutesLabel()+'분)</p>';
+    document.getElementById('micStopBtn').addEventListener('click', stopRecording);
+  }
+
+  function stopRecording(){
+    clearInterval(recordTimerInterval);
+    if(mediaRecorder && mediaRecorder.state !== 'inactive'){
+      mediaRecorder.stop();
+    }
+  }
+
+  function onRecordingStopped(){
+    stopMediaTracks();
+    var blob = new Blob(mediaChunks, { type: 'audio/webm' });
+    lastRecordedBlob = blob;
+    var url = URL.createObjectURL(blob);
+    stage().innerHTML =
+      '<audio controls src="'+url+'"></audio>' +
+      '<p class="caption">다시 들어보고 제출해요. 제출하면 녹음이 저장돼요.</p>' +
+      '<div class="modal-actions">' +
+        '<button class="btn leaf block" id="submitRecordingBtn">제출하고 포인트 받기 🎉</button>' +
+        '<button class="btn ghost block" id="retryRecordingBtn">다시 녹음하기</button>' +
+      '</div>';
+    document.getElementById('submitRecordingBtn').addEventListener('click', function(){
+      submitSession(recordingSession, 'recording');
+    });
+    document.getElementById('retryRecordingBtn').addEventListener('click', function(){
+      URL.revokeObjectURL(url);
+      lastRecordedBlob = null;
+      renderStageIdle();
+    });
+  }
+
+  async function submitSession(session, method){
+    stage().innerHTML = '<div class="spinner" style="margin:20px auto;"></div><p class="caption">저장하는 중이에요...</p>';
+    var today = todayStr();
+    var hasRecording = false;
+    var recSizeBytes = 0;
+
+    if(method === 'recording' && lastRecordedBlob){
+      try{
+        var dataUrl = await blobToDataUrl(lastRecordedBlob);
+        if(dataUrl.length > 4500000){
+          renderResult({ sizeError:true });
+          return;
+        }
+        var recKey = 'rec:'+currentChildId+':'+today+':'+session;
+        var savedRec = await window.storage.set(recKey, dataUrl, true);
+        if(!savedRec){ throw new Error('recording save failed'); }
+        hasRecording = true;
+        recSizeBytes = dataUrl.length;
+      }catch(e){
+        console.error(e);
+        renderResult({ recordError:true });
+        return;
+      }
+    }
+
+    await refreshFromServer();
+    var child = getChild(currentChildId);
+    if(!child.sessions[today]) child.sessions[today] = {};
+    if(child.sessions[today][session] && child.sessions[today][session].done){
+      renderResult({ already:true });
+      return;
+    }
+    child.sessions[today][session] = { done:true, at: nowTimeStr(), method: method || 'manual', hasRecording: hasRecording };
+    if(recSizeBytes > 0){
+      child.sessions[today][session].recSize = recSizeBytes;
+      state.recordingBytesTotal = (state.recordingBytesTotal || 0) + recSizeBytes;
+    }
+    var s = state.settings;
+    var earned = s[session + 'Points'] || 0;
+    var bonus = 0, streakBonus = 0, newStreak = child.streak || 0;
+    var comboHit = false, milestoneHit = null;
+    var daySessions = child.sessions[today];
+    if(daySessions.morning && daySessions.morning.done && daySessions.evening && daySessions.evening.done && !daySessions.bothBonusGiven){
+      bonus = s.bothBonus || 0;
+      daySessions.bothBonusGiven = true;
+      comboHit = true;
+    }
+    if(daySessions.morning && daySessions.morning.done && daySessions.evening && daySessions.evening.done){
+      if(child.lastFullDate !== today){
+        var yest = shiftedDateStr(-1);
+        newStreak = (child.lastFullDate === yest) ? (child.streak||0) + 1 : 1;
+        child.streak = newStreak;
+        child.lastFullDate = today;
+        var every = s.streakEvery || 0;
+        if(every > 0 && newStreak % every === 0){
+          child.streakMilestones = child.streakMilestones || [];
+          if(child.streakMilestones.indexOf(newStreak) === -1){
+            streakBonus = s.streakBonus || 0;
+            child.streakMilestones.push(newStreak);
+          }
+        }
+        child.celebratedMilestones = child.celebratedMilestones || [];
+        if(STREAK_MILESTONES.indexOf(newStreak) !== -1 && child.celebratedMilestones.indexOf(newStreak) === -1){
+          milestoneHit = newStreak;
+          child.celebratedMilestones.push(newStreak);
+        }
+      }
+    }
+    child.totalPoints = (child.totalPoints||0) + earned + bonus + streakBonus;
+    var ok = await saveState(state);
+    if(!ok){
+      renderResult({ error:true });
+      return;
+    }
+    lastRecordedBlob = null;
+    renderResult({ earned:earned, bonus:bonus, streakBonus:streakBonus, streak:newStreak, total:child.totalPoints, comboHit:comboHit, milestoneHit:milestoneHit });
+  }
+
+  function renderResult(r){
+    if(r.sizeError){
+      stage().innerHTML = '<p class="caption">녹음 파일이 너무 커요. 조금 더 짧게 다시 녹음해주세요.</p>' +
+        '<button class="btn primary block" id="closeResultBtn">다시 하기</button>';
+    } else if(r.recordError){
+      stage().innerHTML = '<p class="caption">녹음 저장에 실패했어요. 인터넷 연결을 확인하고 다시 시도해주세요.</p>' +
+        '<button class="btn primary block" id="closeResultBtn">닫기</button>';
+    } else if(r.error){
+      stage().innerHTML = '<p class="caption">저장에 실패했어요. 인터넷 연결을 확인하고 다시 시도해주세요.</p>' +
+        '<button class="btn primary block" id="closeResultBtn">닫기</button>';
+    } else if(r.already){
+      stage().innerHTML = '<p class="caption">오늘은 이미 완료했어요!</p>' +
+        '<button class="btn primary block" id="closeResultBtn">닫기</button>';
+    } else {
+      var overlayEl = document.getElementById('recordOverlay');
+      var modalEl = overlayEl ? overlayEl.querySelector('.modal') : null;
+      var totalEarned = r.earned + r.bonus + r.streakBonus;
+      var bonusLine = '';
+      if(r.bonus > 0) bonusLine += '<p style="font-size:12.5px;">🎊 콤보 보너스 +'+r.bonus+'P</p>';
+      if(r.streakBonus > 0) bonusLine += '<p style="font-size:12.5px;">🔥 연속 달성 보너스 +'+r.streakBonus+'P</p>';
+
+      if(r.milestoneHit){
+        if(modalEl) modalEl.classList.add('milestone-modal');
+        playChime('milestone');
+        if(overlayEl) spawnConfetti(overlayEl, 40, true);
+        stage().innerHTML =
+          '<div class="milestone-flame">'+getStreakVisual(r.milestoneHit).emoji+'</div>' +
+          '<div class="milestone-title display">'+r.milestoneHit+'일 연속 달성!!</div>' +
+          '<p class="caption">정말 대단해요! 새 뱃지를 얻었어요 🏅</p>' +
+          '<div class="points-earned display">+'+totalEarned+'P</div>' +
+          '<p class="caption">총 '+r.total+'P가 됐어요.</p>' +
+          bonusLine +
+          '<button class="btn gold block" id="closeResultBtn" style="margin-top:12px;">신난다! 🎉</button>';
+      } else if(r.comboHit){
+        playChime('combo');
+        if(overlayEl) spawnConfetti(overlayEl, 18, false);
+        stage().innerHTML =
+          '<div class="celebrate">🎯</div>' +
+          '<div class="combo-banner">오늘 아침 + 저녁 콤보 완성!</div>' +
+          '<div class="points-earned display">+'+totalEarned+'P</div>' +
+          '<p class="caption">'+randomPraise()+' 총 '+r.total+'P가 됐어요.</p>' +
+          bonusLine +
+          '<button class="btn primary block" id="closeResultBtn" style="margin-top:10px;">닫기</button>';
+      } else {
+        playChime('normal');
+        if(overlayEl) spawnConfetti(overlayEl, 8, false);
+        stage().innerHTML =
+          '<div class="celebrate">🎉</div>' +
+          '<div class="points-earned display">+'+totalEarned+'P</div>' +
+          '<p class="caption">'+randomPraise()+' 총 '+r.total+'P가 됐어요.</p>' +
+          bonusLine +
+          '<button class="btn primary block" id="closeResultBtn" style="margin-top:10px;">닫기</button>';
+      }
+    }
+    document.getElementById('closeResultBtn').addEventListener('click', function(){
+      if(r.sizeError){
+        lastRecordedBlob = null;
+        renderStageIdle();
+        return;
+      }
+      closeRecordModal();
+      renderHome();
+    });
+  }
+
+  // ---------- Settings (PIN gated) ----------
+  els.gearBtn.addEventListener('click', openPinModal);
+
+  function openPinModal(){
+    var overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.id = 'pinOverlay';
+    overlay.innerHTML =
+      '<div class="modal center modal-wrap">' +
+        '<button class="close-x" id="closePinModal">✕</button>' +
+        '<h2 class="display">선생님 설정</h2>' +
+        '<p>PIN 번호를 입력해주세요</p>' +
+        '<input type="password" inputmode="numeric" id="pinInput" placeholder="PIN" style="text-align:center; font-size:18px; margin-bottom:14px;">' +
+        '<button class="btn primary block" id="pinSubmitBtn">확인</button>' +
+        '<p class="caption">기본 PIN은 1234예요. 설정 화면에서 바꿀 수 있어요.</p>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById('closePinModal').addEventListener('click', function(){ overlay.remove(); });
+    document.getElementById('pinSubmitBtn').addEventListener('click', checkPin);
+    document.getElementById('pinInput').addEventListener('keydown', function(e){ if(e.key==='Enter') checkPin(); });
+    document.getElementById('pinInput').focus();
+  }
+
+  async function checkPin(){
+    await refreshFromServer();
+    var val = document.getElementById('pinInput').value;
+    if(val === (state.settings.pin || '1234')){
+      document.getElementById('pinOverlay').remove();
+      openSettingsModal();
+    } else {
+      toast('PIN이 올바르지 않아요.');
+    }
+  }
+
+  function openSettingsModal(){
+    var s = state.settings;
+    var overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.id = 'settingsOverlay';
+    overlay.style.alignItems = 'center';
+    var rosterHtml = state.children.slice().sort(function(a,b){return a.name.localeCompare(b.name,'ko');}).map(function(c){
+      return '<div class="roster-manage-row"><span>'+avatarFor(c.id)+' '+escapeHtml(c.name)+' · '+c.totalPoints+'P</span>' +
+        '<span style="display:flex; gap:10px; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end;">' +
+        '<button class="x-btn archive-btn" data-archive-id="'+c.id+'">녹음보기</button>' +
+        '<button class="x-btn" data-resetpin-id="'+c.id+'" style="color:var(--dusk);">PIN초기화</button>' +
+        '<button class="x-btn" data-id="'+c.id+'">삭제</button>' +
+        '</span></div>' +
+        '<div class="archive-box hidden" id="archive-'+c.id+'"></div>';
+    }).join('') || '<p class="caption">등록된 친구가 없어요.</p>';
+
+    var per = s.pointsPerUnit || 5000, won = s.wonPerUnit || 5000;
+    var exchangeRows = state.children.slice().sort(function(a,b){ return (b.totalPoints||0) - (a.totalPoints||0); }).map(function(c){
+      var ex = computeExchange(c.totalPoints, per, won);
+      var right = ex.units > 0
+        ? '<span style="font-weight:700; color:var(--gold);">'+ex.won.toLocaleString()+'원</span> <span style="color:var(--ink-soft);">(남음 '+ex.remaining+'P)</span>'
+        : '<span style="color:var(--ink-soft);">환전 불가</span>';
+      return '<div class="roster-manage-row"><span>'+escapeHtml(c.name)+' · '+(c.totalPoints||0)+'P</span><span style="font-size:12.5px;">'+right+'</span></div>';
+    }).join('') || '<p class="caption">등록된 친구가 없어요.</p>';
+
+    var exchangeLogRows = (state.exchangeLog||[]).slice(-15).reverse().map(function(e){
+      return '<div class="roster-manage-row"><span style="font-size:12.5px;">'+e.date+' · '+escapeHtml(e.name)+'</span><span style="font-size:12.5px; font-weight:700; color:var(--gold);">'+e.wonAmount.toLocaleString()+'원</span></div>';
+    }).join('') || '<p class="caption">아직 환전 기록이 없어요.</p>';
+
+    overlay.innerHTML =
+      '<div class="modal modal-wrap" style="max-height:85vh; overflow-y:auto; text-align:left;">' +
+        '<button class="close-x" id="closeSettingsModal">✕</button>' +
+        '<h2 class="display" style="text-align:center;">선생님 설정</h2>' +
+        '<div class="settings-section">' +
+          '<h3>포인트 설정</h3>' +
+          '<div class="field-row"><label>아침 완료 포인트</label><input type="number" min="0" id="setMorning" value="'+s.morningPoints+'"></div>' +
+          '<div class="field-row"><label>저녁 완료 포인트</label><input type="number" min="0" id="setEvening" value="'+s.eveningPoints+'"></div>' +
+          '<div class="field-row"><label>목요일 줌수업 출석 포인트</label><input type="number" min="0" id="setZoom" value="'+(s.zoomPoints!=null?s.zoomPoints:500)+'"></div>' +
+          '<div class="field-row"><label>주일 오프라인 수업 포인트</label><input type="number" min="0" id="setSunday" value="'+(s.sundayPoints!=null?s.sundayPoints:500)+'"></div>' +
+          '<div class="field-row"><label>둘 다 완료 보너스</label><input type="number" min="0" id="setBonus" value="'+s.bothBonus+'"></div>' +
+          '<div class="field-row"><label>연속 며칠마다 보너스</label><input type="number" min="0" id="setStreakEvery" value="'+s.streakEvery+'"></div>' +
+          '<div class="field-row"><label>연속 달성 보너스</label><input type="number" min="0" id="setStreakBonus" value="'+s.streakBonus+'"></div>' +
+          '<div class="field-row"><label>PIN 번호</label><input type="text" inputmode="numeric" id="setPin" value="'+(s.pin||'1234')+'"></div>' +
+          '<button class="btn primary block" id="saveSettingsBtn" style="margin-top:8px;">저장하기</button>' +
+        '</div>' +
+        '<div class="settings-section">' +
+          '<h3>녹음 설정</h3>' +
+          (function(){
+            var usedMB = ((state.recordingBytesTotal||0)/1000000);
+            var overLimit = usedMB > 15;
+            var color = overLimit ? 'var(--danger)' : 'var(--ink-soft)';
+            var weight = overLimit ? '700' : '400';
+            return '<p class="caption" style="text-align:left; color:'+color+'; font-weight:'+weight+';">현재 녹음 저장 용량: 약 '+usedMB.toFixed(1)+'MB / 20MB 사용 중'+(overLimit ? ' ⚠️ 한도에 가까워요' : '')+'</p>';
+          })() +
+          '<div class="field-row"><label>최대 녹음 길이(분)</label><input type="number" min="1" id="setMaxRecordMinutes" value="'+(Math.round((s.recordMaxSeconds||60)/60))+'"></div>' +
+          '<div class="field-row"><label>녹음 보관 기간(일)</label><input type="number" min="0" id="setRetentionDays" value="'+(s.recordingRetentionDays!=null ? s.recordingRetentionDays : 1)+'"></div>' +
+          '<p class="caption" style="text-align:left;">보관 기간이 지난 녹음은 앱이 열릴 때 자동으로 삭제돼요. 0으로 두면 삭제하지 않아요.<br>⚠️ 전체 저장 공간이 20MB로 제한돼 있어요. 30명 기준으로는 3분/1일 보관이 안전 범위예요 (음질을 약간 낮춰서 확보했어요). 인원이 더 많거나 길이를 더 늘리면 위 사용량을 자주 확인해주세요.</p>' +
+          '<button class="btn primary block" id="saveRecordingSettingsBtn" style="margin-top:8px;">저장하기</button>' +
+        '</div>' +
+        '<div class="settings-section">' +
+          '<h3>포인트 환전 (매달 마지막 주일)</h3>' +
+          '<div class="field-row"><label>환전 단위(포인트)</label><input type="number" min="1" id="setPointsPerUnit" value="'+per+'"></div>' +
+          '<div class="field-row"><label>환전 단위(원)</label><input type="number" min="0" id="setWonPerUnit" value="'+won+'"></div>' +
+          '<button class="btn primary block" id="saveExchangeRateBtn" style="margin-top:4px;">단위 저장하기</button>' +
+          '<p class="caption" style="text-align:left; margin-top:14px;">지금 포인트 기준 환전 예상액</p>' +
+          '<div>'+exchangeRows+'</div>' +
+          '<button class="btn gold block" id="processExchangeBtn" style="margin-top:10px;">이번 달 환전 처리하기</button>' +
+          '<p class="caption" style="text-align:left; margin-top:14px;">최근 환전 내역</p>' +
+          '<div>'+exchangeLogRows+'</div>' +
+        '</div>' +
+        '<div class="settings-section">' +
+          '<h3>데이터 내보내기</h3>' +
+          '<p class="caption" style="text-align:left;">모든 학생의 포인트, 출석 내역, 환전 기록을 엑셀 파일로 받아요.</p>' +
+          '<button class="btn dusk block" id="exportExcelBtn" style="margin-top:8px;">📊 포인트/출석 내역 엑셀 다운로드</button>' +
+        '</div>' +
+        '<div class="settings-section">' +
+          '<h3>친구 관리</h3>' +
+          '<div id="rosterManageList">'+rosterHtml+'</div>' +
+        '</div>' +
+        '<div class="settings-section">' +
+          '<h3>위험 구역</h3>' +
+          '<button class="btn danger block" id="resetAllBtn">전체 데이터 초기화</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById('closeSettingsModal').addEventListener('click', function(){ overlay.remove(); });
+    document.getElementById('saveSettingsBtn').addEventListener('click', saveSettingsFromModal);
+    document.getElementById('saveRecordingSettingsBtn').addEventListener('click', saveRecordingSettingsFromModal);
+    document.getElementById('saveExchangeRateBtn').addEventListener('click', saveExchangeRateFromModal);
+    document.getElementById('processExchangeBtn').addEventListener('click', processExchange);
+    document.getElementById('exportExcelBtn').addEventListener('click', exportExcelReport);
+    document.getElementById('resetAllBtn').addEventListener('click', resetAllData);
+    overlay.querySelectorAll('.x-btn[data-id]').forEach(function(btn){
+      btn.addEventListener('click', function(){ deleteChild(btn.getAttribute('data-id'), overlay); });
+    });
+    overlay.querySelectorAll('[data-resetpin-id]').forEach(function(btn){
+      btn.addEventListener('click', function(){ resetChildPin(btn.getAttribute('data-resetpin-id')); });
+    });
+    overlay.querySelectorAll('.archive-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var id = btn.getAttribute('data-archive-id');
+        toggleArchive(id, document.getElementById('archive-'+id));
+      });
+    });
+  }
+
+  async function toggleArchive(childId, containerEl){
+    if(containerEl.dataset.loaded === '1'){
+      containerEl.classList.toggle('hidden');
+      return;
+    }
+    containerEl.classList.remove('hidden');
+    containerEl.innerHTML = '<p class="caption">불러오는 중...</p>';
+    try{
+      var listRes = await window.storage.list('rec:'+childId+':', true);
+      var keys = (listRes && listRes.keys) || [];
+      if(keys.length === 0){
+        containerEl.innerHTML = '<p class="caption">저장된 녹음이 없어요.</p>';
+        containerEl.dataset.loaded = '1';
+        return;
+      }
+      keys.sort().reverse();
+      containerEl.innerHTML = keys.map(function(k){
+        var parts = k.split(':'); // rec, childId, date, session
+        var date = parts[2], session = parts[3];
+        var label = date + ' · ' + (session === 'morning' ? '🌅 아침' : '🌙 저녁');
+        return '<div class="roster-manage-row"><span style="font-size:13px;">'+label+'</span>' +
+          '<button class="x-btn archive-btn" data-key="'+k+'">▶ 재생</button></div>';
+      }).join('');
+      containerEl.dataset.loaded = '1';
+      containerEl.querySelectorAll('button[data-key]').forEach(function(b){
+        b.addEventListener('click', async function(){
+          b.disabled = true; b.textContent = '불러오는 중';
+          try{
+            var r = await window.storage.get(b.getAttribute('data-key'), true);
+            if(r && r.value){
+              var audio = document.createElement('audio');
+              audio.controls = true; audio.autoplay = true; audio.src = r.value;
+              audio.style.cssText = 'width:100%; margin:4px 0;';
+              b.replaceWith(audio);
+            } else {
+              b.textContent = '찾을 수 없음';
+            }
+          }catch(e){
+            b.textContent = '불러오기 실패';
+          }
+        });
+      });
+    }catch(e){
+      containerEl.innerHTML = '<p class="caption">불러오지 못했어요.</p>';
+    }
+  }
+
+  async function saveSettingsFromModal(){
+    await refreshFromServer();
+    state.settings.morningPoints = parseInt(document.getElementById('setMorning').value) || 0;
+    state.settings.eveningPoints = parseInt(document.getElementById('setEvening').value) || 0;
+    state.settings.zoomPoints = parseInt(document.getElementById('setZoom').value) || 0;
+    state.settings.sundayPoints = parseInt(document.getElementById('setSunday').value) || 0;
+    state.settings.bothBonus = parseInt(document.getElementById('setBonus').value) || 0;
+    state.settings.streakEvery = parseInt(document.getElementById('setStreakEvery').value) || 0;
+    state.settings.streakBonus = parseInt(document.getElementById('setStreakBonus').value) || 0;
+    state.settings.pin = (document.getElementById('setPin').value || '1234').trim();
+    var ok = await saveState(state);
+    if(ok){ toast('설정을 저장했어요.'); document.getElementById('settingsOverlay').remove(); if(currentScreen==='home') renderHome(); }
+  }
+
+  async function saveRecordingSettingsFromModal(){
+    await refreshFromServer();
+    var minutes = parseFloat(document.getElementById('setMaxRecordMinutes').value) || 5;
+    if(minutes < 1) minutes = 1;
+    state.settings.recordMaxSeconds = Math.round(minutes * 60);
+    var retention = parseInt(document.getElementById('setRetentionDays').value);
+    state.settings.recordingRetentionDays = isNaN(retention) || retention < 0 ? 0 : retention;
+    var ok = await saveState(state);
+    if(ok){ toast('녹음 설정을 저장했어요.'); document.getElementById('settingsOverlay').remove(); }
+  }
+
+  async function exportExcelReport(){
+    var btn = document.getElementById('exportExcelBtn');
+    if(btn){ btn.disabled = true; btn.textContent = '엑셀 준비 중...'; }
+    try{
+      await refreshFromServer();
+      await ensureXlsxLib();
+      var per = state.settings.pointsPerUnit || 5000, won = state.settings.wonPerUnit || 5000;
+
+      var overview = state.children.slice()
+        .sort(function(a,b){ return (b.totalPoints||0) - (a.totalPoints||0); })
+        .map(function(c){
+          var ex = computeExchange(c.totalPoints, per, won);
+          return {
+            '이름': c.name,
+            '총 포인트': c.totalPoints || 0,
+            '연속 완료일': c.streak || 0,
+            '환전 가능 금액(원)': ex.won,
+            '환전 후 남는 포인트': ex.remaining
+          };
+        });
+
+      var logRows = [];
+      state.children.forEach(function(c){
+        var dates = Object.keys(c.sessions || {}).sort();
+        dates.forEach(function(d){
+          var ds = c.sessions[d];
+          logRows.push({
+            '이름': c.name,
+            '날짜': d,
+            '아침': (ds.morning && ds.morning.done) ? 'O' : '',
+            '아침 시간': (ds.morning && ds.morning.done) ? ds.morning.at : '',
+            '저녁': (ds.evening && ds.evening.done) ? 'O' : '',
+            '저녁 시간': (ds.evening && ds.evening.done) ? ds.evening.at : '',
+            '줌수업': (ds.zoom && ds.zoom.done) ? 'O' : '',
+            '주일수업': (ds.sunday && ds.sunday.done) ? 'O' : ''
+          });
+        });
+      });
+      logRows.sort(function(a,b){
+        if(a['날짜'] !== b['날짜']) return a['날짜'] < b['날짜'] ? -1 : 1;
+        return a['이름'].localeCompare(b['이름'], 'ko');
+      });
+
+      var exLog = (state.exchangeLog || []).map(function(e){
+        return {
+          '날짜': e.date, '이름': e.name,
+          '환전 포인트': e.pointsConverted, '지급 금액(원)': e.wonAmount,
+          '환전 후 남은 포인트': e.remainingAfter
+        };
+      });
+
+      var wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(overview.length ? overview : [{'안내':'등록된 친구가 없어요'}]), '포인트 현황');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(logRows.length ? logRows : [{'안내':'출석 기록이 없어요'}]), '출석 내역');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exLog.length ? exLog : [{'안내':'환전 기록이 없어요'}]), '환전 내역');
+
+      XLSX.writeFile(wb, '말씀챌린지_포인트_' + todayStr() + '.xlsx');
+      toast('엑셀 파일을 다운로드했어요.');
+    }catch(e){
+      console.error(e);
+      toast('엑셀 생성에 실패했어요. 인터넷 연결을 확인해주세요.');
+    } finally {
+      if(btn){ btn.disabled = false; btn.textContent = '📊 포인트/출석 내역 엑셀 다운로드'; }
+    }
+  }
+
+  async function saveExchangeRateFromModal(){
+    await refreshFromServer();
+    state.settings.pointsPerUnit = parseInt(document.getElementById('setPointsPerUnit').value) || 5000;
+    state.settings.wonPerUnit = parseInt(document.getElementById('setWonPerUnit').value) || 5000;
+    var ok = await saveState(state);
+    if(ok){
+      toast('환전 단위를 저장했어요.');
+      document.getElementById('settingsOverlay').remove();
+      openSettingsModal();
+    }
+  }
+
+  async function processExchange(){
+    if(!confirm('이번 달 환전을 처리할까요? 대상 친구들의 포인트가 차감되고 기록이 남아요.')) return;
+    await refreshFromServer();
+    var per = state.settings.pointsPerUnit || 5000;
+    var won = state.settings.wonPerUnit || 5000;
+    var todayD = todayStr();
+    var totalWon = 0, count = 0;
+    state.exchangeLog = state.exchangeLog || [];
+    state.children.forEach(function(c){
+      var ex = computeExchange(c.totalPoints, per, won);
+      if(ex.units > 0){
+        state.exchangeLog.push({
+          date: todayD, childId: c.id, name: c.name,
+          pointsConverted: ex.units * per, wonAmount: ex.won, remainingAfter: ex.remaining
+        });
+        c.totalPoints = ex.remaining;
+        totalWon += ex.won;
+        count++;
+      }
+    });
+    if(count === 0){
+      toast('환전 가능한 친구가 없어요.');
+      return;
+    }
+    var ok = await saveState(state);
+    if(ok){
+      toast(count + '명 환전 완료! 총 ' + totalWon.toLocaleString() + '원');
+      document.getElementById('settingsOverlay').remove();
+      openSettingsModal();
+      if(currentScreen === 'home') renderHome();
+      if(currentScreen === 'leaderboard') renderLeaderboard();
+    }
+  }
+
+  async function deleteChild(id, overlay){
+    if(!confirm('정말 이 친구의 기록을 삭제할까요? 되돌릴 수 없어요.')) return;
+    await refreshFromServer();
+    state.children = state.children.filter(function(c){ return c.id !== id; });
+    await saveState(state);
+    if(currentChildId === id){ currentChildId = null; }
+    overlay.remove();
+    toast('삭제했어요.');
+    if(currentScreen !== 'select'){ showScreen('select'); } else { renderSelect(); }
+  }
+
+  async function resetChildPin(childId){
+    await refreshFromServer();
+    var c = getChild(childId);
+    if(!c){ toast('친구 정보를 찾을 수 없어요.'); return; }
+    if(!confirm(c.name+'님의 비밀번호를 0000으로 초기화할까요?')) return;
+    c.pin = '0000';
+    var ok = await saveState(state);
+    if(ok){ toast(c.name+'님의 비밀번호가 0000으로 초기화됐어요. 다음 로그인 때 0000을 입력하도록 알려주세요.'); }
+  }
+
+  async function resetAllData(){
+    if(!confirm('정말 모든 친구와 기록을 초기화할까요?')) return;
+    if(!confirm('이 작업은 되돌릴 수 없어요. 정말 진행할까요?')) return;
+    var fresh = defaultState();
+    var ok = await saveState(fresh);
+    if(ok){
+      state = fresh;
+      currentChildId = null;
+      document.getElementById('settingsOverlay').remove();
+      toast('초기화했어요.');
+      showScreen('select');
+    }
+  }
+
+  // ---------- Old recording cleanup ----------
+  async function maybeCleanupOldRecordings(){
+    try{
+      await refreshFromServer();
+      var todayD = todayStr();
+      if(state.settings.lastCleanupRun === todayD) return;
+      var retention = state.settings.recordingRetentionDays;
+      if(!retention || retention <= 0){
+        state.settings.lastCleanupRun = todayD;
+        await saveState(state);
+        return;
+      }
+      // keep the most recent `retention` days INCLUDING today; delete anything older
+      var cutoff = shiftedDateStr(-(retention - 1));
+      var freedBytes = 0;
+      for(var i=0;i<state.children.length;i++){
+        var child = state.children[i];
+        try{
+          var listRes = await window.storage.list('rec:'+child.id+':', true);
+          var keys = (listRes && listRes.keys) || [];
+          for(var j=0;j<keys.length;j++){
+            var k = keys[j];
+            var parts = k.split(':');
+            var d = parts[2], sessName = parts[3];
+            if(d && d < cutoff){
+              try{ await window.storage.delete(k, true); }catch(e){ /* already gone, ignore */ }
+              var sessObj = child.sessions && child.sessions[d] && child.sessions[d][sessName];
+              if(sessObj){
+                if(sessObj.recSize){ freedBytes += sessObj.recSize; delete sessObj.recSize; }
+                sessObj.hasRecording = false;
+              }
+            }
+          }
+        }catch(e){ /* no recordings for this child yet, ignore */ }
+      }
+      if(freedBytes > 0){
+        state.recordingBytesTotal = Math.max(0, (state.recordingBytesTotal||0) - freedBytes);
+      }
+      state.settings.lastCleanupRun = todayD;
+      await saveState(state);
+    }catch(e){ console.error('cleanup failed', e); }
+  }
+
+  // ---------- Init ----------
+  async function init(){
+    if(window.storage.__notConfigured){
+      els.loading.innerHTML =
+        '<div style="padding:40px 24px; text-align:center; color:var(--ink-soft); font-size:14px; line-height:1.7;">' +
+        '⚙️ 아직 저장 공간이 연결되지 않았어요.<br>' +
+        '코드 맨 위쪽의 <b>FIREBASE_DB_URL</b> 값을 채워주셔야 해요.<br>' +
+        '(관리자에게 설정을 요청해 주세요)</div>';
+      return;
+    }
+    state = await loadState();
+    els.loading.classList.add('hidden');
+    showScreen('select');
+    maybeCleanupOldRecordings();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
