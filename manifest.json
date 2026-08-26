@@ -1,0 +1,11 @@
+{
+  "name": "드림씨드 말씀 챌린지",
+  "short_name": "드림씨드",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FFF8EC",
+  "theme_color": "#FFF8EC",
+  "icons": [
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
