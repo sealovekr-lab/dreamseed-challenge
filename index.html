@@ -694,7 +694,10 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
       var res = await fetch(urlFor(keySegments(key)));
       if(!res.ok) throw new Error("storage get failed: " + res.status);
       var val = await res.json();
-      if(val === null || typeof val === "undefined") throw new Error("key not found");
+      if(val === null || typeof val === "undefined"){
+        // The server answered fine and said "nothing is stored here" -- different from a failed request.
+        var nf = new Error("key not found"); nf.notFound = true; throw nf;
+      }
       return { key: key, value: val, shared: !!shared };
     },
     set: async function(key, value, shared){
@@ -1293,14 +1296,127 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
   }
 
   // ---------- Storage ----------
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+  // ---------- Safety net: backups + audit trail ----------
+  // Lesson learned: a single failed read at app start used to look like "no data yet", and the app then
+  // wrote a blank state over everything. Now: (1) a failed read NEVER writes anything, (2) a blank state is
+  // only created when the server twice confirms nothing is stored AND no backup exists, (3) the app keeps
+  // dated backup copies it can restore from, and (4) destructive admin actions leave a note.
+  var BACKUP_DAILY_KEEP = 14, BACKUP_EVENT_KEEP = 8;
+  var recoveredNotice = null;
+
+  async function writeBackup(kind, id, s, reason){
+    if(!s || !s.children || s.children.length === 0) return false;   // never back up an empty roster
+    try{
+      var rec = { savedAt: new Date().toISOString(), kids: s.children.length, reason: reason || kind, state: s };
+      var res = await window.storage.set('backup:' + kind + ':' + id, JSON.stringify(rec), true);
+      return !!res;
+    }catch(e){ return false; }
+  }
+  async function pruneBackups(kind, keep){
+    try{
+      var l = await window.storage.list('backup:' + kind + ':', true);
+      var keys = ((l && l.keys) || []).slice().sort();
+      while(keys.length > keep){ await window.storage.delete(keys.shift(), true); }
+    }catch(e){ /* nothing to prune */ }
+  }
+  async function readBackupRecord(key){
+    try{
+      var r = await window.storage.get(key, true);
+      var rec = JSON.parse(r.value);
+      if(rec && rec.state && rec.state.children) return rec;
+    }catch(e){ /* unreadable */ }
+    return null;
+  }
+  async function listBackups(){
+    var out = [];
+    try{
+      var l = await window.storage.list('backup:', true);
+      var keys = (l && l.keys) || [];
+      for(var i=0;i<keys.length;i++){
+        var rec = await readBackupRecord(keys[i]);
+        if(rec) out.push({ key: keys[i], savedAt: rec.savedAt || '', kids: rec.kids || rec.state.children.length, reason: rec.reason || '' });
+      }
+    }catch(e){ /* none */ }
+    out.sort(function(a,b){ return a.savedAt < b.savedAt ? 1 : (a.savedAt > b.savedAt ? -1 : 0); });
+    return out;
+  }
+  async function ensureDailyBackup(){
+    if(!state || !state.children || state.children.length === 0) return;
+    var today = todayStr();
+    var existing = null;
+    try{ var r = await window.storage.get('backup:d:' + today, true); existing = JSON.parse(r.value); }catch(e){ existing = null; }
+    if(existing && existing.state){
+      var age = Date.now() - (Date.parse(existing.savedAt) || 0);
+      if(age < 3 * 3600 * 1000) return;                                  // refreshed at most every 3 hours
+      if(state.children.length < (existing.kids || 0)) return;           // never replace a fuller copy with a smaller one
+    }
+    var ok = await writeBackup('d', today, state, 'daily');
+    if(ok && !existing) await pruneBackups('d', BACKUP_DAILY_KEEP);
+  }
+  async function backupBeforeDanger(reason){
+    var stamp = new Date().toISOString().replace(/[-:.TZ]/g, '');
+    var ok = await writeBackup('x', stamp, state, reason);
+    if(ok) await pruneBackups('x', BACKUP_EVENT_KEEP);
+    return ok;
+  }
+  async function auditNote(action){
+    try{
+      await window.storage.set('audit:' + action, JSON.stringify({ at: new Date().toISOString(), device: (navigator.userAgent || '').slice(0, 140) }), true);
+    }catch(e){ /* best effort */ }
+  }
+
+  // Reads the saved state. Returns {status:'ok'|'empty'|'error'}.
+  //   ok    -> data read and parsed
+  //   empty -> the server answered (twice) that nothing is stored
+  //   error -> network/server/parse trouble: we do NOT know what is stored, so the caller must not write
+  async function readStateStrict(){
+    var lastErr = null;
+    var waits = [0, 500, 1200, 2500];
+    for(var attempt = 0; attempt < waits.length; attempt++){
+      if(waits[attempt]) await sleep(waits[attempt]);
+      try{
+        var res = await window.storage.get(STORAGE_KEY, true);
+        if(res && res.value){ return { status: 'ok', loaded: JSON.parse(res.value) }; }
+        lastErr = new Error('empty value');
+      }catch(e){
+        if(e && e.notFound){
+          // Quick second look before believing it is really empty.
+          await sleep(60);
+          try{
+            var res2 = await window.storage.get(STORAGE_KEY, true);
+            if(res2 && res2.value){ return { status: 'ok', loaded: JSON.parse(res2.value) }; }
+            lastErr = new Error('empty value');
+          }catch(e2){
+            if(e2 && e2.notFound) return { status: 'empty' };
+            lastErr = e2;
+          }
+        } else {
+          lastErr = e;
+        }
+      }
+    }
+    return { status: 'error', error: lastErr };
+  }
+
   async function loadState(){
     var loaded = null;
-    try{
-      var res = await window.storage.get(STORAGE_KEY, true);
-      if(res && res.value){
-        loaded = JSON.parse(res.value);
+    var r = await readStateStrict();
+    if(r.status === 'error'){ console.error('loadState: could not read saved data, leaving server untouched', r.error); return null; }
+    if(r.status === 'ok'){ loaded = r.loaded; }
+    else {
+      // Server confirms nothing is stored. Prefer restoring the newest backup over starting blank.
+      var backups = await listBackups();
+      if(backups.length){
+        var rec = await readBackupRecord(backups[0].key);
+        if(rec){
+          loaded = rec.state;
+          recoveredNotice = '저장된 데이터가 비어 있어서 자동 백업(' + (backups[0].savedAt || '').slice(0, 10) + ')에서 되살렸어요.';
+          try{ await window.storage.set(STORAGE_KEY, JSON.stringify(loaded), true); }catch(e){ console.error(e); }
+        }
       }
-    }catch(e){ /* not found or error -> fall through to default */ }
+    }
     if(!loaded){
       var fresh = defaultState();
       try{ await window.storage.set(STORAGE_KEY, JSON.stringify(fresh), true); }catch(e){ console.error(e); }
@@ -2782,6 +2898,13 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
           '<div id="rosterManageList">'+rosterHtml+'</div>' +
         '</div>' +
         '<div class="settings-section">' +
+          '<h3>🛟 자동 백업 / 복원</h3>' +
+          '<p class="caption" style="text-align:left;">앱이 명단·기록·말씀 설정의 복사본을 하루에 한 번(최근 14일) 자동으로 만들어 둬요. 데이터가 사라졌을 때 여기서 되돌릴 수 있어요. (음성 파일은 따로 저장돼 있어 영향을 받지 않아요.)</p>' +
+          '<button class="btn dusk block" id="downloadBackupBtn">💾 지금 백업 파일 내려받기</button>' +
+          '<button class="btn dusk block" id="showBackupsBtn" style="margin-top:8px;">📂 백업 목록 보기 / 복원</button>' +
+          '<div id="backupListBox" style="margin-top:10px;"></div>' +
+        '</div>' +
+        '<div class="settings-section">' +
           '<h3>위험 구역</h3>' +
           '<p class="caption" style="text-align:left;">👇 이름·비밀번호(명단)는 그대로 두고, 나무·배지·연속일·인증기록만 전부 지워요. 새 학기/새 달을 시작할 때 쓰세요.</p>' +
           '<button class="btn danger block" id="resetProgressBtn" style="margin-bottom:14px;">전체 진행 상황 초기화 (명단 유지)</button>' +
@@ -2811,6 +2934,8 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
     });
     document.getElementById('saveRecordingSettingsBtn').addEventListener('click', saveRecordingSettingsFromModal);
     document.getElementById('exportExcelBtn').addEventListener('click', exportExcelReport);
+    document.getElementById('downloadBackupBtn').addEventListener('click', downloadBackupFile);
+    document.getElementById('showBackupsBtn').addEventListener('click', showBackupList);
     document.getElementById('resetAllBtn').addEventListener('click', resetAllData);
     document.getElementById('resetProgressBtn').addEventListener('click', resetAllProgress);
     overlay.querySelectorAll('.x-btn[data-id]').forEach(function(btn){
@@ -2879,7 +3004,9 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
 
   async function saveSettingsFromModal(){
     await refreshFromServer();
-    state.settings.pin = (document.getElementById('setPin').value || '1234').trim();
+    var newAdminPin = (document.getElementById('setPin').value || '1234').trim();
+    if(newAdminPin !== state.settings.pin){ await auditNote('admin-pin-changed'); }
+    state.settings.pin = newAdminPin;
     var ok = await saveState(state);
     if(ok){ toast('설정을 저장했어요.'); document.getElementById('settingsOverlay').remove(); if(currentScreen==='home') renderHome(); }
   }
@@ -3153,6 +3280,8 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
   async function deleteChild(id, overlay){
     if(!confirm('정말 이 친구의 기록을 삭제할까요? 되돌릴 수 없어요.')) return;
     await refreshFromServer();
+    await backupBeforeDanger('before-delete-child');
+    await auditNote('delete-child');
     state.children = state.children.filter(function(c){ return c.id !== id; });
     await saveState(state);
     if(currentChildId === id){ currentChildId = null; }
@@ -3179,6 +3308,8 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
     if(!c) return;
     if(!confirm(c.name+'님의 나무·정원·배지·트로피·연속일·인증기록을 모두 초기화할까요?\n(이름, 비밀번호, 캐릭터는 그대로 남아요)')) return;
     if(!confirm('이 작업은 되돌릴 수 없어요. '+c.name+'님만 초기화됩니다. 정말 진행할까요?')) return;
+    await backupBeforeDanger('before-reset-child');
+    await auditNote('reset-child');
     try{
       var listRes = await window.storage.list('rec:'+childId+':', true);
       var keys = (listRes && listRes.keys) || [];
@@ -3222,6 +3353,8 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
     if(!confirm('모든 학생의 나무·정원(물/햇빛)·배지·연속일·인증기록을 초기화할까요?\n(이름과 비밀번호는 그대로 남아요)')) return;
     if(!confirm('이 작업은 되돌릴 수 없어요. 정말 진행할까요?')) return;
     await refreshFromServer();
+    await backupBeforeDanger('before-reset-progress');
+    await auditNote('reset-progress');
     state.children.forEach(function(c){
       c.streak = 0;
       c.lastFullDate = null;
@@ -3251,9 +3384,64 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
     }
   }
 
+  // ---------- Backup download / list / restore (admin) ----------
+  async function downloadBackupFile(){
+    await refreshFromServer();
+    var blob = new Blob([JSON.stringify(state, null, 1)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = '드림씨드_백업_' + todayStr() + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+    toast('백업 파일을 내려받았어요. 컴퓨터에 보관해 두세요.');
+  }
+
+  function backupLabel(b){
+    var d = new Date(b.savedAt);
+    var when = isNaN(d.getTime()) ? b.savedAt : ((d.getMonth()+1) + '월 ' + d.getDate() + '일 ' + pad(d.getHours()) + ':' + pad(d.getMinutes()));
+    var why = b.key.indexOf('backup:x:') === 0 ? ' · 작업 직전 보관' : ' · 자동';
+    return when + ' · 아이 ' + b.kids + '명' + why;
+  }
+
+  async function showBackupList(){
+    var box = document.getElementById('backupListBox');
+    if(!box) return;
+    box.innerHTML = '<p class="caption">불러오는 중...</p>';
+    var list = await listBackups();
+    if(!list.length){ box.innerHTML = '<p class="caption">아직 만들어진 백업이 없어요. 내일부터 자동으로 쌓여요.</p>'; return; }
+    box.innerHTML = list.map(function(b){
+      return '<div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 0; border-top:1px solid var(--line, #eee);">' +
+        '<span style="font-size:13px;">' + backupLabel(b) + '</span>' +
+        '<button class="btn ghost" data-restore-key="' + b.key + '" style="padding:6px 12px; font-size:13px;">복원</button></div>';
+    }).join('');
+    box.querySelectorAll('[data-restore-key]').forEach(function(btn){
+      btn.addEventListener('click', function(){ restoreFromBackup(btn.getAttribute('data-restore-key')); });
+    });
+  }
+
+  async function restoreFromBackup(key){
+    var rec = await readBackupRecord(key);
+    if(!rec){ toast('이 백업을 읽을 수 없어요.'); return; }
+    if(!confirm('이 시점(아이 ' + rec.state.children.length + '명)으로 되돌릴까요?\n지금 데이터는 먼저 따로 보관해 둬요.')) return;
+    await refreshFromServer();
+    await backupBeforeDanger('before-restore');
+    await auditNote('restore');
+    var ok = await saveState(rec.state);
+    if(!ok){ toast('복원에 실패했어요. 인터넷 연결을 확인하고 다시 시도해주세요.'); return; }
+    var reloaded = await loadState();
+    if(reloaded) state = reloaded;
+    currentChildId = null;
+    var ov = document.getElementById('settingsOverlay'); if(ov) ov.remove();
+    toast('복원했어요.');
+    showScreen('select');
+  }
+
   async function resetAllData(){
     if(!confirm('정말 모든 친구와 기록을 초기화할까요?')) return;
     if(!confirm('이 작업은 되돌릴 수 없어요. 정말 진행할까요?')) return;
+    await refreshFromServer();
+    await backupBeforeDanger('before-reset-all');
+    await auditNote('reset-all');
     var fresh = defaultState();
     var ok = await saveState(fresh);
     if(ok){
@@ -3270,6 +3458,7 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
     try{
       await refreshFromServer();
       var todayD = todayStr();
+      try{ await ensureDailyBackup(); }catch(e){ console.error('backup failed', e); }
       if(state.settings.lastCleanupRun === todayD) return;
       var retention = state.settings.recordingRetentionDays;
       if(!retention || retention <= 0){
@@ -3319,9 +3508,24 @@ var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.fire
       return;
     }
     state = await loadState();
+    if(!state){ showLoadError(); return; }   // could not read saved data: show a retry screen, write nothing
     els.loading.classList.add('hidden');
     showScreen('select');
+    if(recoveredNotice){ toast(recoveredNotice); recoveredNotice = null; }
     maybeCleanupOldRecordings();
+  }
+
+  function showLoadError(){
+    els.loading.classList.remove('hidden');
+    els.loading.innerHTML =
+      '<div style="padding:40px 24px; text-align:center; color:var(--ink-soft); font-size:15px; line-height:1.8;">' +
+      '📡 인터넷이 불안정해서 데이터를 불러오지 못했어요.<br>' +
+      '걱정 마세요, 저장된 기록은 그대로 안전해요.<br><br>' +
+      '<button class="btn primary" id="retryLoadBtn">다시 시도</button></div>';
+    document.getElementById('retryLoadBtn').addEventListener('click', function(){
+      els.loading.innerHTML = '<div class="spinner"></div>불러오는 중이에요...';
+      init();
+    });
   }
 
   init();
