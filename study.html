@@ -1507,7 +1507,7 @@ function renderHome(){
   setWide(false);
   var who = c ? (avatarOf(c) + ' ' + esc(c.name)) : '';
   $view.innerHTML =
-    '<div class="topbar"><a class="back" href="index.html">← 돌아가기</a><span class="who">' + who + '</span></div>' +
+    '<div class="topbar"><a class="back" href="index.html?back=study">← 돌아가기</a><span class="who">' + who + '</span></div>' +
     '<div class="hero"><div class="hero-title display">🎤 말씀 연습실</div>' +
       (vc.ref ? '<div class="hero-ref">' + esc(vc.ref) + '</div>' : '') +
       (vc.ko ? '<p class="hero-ko">' + esc(vc.ko) + '</p>' : '<p class="hero-ko">이번 주 말씀을 선생님이 준비하고 있어요</p>') +
