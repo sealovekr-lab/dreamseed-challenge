@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>드림씨드 말씀 학습실</title>
+<title>드림씨드 말씀 연습실</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="theme-color" content="#FFF8EC">
@@ -171,6 +171,15 @@
   .row .r3 input.say{flex:1 1 200px; min-width:0; padding:7px 8px; font-size:14px;}
   .row .r3 .tts-state{flex-basis:100%; font-size:12px; color:var(--ink-soft);}
   .row .r3 .tts-note{flex-basis:100%; font-size:11.5px; color:var(--ink-soft); line-height:1.5;}
+  .row .r4{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:8px; padding-top:8px; border-top:1px dashed #E6DDC6;}
+  .row .r4 .tts-lab{font-size:12px; font-weight:900; color:var(--leaf);}
+  .row .r4 select{flex:1 1 170px; min-width:0; padding:7px 8px; font-size:14px;}
+  .row .r4 .src-note{font-size:12px; color:var(--ink-soft); word-break:break-all;}
+  .own-box{background:#F4FAF6; border:1px solid #CFE8D8; border-radius:14px; padding:10px 12px; margin:8px 0;}
+  .own-box .own-h{font-weight:900; font-size:14px; color:var(--leaf); margin-bottom:4px;}
+  .own-box .own-info{font-size:13px; margin:6px 0 2px; word-break:break-all;}
+  .own-box .own-msg{font-size:13px; margin-top:6px; line-height:1.5; color:var(--ink);}
+  .own-box .own-msg:empty{display:none;}
   .ver-row{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;} .ver-row select,.ver-row input{flex:1 1 160px; min-width:0;}
   .voice-tag{font-size:11.5px; color:var(--ink-soft); margin-top:6px;}
   .ver-line{font-size:13px; color:var(--ink-soft); margin:-4px 2px 10px; text-align:left;}
@@ -185,6 +194,62 @@
   @media (max-width:560px){ .grid2{grid-template-columns:1fr;} .word-grid{gap:10px;} }
   .mono{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px;}
   .dirty{color:var(--danger); font-weight:700; font-size:12.5px;}
+
+  /* ---- 말씀 퀴즈 · 나의 보석함 (연습실 안) ---- */
+  .qz-row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
+  .qz-card{display:flex; flex-direction:column; align-items:center; gap:2px; border:3px solid transparent; border-radius:24px; padding:14px 8px 12px; box-shadow:var(--shadow); color:var(--ink); font-family:inherit; text-align:center; transition:transform .12s ease;}
+  .qz-card:active{transform:scale(0.96);}
+  .qz-quiz{background:linear-gradient(180deg,#FFF6D6,#FFEBB0); border-color:#F6D77A;}
+  .qz-gems{background:linear-gradient(180deg,#F1E9FF,#E3D6FB); border-color:#CDB8F3;}
+  .qz-quiz.off{opacity:0.7;} .qz-quiz.done{border-color:var(--leaf); background:linear-gradient(180deg,#F1FAF4,#DEF3E7);}
+  .qz-ico{font-size:34px; line-height:1.2; animation:qzBob 3s ease-in-out infinite;}
+  .qz-t{font-size:16px; font-weight:900;} .qz-s{font-size:12.5px; color:var(--ink-soft); font-weight:700; word-break:keep-all;}
+  @keyframes qzBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .qz-wrap{margin-top:6px;}
+  .qz-title{font-size:19px; font-weight:900; text-align:center; margin:10px 0 6px;} .qz-no{font-size:13px; color:var(--ink-soft); font-weight:700; margin-left:4px;}
+  .qz-dots{display:flex; justify-content:center; gap:8px; margin-bottom:12px;}
+  .qz-dot{width:14px; height:14px; border-radius:50%; background:#fff; border:2px solid var(--muted);}
+  .qz-dot.cur{border-color:var(--gold); background:#FFF3C9;} .qz-dot.ok{background:var(--leaf); border-color:var(--leaf);} .qz-dot.no{background:#F5B8B1; border-color:#F5B8B1;}
+  .qz-card-q{background:var(--card); border-radius:26px; box-shadow:var(--shadow); padding:16px 14px 18px; text-align:center; border:3px solid #FFEBB0;}
+  .qz-flag{display:inline-block; font-size:12.5px; font-weight:900; background:#FFF6D6; border-radius:999px; padding:3px 11px; color:var(--ink-soft);}
+  .qz-head{font-size:15px; font-weight:800; margin:10px 0 8px; color:var(--ink-soft);}
+  .qz-big{font-size:30px; font-weight:900; line-height:1.4; margin:4px 0 10px; word-break:keep-all; overflow-wrap:anywhere;}
+  .qz-big.zh{font-size:34px;} .qz-big.sm{font-size:21px; line-height:1.7; font-weight:800;} .qz-big.ko{font-size:26px; color:var(--dusk);}
+  .qz-blank{display:inline-block; min-width:2.4em; border-bottom:4px solid var(--gold); color:var(--leaf); margin:0 4px;}
+  .qz-hint{font-size:14px; color:var(--ink-soft); line-height:1.6;}
+  .qz-play{margin:2px auto 4px;} .qz-play.big{min-width:150px; min-height:72px; font-size:28px; margin:6px auto 8px;}
+  .qz-opts{display:grid; gap:10px; margin-top:14px;}
+  .qz-opt{border:3px solid var(--muted); background:var(--card); border-radius:20px; padding:15px 14px; font-size:18px; font-weight:800; color:var(--ink); font-family:inherit; line-height:1.5; word-break:keep-all; min-height:58px; box-shadow:var(--shadow);}
+  .qz-opt.zh{font-size:24px;} .qz-opt:active:not([disabled]){transform:scale(0.98); border-color:var(--gold);}
+  .qz-opt.right{border-color:var(--leaf); background:var(--leaf-soft);} .qz-opt.wrong{border-color:#E9A39B; background:#FDEDEA;}
+  .qz-opt[disabled]{opacity:1;}
+  .qz-fb{margin-top:12px; padding:12px 14px; border-radius:16px; font-size:15px; line-height:1.6; font-weight:700; text-align:center;}
+  .qz-fb.good{background:var(--leaf-soft); color:#1F6B45;} .qz-fb.soso{background:#FFF3C9; color:#7A5A00;}
+  .qz-next{margin-top:12px;}
+  .qz-done{background:linear-gradient(180deg,#FFF6D6,#FFF1DD); border-radius:28px; padding:22px 16px; text-align:center; box-shadow:var(--shadow); margin-top:10px;}
+  .qz-done-t{font-size:23px; font-weight:900; margin-bottom:6px;}
+  .qz-gem-row{min-height:68px; display:flex; justify-content:center; gap:10px; margin:6px 0;}
+  .qz-gem{font-size:56px; display:inline-block;} .qz-gem.pop{animation:qzPop .8s ease both;}
+  @keyframes qzPop{0%{transform:scale(0) rotate(-30deg); opacity:0}60%{transform:scale(1.35) rotate(8deg); opacity:1}100%{transform:scale(1) rotate(0)}}
+  .qz-done-p{font-size:19px; font-weight:900; color:#6E3FC4; min-height:24px;} .qz-done-m{font-size:15px; line-height:1.6; margin:6px 0 12px;}
+  .qz-done-btns{display:grid; gap:10px; margin-top:12px;}
+  .gm-hero{background:linear-gradient(180deg,#F1E9FF,#E3D6FB); border-radius:26px; padding:20px 16px 16px; text-align:center; box-shadow:var(--shadow); margin-top:8px;}
+  .gm-title{font-size:26px; margin:0 0 4px;} .gm-total{font-size:20px; font-weight:800;} .gm-total b{font-size:46px; color:#6E3FC4; margin-right:4px;}
+  .gm-today{font-size:13.5px; color:var(--ink-soft); font-weight:700; margin-top:2px;}
+  .gm-shelf{background:var(--card); border-radius:24px; box-shadow:var(--shadow); padding:14px 12px; margin-top:14px; display:flex; flex-wrap:wrap; gap:6px; justify-content:center; border:3px solid #E3D6FB;}
+  .gm-gem{font-size:30px; line-height:1.1;} .gm-more{font-size:13px; color:var(--ink-soft); align-self:center; margin-left:6px;}
+  .gm-empty{font-size:14.5px; color:var(--ink-soft); line-height:1.7; padding:10px 6px; text-align:center;}
+  .gm-h{font-size:15px; margin:18px 4px 8px;}
+  .gm-log{display:flex; align-items:center; gap:10px; background:var(--card); border-radius:14px; padding:9px 12px; margin-bottom:6px; font-size:13.5px; box-shadow:var(--shadow);}
+  .gm-log .gm-d{font-weight:900; min-width:38px;} .gm-log .gm-p{margin-left:auto; font-weight:900; color:#6E3FC4;}
+  .gm-can{background:#E7F7EE; border:3px solid var(--leaf); border-radius:20px; padding:12px 14px; margin-top:12px; text-align:center; font-weight:900; font-size:15px; line-height:1.6;} .gm-can span{font-weight:700; font-size:13px; color:var(--ink-soft);}
+  .gm-next{background:var(--card); border-radius:20px; padding:12px 14px; margin-top:12px; text-align:center; font-size:14.5px; box-shadow:var(--shadow);} .gm-next b{color:#6E3FC4;}
+  .gm-bar{height:12px; background:#EEE6FB; border-radius:999px; margin-top:8px; overflow:hidden;} .gm-bar i{display:block; height:100%; background:linear-gradient(90deg,#B08AF0,#6E3FC4); border-radius:999px;}
+  .gm-tiers{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:10px;} .gm-tier{font-size:12.5px; font-weight:700; background:#F4EFE2; color:var(--ink-soft); border-radius:999px; padding:4px 11px;} .gm-tier.on{background:var(--leaf-soft); color:#1E6B47;}
+  .gm-log.off{opacity:0.55;} .gm-log.off span{text-decoration:line-through;} .gm-log.off i{text-decoration:none; font-style:normal; display:inline-block;} .gm-sub{display:block; font-size:12px; color:var(--ink-soft);}
+  .gadm-wrap{overflow-x:auto;} .gadm-t{width:100%; border-collapse:collapse; font-size:14px;} .gadm-t th,.gadm-t td{padding:8px 6px; text-align:center; border-bottom:1px solid #EEE6D0; white-space:nowrap;} .gadm-t th{font-size:12.5px; color:var(--ink-soft);} .gadm-t td:first-child,.gadm-t th:first-child{text-align:left;} .gadm-t tr.sel td{background:#F4FAF6;}
+  .gcfg-row{display:flex; align-items:center; gap:8px; margin:6px 0; flex-wrap:wrap;} .gcfg-row input[type=number]{width:84px;} .gcfg-row input[type=text]{flex:1 1 150px; min-width:0;} .gcfg-row select{flex:1;}
+  .gadm-form{background:#FAF6EA; border-radius:14px; padding:10px 12px; margin:10px 0;}
 </style>
 </head>
 <body>
@@ -194,13 +259,15 @@
 <div id="toast" class="toast"></div>
 <script>
 /* ============================================================
-   드림씨드 말씀 학습실 (study.html)
+   드림씨드 말씀 연습실 (study.html)
    - 기존 앱(index.html)의 데이터를 "읽기만" 합니다. (app_state, verseAudioFile:*)
-   - 새로 쓰는 곳은 오직 studyRoom/en, studyRoom/zh 두 칸뿐입니다.
+   - 새로 쓰는 곳은 오직 studyRoom/ 아래입니다: studyRoom/en, studyRoom/zh(말씀 내용),
+     studyRoom/clips/<id>(선생님이 올린 소리 파일: 전용 음원 · 단어 낭독 파일 · 줄별 소리),
+     studyRoom/gems/<아이ID>/…, studyRoom/gemsConfig (퀴즈 보석 기록·교환 기록·교환표).
    ============================================================ */
 var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.firebasedatabase.app";
 var LAST_CHILD_KEY = 'dreamseed_last_child_id';
-// 선생님이 [학습실 자동 생성]을 누를 때만 쓰는 무료 도구들 (아이들 화면에서는 내려받지 않습니다)
+// 선생님이 [연습실 자동 생성]을 누를 때만 쓰는 무료 도구들 (아이들 화면에서는 내려받지 않습니다)
 var CDN = {
   transformers: 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.1/+esm',
   pinyin: 'https://cdn.jsdelivr.net/npm/pinyin-pro@3.29.5/+esm',
@@ -217,12 +284,15 @@ var Fb = (function(){
     return r.json();
   }
   async function put(path, str){
-    // 안전장치: 학습실은 studyRoom/ 아래에만 쓸 수 있습니다. (기존 데이터는 절대 건드리지 않음)
+    // 안전장치: 연습실은 studyRoom/ 아래에만 쓸 수 있습니다. (기존 데이터는 절대 건드리지 않음)
     if(path.indexOf('studyRoom/') !== 0) throw new Error('blocked path: ' + path);
     var r = await fetch(url(path), { method:'PUT', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(str) });
     if(!r.ok) throw new Error('put failed ' + r.status);
     return true;
   }
+  function okCid(c){ return typeof c === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(c); }
+  function okDate(d){ return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d); }
+  function okAid(id){ return typeof id === 'string' && /^[A-Za-z0-9_-]{6,40}$/.test(id); }
   async function withRetry(fn){
     var waits = [0, 500, 1200], last = null;
     for(var i=0;i<waits.length;i++){
@@ -242,6 +312,21 @@ var Fb = (function(){
       return v ? JSON.parse(v) : null;
     }); },
     writeStudy: function(lang, doc){ return put('studyRoom/' + lang, JSON.stringify(doc)); },
+    /* 선생님이 올린 소리 파일(데이터 주소 글자) — studyRoom/clips/<id> 에만 저장. 한 번 저장한 파일은 고치지 않고 새 id로 올림 */
+    putClip: function(id, dataUrl){ return put('studyRoom/clips/' + id, dataUrl); },
+    readClip: function(id){ return withRetry(async function(){
+      var v = await getRaw('studyRoom/clips/' + id);
+      if(typeof v !== 'string' || v.indexOf('data:') !== 0) throw new Error('no clip');
+      return v;
+    }); },
+    /* 퀴즈 보석 기록 (studyRoom/gems/<아이ID>/…) — 아이 화면은 자기 ID의 days/<날짜> 한 곳에만 쓰고,
+       선생님 화면만 adj/<기록ID>(교환·조정)와 studyRoom/gemsConfig(교환표)를 씀. app_state·말씀정원과 무관 */
+    readGems: function(cid){ return withRetry(async function(){ if(!okCid(cid)) throw new Error('bad child'); return getRaw('studyRoom/gems/' + cid); }); },
+    readAllGems: function(){ return withRetry(function(){ return getRaw('studyRoom/gems'); }); },
+    readGemConfig: function(){ return withRetry(function(){ return getRaw('studyRoom/gemsConfig'); }); },
+    putGemDay: function(cid, date, obj){ if(!okCid(cid) || !okDate(date)) throw new Error('bad gem path'); return put('studyRoom/gems/' + cid + '/days/' + date, obj); },
+    putGemAdj: function(cid, id, obj){ if(!okCid(cid) || !okAid(id)) throw new Error('bad gem path'); return put('studyRoom/gems/' + cid + '/adj/' + id, obj); },
+    putGemConfig: function(obj){ return put('studyRoom/gemsConfig', obj); },
     readAudioDataUrl: async function(lang){
       var v = await getRaw('verseAudioFile/' + lang);
       if(!v || typeof v !== 'string') return null;
@@ -536,11 +621,13 @@ function fillGaps(times, dur){
   }
 }
 Core.baseSection = function(lang, ctx){
-  return {
+  var sec = {
     lang: lang, verseRef: ctx.ref || '', text: ctx.text, audioStamp: ctx.stamp || '',
     quality: 'ok', notes: [], passStart: 0, passEnd: 0,
     tokens: [], words: [], phrases: [], full: { start: 0, end: 0 }, createdAt: Date.now()
   };
+  if(ctx.own) sec.own = ctx.own;     // 연습실 전용 전체 음원으로 만든 경우, 그 파일 정보
+  return sec;
 };
 function mkRow(text, start, end, audio){
   return { id: Core.uid(), text: text, pinyin: '', ko: '', start: Core.r2(start), end: Core.r2(end), audio: !!audio };
@@ -763,7 +850,7 @@ Core.applyMeanings = function(sec, json){
 };
 Core.buildClaudeRequest = function(info){
   var L = [];
-  L.push('드림씨드 말씀 학습실 내용을 만들어 주세요. 이번 주 말씀은 ' + (info.ref || '(출처 미입력)') + ' 입니다.');
+  L.push('드림씨드 말씀 연습실 내용을 만들어 주세요. 이번 주 말씀은 ' + (info.ref || '(출처 미입력)') + ' 입니다.');
   L.push('');
   L.push('한글: ' + (info.ko || ''));
   if(info.en) L.push('영어: ' + info.en);
@@ -787,6 +874,69 @@ Core.buildClaudeRequest = function(info){
   L.push('  "zh": { "words": { "표현": "뜻" }, "phrases": { "구절 그대로": "뜻" }, "pinyin": { "표현 또는 구절 그대로": "bú yào ..." } }');
   L.push('}');
   return L.join('\n');
+};
+
+/* ----- 선생님이 올린 소리 파일: 전용 음원 / 단어 낭독 파일 / 줄별 소리 -----
+   section.own        = 연습실 전용 전체 음원(있으면 기존 등록 음원 대신 이 파일로 구간을 자르고 재생)
+   section.wordsAudio = 단어 낭독 파일(단어를 한 번씩, 사이를 쉬며 읽은 파일)
+   row.src            = 'words'(단어 낭독 파일의 wstart~wend 구간) | 'clip'(row.clip 파일 전체) | 없음(전체 음원의 start~end 구간)
+   파일은 한 번 올리면 id가 고정(고치지 않음)이라, 게시한 내용이 나중의 편집 때문에 어긋나지 않아요. */
+Core.CLIP_LIMITS = { own: 3 * 1024 * 1024, words: 2 * 1024 * 1024, clip: 600 * 1024 };
+Core.CLIP_MAXSEC = { own: 180, words: 120, clip: 30 };
+Core.newClipId = function(){ return 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); };
+Core.validId = function(id){ return typeof id === 'string' && /^[A-Za-z0-9_-]{6,40}$/.test(id); };
+Core.cleanMeta = function(m){
+  if(!m || typeof m !== 'object' || !Core.validId(m.id)) return null;
+  var dur = +m.dur;
+  if(!(dur > 0 && dur < 600)) return null;
+  var out = { id: m.id, name: String(m.name || '').slice(0, 80), mime: String(m.mime || '').slice(0, 40), len: Math.max(0, Math.round(+m.len || 0)), dur: Core.r2(dur) };
+  if(typeof m.forText === 'string' && m.forText) out.forText = m.forText.slice(0, 600);   // 올릴 때 등록돼 있던 말씀(다음 주 말씀에 잘못 쓰이지 않게 하는 표시)
+  return out;
+};
+Core.audioMime = function(file){
+  var name = String((file && file.name) || '').toLowerCase(), ext = (name.split('.').pop() || '');
+  var map = { mp3: 'audio/mpeg', m4a: 'audio/mp4', mp4: 'audio/mp4', aac: 'audio/aac', wav: 'audio/wav', ogg: 'audio/ogg', oga: 'audio/ogg', opus: 'audio/ogg', webm: 'audio/webm' };
+  if(map[ext]) return map[ext];
+  var t = String((file && file.type) || '').toLowerCase();
+  return t.indexOf('audio/') === 0 ? t.split(';')[0] : '';
+};
+/* 이 줄이 "소리 파일"로 들려줄 수 있는 모양인지 (파일을 실제로 불러왔는지는 보지 않음). 'clip' | 'words' | 'main' | null */
+Core.rowFileKind = function(sec, r){
+  if(!r || r.audio === false) return null;
+  if(r.src === 'clip') return (r.clip && Core.validId(r.clip.id) && +r.clip.dur > 0) ? 'clip' : null;
+  if(r.src === 'words') return (sec && sec.wordsAudio && Core.validId(sec.wordsAudio.id) && typeof r.wstart === 'number' && typeof r.wend === 'number' && r.wend > r.wstart) ? 'words' : null;
+  return (typeof r.start === 'number' && typeof r.end === 'number' && r.end > r.start) ? 'main' : null;
+};
+/* 단어 낭독 파일 자르기: 쉬는 곳(조용한 구간)을 기준으로 단어 n개로 나눔. 정확히 n개로 나뉘는 설정을 못 찾으면 ok:false */
+Core.speechRuns = function(E, factor, minGap, minLen){
+  var sorted = E.rms.slice().sort(function(a, b){ return a - b; });
+  var p95 = sorted[Math.floor(sorted.length * 0.95)] || 0;
+  var thr = Math.max(1e-5, factor * p95), fs = E.fs, runs = [], cur = null, quiet = 0, i;
+  for(i=0;i<E.rms.length;i++){
+    if(E.rms[i] >= thr){ if(!cur) cur = { a: i, b: i }; else cur.b = i; quiet = 0; }
+    else if(cur){ quiet++; if(quiet * fs >= minGap){ runs.push(cur); cur = null; quiet = 0; } }
+  }
+  if(cur) runs.push(cur);
+  return runs.map(function(r){ return { s: r.a * fs, e: (r.b + 1) * fs }; }).filter(function(r){ return r.e - r.s >= minLen; });
+};
+Core.splitWordsFile = function(E, n){
+  if(!E || !E.rms || !E.rms.length || !(n > 0)) return { ok: false, found: 0 };
+  var factors = [0.1, 0.18, 0.05, 0.3], gaps = [0.6, 0.45, 0.35, 0.28, 0.22], found = null, ref = null, fi, gi;
+  for(fi=0; fi<factors.length && !found; fi++){
+    for(gi=0; gi<gaps.length; gi++){
+      var runs = Core.speechRuns(E, factors[fi], gaps[gi], 0.12);
+      if(fi === 0 && gaps[gi] === 0.35) ref = runs.length;
+      if(runs.length === n){ found = runs; break; }
+    }
+  }
+  if(!found) return { ok: false, found: ref == null ? 0 : ref };
+  var segs = found.map(function(r, i){
+    var prevE = i > 0 ? found[i-1].e : 0, nextS = i < found.length - 1 ? found[i+1].s : E.dur;
+    var s = Math.max(i > 0 ? (prevE + r.s) / 2 : 0, r.s - 0.08);
+    var e = Math.min(i < found.length - 1 ? (r.e + nextS) / 2 : E.dur, r.e + 0.12);
+    return { s: Core.r2(s), e: Core.r2(Math.max(e, s + 0.2)) };
+  });
+  return { ok: true, segs: segs };
 };
 
 /* ----- 기기 음성(Web Speech) 줄별 확인 상태 -----
@@ -865,6 +1015,20 @@ Core.dataUrlToBlob = function(dataUrl){
   var arr = new Uint8Array(bin.length);
   for(var i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
   return new Blob([arr], { type: mime });
+};
+
+/* 올린 파일을 읽어 길이(초)와 (원하면) 소리 크기를 잰다. 읽을 수 없는 파일이면 오류 */
+Core.probeAudio = async function(blob, wantEnergy){
+  var d = await Core.decodePcm16k(await blob.arrayBuffer());
+  return { dur: d.pcm.length / d.sr, E: wantEnergy ? Core.energy(d.pcm, d.sr) : null };
+};
+Core.blobToDataUrl = function(blob){
+  return new Promise(function(res, rej){
+    var fr = new FileReader();
+    fr.onload = function(){ res(String(fr.result)); };
+    fr.onerror = function(){ rej(new Error('파일을 읽지 못했어요')); };
+    fr.readAsDataURL(blob);
+  });
 };
 /* ============================================================
    구간 재생기: 전체 MP3 하나에서 [시작~끝] 부분만 정확한 횟수로 재생
@@ -1171,12 +1335,58 @@ function attachAudio(lang){
   }
 }
 
+/* ---------- 선생님이 올린 소리 파일(전용 음원 · 단어 낭독 파일 · 줄별 소리) ----------
+   파일마다 재생기를 따로 두어(주소를 바꿔 끼우지 않음) 눌렀을 때 바로 소리가 나게 해요. */
+App.srcs = {};
+var ClipPlayers = {};
+function registerClip(id, blob, len){
+  var old = App.srcs['c:' + id];
+  if(old && old.status === 'ok' && old.url){ try{ ClipPlayers[id] && ClipPlayers[id].stop(); }catch(e){} try{ URL.revokeObjectURL(old.url); }catch(e){} }
+  var url = URL.createObjectURL(blob), el = new Audio();
+  try{ el.preload = 'auto'; }catch(e){}
+  el.src = url;
+  ClipPlayers[id] = new SegPlayer(el, { onState: onPlayState });
+  return (App.srcs['c:' + id] = { status: 'ok', blob: blob, url: url, len: len, el: el });
+}
+async function loadClip(id, force){
+  var cur = App.srcs['c:' + id];
+  if(cur && cur.status === 'ok' && !force) return cur;
+  if(!Core.validId(id)) return (App.srcs['c:' + id] = { status: 'error' });
+  try{
+    var du = await Fb.readClip(id);
+    return registerClip(id, Core.dataUrlToBlob(du), du.length);
+  }catch(e){
+    return (App.srcs['c:' + id] = { status: 'error', error: String(e && e.message || e) });
+  }
+}
+function sectionClipIds(sec){
+  var ids = [];
+  function add(id){ if(id && ids.indexOf(id) < 0) ids.push(id); }
+  if(sec.own) add(sec.own.id);
+  (sec.words || []).concat(sec.phrases || []).forEach(function(r){
+    if(r.src === 'words' && sec.wordsAudio) add(sec.wordsAudio.id);
+    if(r.src === 'clip' && r.clip) add(r.clip.id);
+  });
+  return ids;
+}
+async function loadSectionSources(sec, force){
+  var ids = sectionClipIds(sec), i = 0;
+  async function worker(){ while(i < ids.length){ var id = ids[i++]; await loadClip(id, !!force); } }
+  await Promise.all([worker(), worker(), worker()]);
+}
+
 /* ---------- 이번 주 말씀이 학습 가능한 상태인지 ---------- */
 function verseCard(){ return ((App.appState && App.appState.settings) || {}).verseCard || {}; }
 function usableSection(lang){
   var doc = App.docs[lang];
   if(!doc || !doc.published) return { state: 'none' };
   var pub = doc.published, vc = verseCard();
+  if(pub.own){
+    /* 연습실 전용 음원으로 만든 경우: 구간 시간이 그 파일 기준이라, 설정 화면의 음원이 바뀌어도 영향 없음 */
+    if(!Core.cleanMeta(pub.own)) return { state: 'stale' };
+    if(Core.normText(pub.text) !== Core.normText(vc[lang])) return { state: 'stale' };
+    return { state: 'ready', section: pub };
+  }
   var va = (((App.appState.settings || {}).verseAudio) || {})[lang] || {};
   if(!va.uploadedAt) return { state: 'noaudio' };
   if(Core.normText(pub.text) !== Core.normText(vc[lang])) return { state: 'stale' };
@@ -1187,7 +1397,14 @@ function usableSection(lang){
 /* ---------- 재생기 ---------- */
 var Player = new SegPlayer(audioEl, { onState: onPlayState });
 var Voice = new TtsPlayer({ onState: onPlayState });
-function stopSounds(){ Player.stop(); Voice.stop(); }
+function stopSounds(){
+  Player.stop(); Voice.stop();
+  Object.keys(ClipPlayers).forEach(function(id){ ClipPlayers[id].stop(); });
+}
+function isPlayingAny(pid){
+  if(Player.isPlaying(pid) || Voice.isPlaying(pid)) return true;
+  return Object.keys(ClipPlayers).some(function(id){ return ClipPlayers[id].isPlaying(pid); });
+}
 function onVoicesChanged(){ if(App.view === 'admin' && typeof updateVoiceBadges === 'function') updateVoiceBadges(); }
 function onPlayState(id, st, info){
   var nodes = document.querySelectorAll('[data-pid="' + id + '"]');
@@ -1249,7 +1466,7 @@ function renderFatal(msg){
   $view.innerHTML = '<div class="center-msg">' + esc(msg) + '<br><br><button class="btn leaf" data-act="reload">다시 시도</button><br><br><a class="linkbtn" href="index.html">드림씨드로 돌아가기</a></div>';
 }
 function renderNoChild(){
-  $view.innerHTML = '<div class="center-msg" style="padding-top:80px;"><div style="font-size:54px;">🌱</div><h2 class="display">먼저 이름을 골라 주세요</h2>드림씨드 첫 화면에서 내 이름을 누르고<br>들어온 뒤, 📚 말씀 학습실 버튼을 눌러 주세요.<br><br>' +
+  $view.innerHTML = '<div class="center-msg" style="padding-top:80px;"><div style="font-size:54px;">🌱</div><h2 class="display">먼저 이름을 골라 주세요</h2>드림씨드 첫 화면에서 내 이름을 누르고<br>들어온 뒤, 🎤 말씀 연습실 버튼을 눌러 주세요.<br><br>' +
     '<a class="btn leaf big" style="text-decoration:none; display:inline-block;" href="index.html">드림씨드로 가기</a><div class="foot"><button class="linkbtn" data-act="admin">👩‍🏫 선생님</button></div></div>';
 }
 
@@ -1291,10 +1508,10 @@ function renderHome(){
   var who = c ? (avatarOf(c) + ' ' + esc(c.name)) : '';
   $view.innerHTML =
     '<div class="topbar"><a class="back" href="index.html">← 돌아가기</a><span class="who">' + who + '</span></div>' +
-    '<div class="hero"><div class="hero-title display">📚 말씀 학습실</div>' +
+    '<div class="hero"><div class="hero-title display">🎤 말씀 연습실</div>' +
       (vc.ref ? '<div class="hero-ref">' + esc(vc.ref) + '</div>' : '') +
       (vc.ko ? '<p class="hero-ko">' + esc(vc.ko) + '</p>' : '<p class="hero-ko">이번 주 말씀을 선생님이 준비하고 있어요</p>') +
-    '</div>' + cardState('en') + cardState('zh') + homeCredits() +
+    '</div>' + cardState('en') + cardState('zh') + quizMenuHtml() + homeCredits() +
     '<p class="help" style="text-align:center; margin-top:16px;">여러 번 들어도, 틀려도 괜찮아요. 천천히 따라 해요! 🌱</p>' +
     '<div class="foot"><button class="linkbtn" data-act="admin">👩‍🏫 선생님</button></div>';
 }
@@ -1305,10 +1522,11 @@ async function openLang(lang, section, opts){
   App.preview = !!opts.preview;
   App.lang = lang; App.section = section; App.view = 'lang'; App.step = opts.step || 1;
   renderLoading('소리를 불러오는 중…');
-  var a = await ensureAudio(lang, false);
-  attachAudio(lang);
+  var a = section.own ? null : await ensureAudio(lang, false);     // 전용 음원이 없을 때만 기존 등록 음원을 씀
+  if(a) attachAudio(lang);
+  await loadSectionSources(section, false);
   await Tts.init();
-  if(a.status === 'ok' && !App.preview && Core.stampParts(section.audioStamp).len !== a.len){
+  if(a && a.status === 'ok' && !App.preview && Core.stampParts(section.audioStamp).len !== a.len){
     // 음원이 중간에 바뀜: 구간 시간이 어긋나므로 열지 않음
     $view.innerHTML = '<div class="center-msg"><div style="font-size:48px;">🌱</div>새 말씀을 준비하고 있어요.<br>조금만 기다려 주세요.<br><br><button class="btn leaf" data-act="home">돌아가기</button></div>';
     return;
@@ -1316,6 +1534,12 @@ async function openLang(lang, section, opts){
   renderLang();
 }
 function langAudioOk(){ var a = App.audio[App.lang]; return !!a && a.status === 'ok'; }
+/* 소리 파일로 들려주려던 줄인데 파일을 불러오지 못한 줄 수 */
+function missingFileRows(){
+  var sec = App.section, n = 0;
+  (sec.words || []).concat(sec.phrases || [], [sec.full]).forEach(function(r){ if(Core.rowFileKind(sec, r) && !rowFile(r)) n++; });
+  return n;
+}
 function stepsDone(){ return getProg(App.lang, App.section).steps; }
 
 function renderLang(){
@@ -1326,13 +1550,15 @@ function renderLang(){
   }).join('');
   var banner = '';
   if(App.preview) banner += '<div class="banner info">👀 미리보기예요. 아이들에게는 아직 안 보이고, 진행 기록도 남지 않아요. <button class="btn small ghost" data-act="admin-back">← 편집으로</button></div>';
-  var a = App.audio[App.lang];
-  if(!langAudioOk()){
-    var why = (a && a.status === 'error') ? '소리를 불러오지 못했어요.' : '아직 소리 파일이 없어요.';
+  var a = App.audio[App.lang], miss = missingFileRows();
+  if(sec.own ? miss > 0 : !langAudioOk()){
+    var why = sec.own ? '소리 파일 일부를 불러오지 못했어요.' : ((a && a.status === 'error') ? '소리를 불러오지 못했어요.' : '아직 소리 파일이 없어요.');
     banner += '<div class="banner warn">' + why + ' 글자로 먼저 배워요. <button class="btn small ghost" data-act="retry-audio">다시 불러오기</button></div>';
+  } else if(miss > 0){
+    banner += '<div class="banner warn">일부 줄의 소리 파일을 불러오지 못했어요. <button class="btn small ghost" data-act="retry-audio">다시 불러오기</button></div>';
   }
   $view.innerHTML =
-    '<div class="topbar"><button class="back" data-act="' + (App.preview ? 'admin-back' : 'home') + '">← ' + (App.preview ? '편집으로' : '학습실') + '</button><span class="who">' + (App.child && !App.preview ? esc(avatarOf(App.child)) + ' ' + esc(App.child.name) : '') + '</span></div>' +
+    '<div class="topbar"><button class="back" data-act="' + (App.preview ? 'admin-back' : 'home') + '">← ' + (App.preview ? '편집으로' : '연습실') + '</button><span class="who">' + (App.child && !App.preview ? esc(avatarOf(App.child)) + ' ' + esc(App.child.name) : '') + '</span></div>' +
     '<div class="lang-title"><span style="font-size:36px;">' + L.flag + '</span><h1 class="display">' + L.name + '</h1></div>' + verLineHtml(sec) +
     banner + '<div class="steps">' + tabs + '</div><div id="stepBody"></div>' + creditHtml(sec);
   renderStep();
@@ -1343,8 +1569,28 @@ function playBtn(kind, id, mode, label, icon, cls, enabled, extra){
   return '<button class="pbtn ' + (cls || '') + '" data-act="play" data-kind="' + kind + '" data-id="' + esc(id) + '" data-mode="' + mode + '" data-pid="' + pid + '" ' + (enabled ? '' : 'disabled') + '>' +
     '<span>' + icon + '</span><span class="lab">' + label + '</span></button>';
 }
-/* 소리 우선순위: ① 승인된 MP3 구간 → ② 관리자가 확인한 기기 음성 → ③ 없음(안내) */
-function rowMp3(row){ return langAudioOk() && !!row && row.audio !== false && typeof row.start === 'number' && typeof row.end === 'number' && row.end > row.start; }
+/* 소리 우선순위: ① 선생님이 정한 소리 파일(줄별 파일 / 단어 낭독 파일 구간 / 전체 음원 구간) → ② 관리자가 확인한 기기 음성 → ③ 없음(안내) */
+/* 소리 파일(전용 음원·단어 낭독 파일·줄별 소리·기존 음원 구간)로 이 줄을 들려줄 수 있으면 {kind,start,end,player} */
+function rowFile(row, sec, lang){
+  sec = sec || App.section; lang = lang || App.lang;
+  var kind = Core.rowFileKind(sec, row);
+  if(!kind) return null;
+  if(kind === 'clip'){
+    var cs = App.srcs['c:' + row.clip.id], cp = ClipPlayers[row.clip.id];
+    return (cs && cs.status === 'ok' && cp) ? { kind: kind, start: 0, end: row.clip.dur + 0.3, player: cp } : null;   // 파일 끝에서 저절로 멈춤(여유 0.3초)
+  }
+  if(kind === 'words'){
+    var ws = App.srcs['c:' + sec.wordsAudio.id], wp = ClipPlayers[sec.wordsAudio.id];
+    return (ws && ws.status === 'ok' && wp) ? { kind: kind, start: row.wstart, end: row.wend, player: wp } : null;
+  }
+  if(sec.own){
+    var os = App.srcs['c:' + sec.own.id], op = ClipPlayers[sec.own.id];
+    return (os && os.status === 'ok' && op) ? { kind: 'main', start: row.start, end: row.end, player: op } : null;
+  }
+  var a = App.audio[lang];
+  return (a && a.status === 'ok') ? { kind: 'main', start: row.start, end: row.end, player: Player } : null;
+}
+function rowMp3(row){ return !!rowFile(row); }
 function rowTts(row){ return !!row && !!row.text && Core.ttsConfirmed(App.lang, row) && Tts.usable(App.lang); }
 function rowPlayable(row){ return rowMp3(row) || rowTts(row); }
 function soundOf(row){ return rowMp3(row) ? 'mp3' : (rowTts(row) ? 'tts' : null); }
@@ -1524,13 +1770,13 @@ function doPlay(btn){
   var row = findRow(kind, id);
   var sk = (kind === 'f') ? (rowMp3(row) ? 'mp3' : null) : soundOf(row);   // 전체 말씀은 MP3만
   if(!sk){ toast('소리를 준비하고 있어요.'); return; }
-  if(Player.isPlaying(pid) || Voice.isPlaying(pid)){ stopSounds(); return; }
+  if(isPlayingAny(pid)){ stopSounds(); return; }
   var times = (mode === 'f') ? 1 : parseInt(mode, 10) || 1;
   // "들었어요"는 여기서 처리하지 않음: 소리가 실제로 한 번 끝까지 나온 뒤 onPlayState('pass')에서 처리
   stopSounds();
   if(sk === 'mp3'){
-    var dur = row.end - row.start;
-    Player.play(pid, row.start, row.end, {
+    var rf = rowFile(row), dur = rf.kind === 'clip' ? row.clip.dur : rf.end - rf.start;
+    rf.player.play(pid, rf.start, rf.end, {
       times: times, gapMs: 600, rate: App.slow ? 0.75 : 1,
       followMs: (mode === 'f') ? Math.round(Math.max(1500, dur * 1000 * 1.4 + 600)) : 0
     });
@@ -1569,6 +1815,7 @@ document.addEventListener('click', function(ev){
   if(!el) return;
   var act = el.getAttribute('data-act');
   if(typeof adminClick === 'function' && adminClick(act, el, ev)) return;
+  if(typeof quizClick === 'function' && quizClick(act, el, ev)) return;
   switch(act){
     case 'reload': boot(); break;
     case 'home': renderHome(); window.scrollTo(0, 0); break;
@@ -1603,7 +1850,12 @@ document.addEventListener('click', function(ev){
     case 'rec-start': recStart(); break;
     case 'rec-stop': recStop(); break;
     case 'rec-reset': recCleanup(true); bindRecUi(); break;
-    case 'retry-audio': (async function(){ renderLoading('소리를 불러오는 중…'); await ensureAudio(App.lang, true); attachAudio(App.lang); renderLang(); })(); break;
+    case 'retry-audio': (async function(){
+      renderLoading('소리를 불러오는 중…');
+      if(!App.section.own){ await ensureAudio(App.lang, true); attachAudio(App.lang); }
+      await loadSectionSources(App.section, false);      // 이미 불러온 파일은 그대로, 실패한 파일만 다시
+      renderLang();
+    })(); break;
     case 'noop': break;
   }
 });
@@ -1618,9 +1870,818 @@ document.addEventListener('pointerdown', function(ev){
 window.addEventListener('pagehide', function(){ stopSounds(); recCleanup(true); });
 document.addEventListener('visibilitychange', function(){ if(document.hidden) stopSounds(); });
 /* ============================================================
+   말씀 퀴즈 · 나의 보석함  (연습실 안에서만 쓰는 기능)
+   - 문제는 선생님이 게시한 단어·구절로만 만듦 (새 문장을 지어내지 않음)
+   - 보석 기록: 이 기기('dsGems:<아이ID>')에 먼저 저장하고, 서버의 studyRoom/gems/<아이ID>/days/<날짜> 에도 올림
+     (선생님이 보고 교환·조정 기록 adj/…, 교환표 studyRoom/gemsConfig 를 남김)
+     → app_state·말씀정원(물방울/햇빛/열매)·녹음 기록·연습실 진행 기록(dsStudy)과 완전히 별개
+   ============================================================ */
+var Q = {};
+Core.Q = Q;
+Q.DAILY = 3;            // 하루 기본 문제 수
+Q.MAXPAY = 2;           // 하루에 받을 수 있는 보석 최대 개수 (끝까지 풀기 1 + 모두 맞히기 보너스 1)
+Q.HIST_DAYS = 40;       // 최근 문제 기록 보관 일수
+Q.DETAIL_DAYS = 7;      // 이 기기에 문제 내용(qs/res)을 보관하는 일수 (보석 기록 요약은 계속 보관)
+Q.nowFn = function(){ return new Date(); };
+
+/* ---------- 순수 계산 (화면·저장과 무관) ---------- */
+Q.hash = function(s){
+  var h = 2166136261 >>> 0, i; s = String(s);
+  for(i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+  return h >>> 0;
+};
+Q.rng = function(seed){
+  var a = Q.hash(seed);
+  return function(){
+    a = (a + 0x6D2B79F5) | 0;
+    var t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+Q.shuffle = function(arr, rnd){
+  var a = arr.slice(), i, j, t;
+  for(i=a.length-1;i>0;i--){ j = Math.floor(rnd() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a;
+};
+Q.dateStr = function(d){
+  d = d || Q.nowFn();
+  return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+};
+Q.clean = function(s){ return String(s == null ? '' : s).trim(); };
+Q.uniqueBy = function(list, keyFn){
+  var seen = {}, out = [];
+  list.forEach(function(x){ var k = keyFn(x); if(k && !seen[k]){ seen[k] = 1; out.push(x); } });
+  return out;
+};
+function qzEsc(s){ return String(s == null ? '' : s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+Q.keyOf = function(lang, type, kind, id, id2){ return [lang, type, kind, id, id2 || ''].join('|'); };
+Q.parseKey = function(key){ var p = String(key).split('|'); return { key: String(key), lang: p[0], type: p[1], kind: p[2], id: p[3], id2: p[4] || '' }; };
+
+/* 문제 후보 목록: ctx = { langs: { en: {sec, canPlay(row)}, zh: {...} } } (준비된 언어만 들어 있음) */
+Q.pool = function(ctx){
+  var out = [];
+  ['en', 'zh'].forEach(function(lang){
+    var L = ctx.langs && ctx.langs[lang];
+    if(!L || !L.sec) return;
+    var W = (L.sec.words || []).filter(function(r){ return r && Q.clean(r.text); });
+    var P = (L.sec.phrases || []).filter(function(r){ return r && Q.clean(r.text); });
+    var cand = [];
+    W.forEach(function(w){
+      cand.push({ lang: lang, type: 'meaning', kind: 'w', id: w.id });
+      cand.push({ lang: lang, type: 'reverse', kind: 'w', id: w.id });
+      cand.push({ lang: lang, type: 'listen', kind: 'w', id: w.id });
+      P.forEach(function(p){ cand.push({ lang: lang, type: 'blank', kind: 'p', id: p.id, id2: w.id }); });
+    });
+    P.forEach(function(p){ cand.push({ lang: lang, type: 'meaning', kind: 'p', id: p.id }); });
+    cand.forEach(function(d){
+      d.key = Q.keyOf(d.lang, d.type, d.kind, d.id, d.id2);
+      if(Q.build(d, ctx, 'pool')) out.push(d);
+    });
+  });
+  return out;
+};
+
+/* 한 문제 만들기. 만들 수 없으면 null. 같은 (desc, seed)면 항상 같은 문제 */
+Q.build = function(desc, ctx, seed){
+  var L = ctx.langs && ctx.langs[desc.lang];
+  if(!L || !L.sec) return null;
+  var sec = L.sec, lang = desc.lang, rnd = Q.rng(seed + '|' + desc.key);
+  var W = (sec.words || []).filter(function(r){ return r && Q.clean(r.text); });
+  var P = (sec.phrases || []).filter(function(r){ return r && Q.clean(r.text); });
+  var rows = desc.kind === 'p' ? P : W;
+  var row = rows.filter(function(r){ return r.id === desc.id; })[0];
+  if(!row) return null;
+  var other = { en: ctx.langs.en, zh: ctx.langs.zh };
+  function opt(r, ok){ return { t: Q.clean(r.text), py: lang === 'zh' ? Q.clean(r.pinyin) : '', ok: !!ok }; }
+  function finish(q, options){
+    var shuffled = Q.shuffle(options, rnd);
+    q.opts = shuffled;
+    q.key = desc.key; q.lang = lang; q.type = desc.type; q.kind = desc.kind; q.row = row;
+    return q;
+  }
+
+  if(desc.type === 'meaning'){
+    var ko = Q.clean(row.ko);
+    if(!ko) return null;
+    // 같은 언어의 같은 종류(단어/구절)에서 먼저, 부족하면 다른 언어에서
+    var pools = [rows];
+    var o = lang === 'en' ? 'zh' : 'en';
+    if(other[o] && other[o].sec) pools.push((desc.kind === 'p' ? other[o].sec.phrases : other[o].sec.words) || []);
+    var ds = [];
+    pools.forEach(function(arr){
+      var c = arr.filter(function(r){ return r && r !== row && Q.clean(r.ko) && Core.normText(r.ko) !== Core.normText(ko); });
+      ds = ds.concat(Q.shuffle(Q.uniqueBy(c, function(r){ return Core.normText(r.ko); }), rnd));
+    });
+    ds = Q.uniqueBy(ds, function(r){ return Core.normText(r.ko); });
+    if(ds.length < 2) return null;
+    var opts = [{ t: ko, py: '', ok: true }, { t: Q.clean(ds[0].ko), py: '', ok: false }, { t: Q.clean(ds[1].ko), py: '', ok: false }];
+    return finish({ text: Q.clean(row.text), py: lang === 'zh' ? Q.clean(row.pinyin) : '', canPlay: !!(L.canPlay && L.canPlay(row)) }, opts);
+  }
+
+  if(desc.type === 'reverse' || desc.type === 'listen'){
+    if(desc.kind !== 'w') return null;
+    if(desc.type === 'reverse' && !Q.clean(row.ko)) return null;
+    if(desc.type === 'listen' && !(L.canPlay && L.canPlay(row))) return null;
+    var ds2 = Q.uniqueBy(W.filter(function(r){ return r !== row && Core.normText(r.text) !== Core.normText(row.text); }), function(r){ return Core.normText(r.text); });
+    if(ds2.length < 2) return null;
+    ds2 = Q.shuffle(ds2, rnd);
+    var q2 = desc.type === 'reverse' ? { ko: Q.clean(row.ko) } : { sound: true };
+    return finish(q2, [opt(row, true), opt(ds2[0], false), opt(ds2[1], false)]);
+  }
+
+  if(desc.type === 'blank'){
+    if(desc.kind !== 'p') return null;
+    var w = W.filter(function(r){ return r.id === desc.id2; })[0];
+    if(!w) return null;
+    var wt = Q.clean(w.text), pt = Q.clean(row.text), before, after, hit;
+    if(lang === 'zh'){
+      var at = pt.indexOf(wt);
+      if(at < 0) return null;
+      before = pt.slice(0, at); after = pt.slice(at + wt.length); hit = wt;
+    } else {
+      var m = new RegExp('(^|[^A-Za-z])(' + qzEsc(wt) + ')(?=[^A-Za-z]|$)', 'i').exec(pt);
+      if(!m) return null;
+      before = pt.slice(0, m.index + m[1].length); after = pt.slice(m.index + m[1].length + m[2].length); hit = m[2];
+    }
+    // 보기: 이 구절에 없는 다른 핵심 단어 → 부족하면 말씀 본문의 긴 단어
+    var inPhrase = function(t){ return lang === 'zh' ? pt.indexOf(t) >= 0 : new RegExp('(^|[^A-Za-z])' + qzEsc(t) + '(?=[^A-Za-z]|$)', 'i').test(pt); };
+    var dsw = W.filter(function(r){ return r !== w && Core.normText(r.text) !== Core.normText(wt) && !inPhrase(Q.clean(r.text)); }).map(function(r){ return { t: Q.clean(r.text), py: lang === 'zh' ? Q.clean(r.pinyin) : '' }; });
+    if(lang === 'en' && dsw.length < 2){
+      String(sec.text || '').split(/\s+/).forEach(function(tok){
+        var c = tok.replace(/^[^A-Za-z]+|[^A-Za-z]+$/g, '');
+        if(c.length >= 5 && !inPhrase(c)) dsw.push({ t: c, py: '' });
+      });
+    }
+    dsw = Q.uniqueBy(dsw, function(x){ return Core.normText(x.t); }).filter(function(x){ return Core.normText(x.t) !== Core.normText(hit); });
+    if(dsw.length < 2) return null;
+    dsw = Q.shuffle(dsw, rnd);
+    return finish({ before: before, after: after, ko: Q.clean(row.ko), phraseText: pt },
+      [{ t: hit, py: lang === 'zh' ? Q.clean(w.pinyin) : '', ok: true }, { t: dsw[0].t, py: dsw[0].py, ok: false }, { t: dsw[1].t, py: dsw[1].py, ok: false }]);
+  }
+  return null;
+};
+
+/* 오늘 낼 문제 고르기: 틀렸던 문제 1개(있으면) + 오래 안 나온 것부터, 같은 단어·같은 유형이 겹치지 않게, 두 언어가 섞이게 */
+Q.pick = function(pool, o){
+  var n = o.n, hist = o.hist || {}, today = o.today, rnd = Q.rng(o.seed), chosen = [], used = {};
+  var fixed = o.fixedDescs || [], total = n + fixed.length;
+  var byKey = {}; pool.forEach(function(d){ byKey[d.key] = d; });
+  function itemOf(d){ return d.lang + '|' + d.kind + '|' + d.id; }
+  function take(d){ chosen.push(d); used[d.key] = 1; }
+  if(o.allowRetry){      // 전에 틀렸던 문제를 하루 한 번 다시 (오늘 이미 나온 것은 제외)
+    (o.wrong || []).some(function(k){
+      var d = byKey[k];
+      if(d && hist[k] !== today && !used[k]){ take(d); return true; }
+      return false;
+    });
+  }
+  // 오래 안 나온 것부터 (한 번도 안 나온 것이 가장 먼저), 같은 조건끼리는 날짜 시드로 섞기
+  var order = Q.shuffle(pool.filter(function(d){ return !used[d.key]; }), rnd);
+  order.sort(function(a, b){ var x = hist[a.key] || '', y = hist[b.key] || ''; return x < y ? -1 : x > y ? 1 : 0; });
+  var bothLangs = {}; pool.forEach(function(d){ bothLangs[d.lang] = 1; });
+  bothLangs = Object.keys(bothLangs).length > 1;
+  function passFn(level){
+    return function(d){
+      if(used[d.key]) return false;
+      var base = chosen.concat(fixed);
+      if(level <= 1 && base.some(function(c){ return itemOf(c) === itemOf(d); })) return false;          // 같은 단어·구절 겹침 방지
+      if(level === 0 && base.some(function(c){ return c.type === d.type; })) return false;               // 같은 유형 겹침 방지
+      if(level <= 1 && bothLangs && base.length === total - 1 && base.length > 0 && base.every(function(c){ return c.lang === d.lang; })) return false;   // 마지막 문제는 다른 언어로
+      return true;
+    };
+  }
+  [0, 1, 2].forEach(function(level){
+    var f = passFn(level);
+    order.forEach(function(d){ if(chosen.length < n && f(d)) take(d); });
+  });
+  return chosen;
+};
+
+Q.reward = function(n, okCount){
+  if(!(n > 0)) return 0;
+  return Math.min(Q.MAXPAY, 1 + (okCount === n ? 1 : 0));
+};
+
+/* ---------- 보석 기록 계산 (서버에서 읽은 값은 믿지 않고 범위를 다시 맞춤) ---------- */
+Q.DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+Q.ID_RE = /^[A-Za-z0-9_-]{6,40}$/;
+Q.int = function(x, lo, hi){ x = Math.round(+x); if(!isFinite(x)) return lo; return Math.max(lo, Math.min(hi, x)); };
+Q.cleanDays = function(raw){
+  var out = {};
+  if(!raw || typeof raw !== 'object') return out;
+  Object.keys(raw).forEach(function(d){
+    var v = raw[d];
+    if(!Q.DATE_RE.test(d) || !v || typeof v !== 'object') return;
+    var n = Q.int(v.n, 0, 10), ok = Q.int(v.ok, 0, n);
+    out[d] = { n: n, ok: ok, paid: Q.int(v.paid, 0, Q.MAXPAY), at: Q.int(v.at, 0, 9e15) };     // 하루 보석은 최대 2개로 맞춤
+  });
+  return out;
+};
+/* 선생님이 남긴 교환('x', 보석이 줄어듦) · 조정('a', 늘거나 줆) 기록. off=취소됨 */
+Q.cleanAdj = function(raw){
+  var list = [];
+  if(!raw || typeof raw !== 'object') return list;
+  Object.keys(raw).forEach(function(id){
+    var v = raw[id];
+    if(!Q.ID_RE.test(id) || !v || typeof v !== 'object') return;
+    var k = v.k === 'x' ? 'x' : v.k === 'a' ? 'a' : null; if(!k) return;
+    var d = Q.int(v.d, -1000, 1000); if(d === 0 || (k === 'x' && d > 0)) return;
+    list.push({ id: id, k: k, d: d, reward: String(v.reward || '').slice(0, 20), memo: String(v.memo || '').slice(0, 60), at: Q.int(v.at, 0, 9e15), off: !!v.off, offAt: Q.int(v.offAt, 0, 9e15) });
+  });
+  list.sort(function(a, b){ return a.at - b.at || (a.id < b.id ? -1 : 1); });
+  return list;
+};
+Q.cleanConfig = function(raw){
+  var arr = [];
+  if(raw && Array.isArray(raw.tiers)) arr = raw.tiers;
+  else if(raw && raw.tiers && typeof raw.tiers === 'object') arr = Object.keys(raw.tiers).map(function(k){ return raw.tiers[k]; });
+  var tiers = arr.filter(function(t){ return t && typeof t === 'object'; }).map(function(t){ return { n: Q.int(t.n, 1, 999), name: String(t.name || '').trim().slice(0, 20) }; }).filter(function(t){ return t.name; });
+  tiers = Q.uniqueBy(tiers, function(t){ return String(t.n); }).sort(function(a, b){ return a.n - b.n; }).slice(0, 12);
+  return { tiers: tiers };
+};
+Q.summary = function(days, adj){
+  var earned = 0, ex = 0, ad = 0;
+  Object.keys(days || {}).forEach(function(d){ earned += days[d].paid || 0; });
+  (adj || []).forEach(function(a){ if(a.off) return; if(a.k === 'x') ex += -a.d; else ad += a.d; });
+  return { earned: earned, exchanged: ex, adjusted: ad, balance: Math.max(0, earned - ex + ad) };
+};
+Q.lastDays = function(today, n){
+  var out = [], base = new Date(today + 'T12:00:00'), i;
+  for(i=0;i<n;i++){ out.push(Q.dateStr(new Date(base.getTime() - i * 86400000))); }
+  return out;
+};
+Q.weekPaid = function(days, today){ return Q.lastDays(today, 7).reduce(function(a, d){ return a + ((days[d] && days[d].paid) || 0); }, 0); };
+Q.lastQuizDay = function(days){ var ds = Object.keys(days || {}).filter(function(d){ return days[d].n > 0; }).sort(); return ds.length ? ds[ds.length - 1] : ''; };
+Q.rewardStatus = function(balance, tiers){
+  var can = tiers.filter(function(t){ return t.n <= balance; }), next = tiers.filter(function(t){ return t.n > balance; })[0] || null;
+  return { can: can, next: next };
+};
+Q.mdLabel = function(ts){ var d = new Date(ts); return (d.getMonth() + 1) + '/' + d.getDate(); };
+
+/* ---------- 보석 저장: 이 기기에 먼저 → 서버(선생님도 볼 수 있게)에도 ---------- */
+var Gems = {
+  stored: true,        // 이 기기 저장이 되는지
+  online: null,        // 마지막 서버 확인이 되었는지 (null=아직 모름)
+  key: function(){ return 'dsGems:' + (App.child ? App.child.id : 'guest'); },
+  blank: function(){ return { v: 2, days: {}, hist: {}, wrong: [], srv: { days: {}, adj: [], tiers: [], at: 0 } }; },
+  load: function(){
+    var d = null;
+    try{ d = JSON.parse(lsGet(Gems.key()) || 'null'); }catch(e){ d = null; }
+    if(!d || typeof d !== 'object') d = Gems.blank();
+    if(!d.days || typeof d.days !== 'object') d.days = {};
+    if(!d.hist || typeof d.hist !== 'object') d.hist = {};
+    if(!Array.isArray(d.wrong)) d.wrong = [];
+    if(!d.srv || typeof d.srv !== 'object') d.srv = { days: {}, adj: [], tiers: [], at: 0 };
+    if(!d.srv.days || typeof d.srv.days !== 'object') d.srv.days = {};
+    if(!Array.isArray(d.srv.adj)) d.srv.adj = [];
+    if(!Array.isArray(d.srv.tiers)) d.srv.tiers = [];
+    return d;
+  },
+  save: function(d){
+    // 오래된 날의 문제 내용은 정리 (받은 보석 요약은 계속 남김)
+    var cutStr = Q.dateStr(new Date(Q.nowFn().getTime() - Q.DETAIL_DAYS * 86400000));
+    Object.keys(d.days).forEach(function(k){ if(k < cutStr && d.days[k].done){ delete d.days[k].qs; delete d.days[k].res; } });
+    var hcut = Q.dateStr(new Date(Q.nowFn().getTime() - Q.HIST_DAYS * 86400000));
+    Object.keys(d.hist).forEach(function(k){ if(d.hist[k] < hcut) delete d.hist[k]; });
+    d.wrong = d.wrong.slice(-20);
+    var txt = JSON.stringify(d);
+    lsSet(Gems.key(), txt);
+    Gems.stored = (lsGet(Gems.key()) === txt);
+    return Gems.stored;
+  },
+  /* 받은 보석이 있는 날 모두 (서버 기록 + 이 기기에서 끝낸 날) */
+  mergedDays: function(d){
+    var out = {}, k;
+    Object.keys(d.srv.days).forEach(function(x){ out[x] = d.srv.days[x]; });
+    Object.keys(d.days).forEach(function(x){
+      var e = d.days[x];
+      if(e && e.done && !out[x]) out[x] = { n: e.n || (e.qs ? e.qs.length : 0), ok: e.ok || 0, paid: Math.min(Q.MAXPAY, e.paid || 0), at: 0 };
+    });
+    return out;
+  },
+  view: function(){
+    var d = Gems.load(), days = Gems.mergedDays(d), adj = Q.cleanAdj(Gems.adjMap(d.srv.adj));
+    return { data: d, days: days, adj: adj, tiers: d.srv.tiers, sum: Q.summary(days, adj), unsynced: Gems.unsynced(d) };
+  },
+  adjMap: function(list){ var m = {}; (list || []).forEach(function(a){ m[a.id] = a; }); return m; },
+  unsynced: function(d){ return Object.keys(d.days).filter(function(k){ return d.days[k].done && !d.days[k].sync; }).length; },
+  /* 서버의 내 기록·교환표를 읽어 합침 (다른 기기에서 끝낸 날도 반영) */
+  pull: async function(){
+    if(!App.child) return false;
+    var r, cfg;
+    try{ r = await Fb.readGems(App.child.id); cfg = await Fb.readGemConfig(); }catch(e){ Gems.online = false; return false; }
+    var d = Gems.load(), sd = Q.cleanDays(r && r.days);
+    d.srv = { days: sd, adj: Q.cleanAdj(r && r.adj), tiers: Q.cleanConfig(cfg).tiers, at: Date.now() };
+    Object.keys(sd).forEach(function(date){
+      var e = d.days[date] || (d.days[date] = { qs: [], res: {} });
+      e.done = true; e.paid = sd[date].paid; e.ok = sd[date].ok; e.n = sd[date].n; e.sync = true;    // 같은 날 두 번 받지 않게 서버 기록을 기준으로 함
+    });
+    Gems.online = true;
+    Gems.save(d);
+    await Gems.pushPending();
+    return true;
+  },
+  /* 아직 서버에 없는 '끝낸 날'을 올림 (안 되면 다음에 다시) */
+  pushPending: async function(){
+    if(!App.child) return false;
+    var d = Gems.load(), todo = Object.keys(d.days).filter(function(k){ return d.days[k].done && !d.days[k].sync; }).sort(), allOk = true, i;
+    for(i=0;i<todo.length;i++){
+      var date = todo[i], e = d.days[date];
+      var rec = { n: Q.int(e.n || (e.qs ? e.qs.length : 0), 0, 10), ok: Q.int(e.ok, 0, 10), paid: Q.int(e.paid, 0, Q.MAXPAY), at: Date.now() };
+      try{ await Fb.putGemDay(App.child.id, date, rec); }
+      catch(err){ allOk = false; Gems.online = false; break; }
+      var d2 = Gems.load();
+      if(d2.days[date]){ d2.days[date].sync = true; }
+      d2.srv.days[date] = { n: rec.n, ok: rec.ok, paid: rec.paid, at: rec.at };
+      Gems.save(d2);
+      Gems.online = true;
+    }
+    return allOk;
+  }
+};
+
+/* ---------- 화면에서 쓰는 준비물 ---------- */
+App.qz = null;
+function quizCtx(withSound){
+  var ctx = { langs: {} };
+  ['en', 'zh'].forEach(function(lang){
+    var u = usableSection(lang);
+    if(u.state !== 'ready') return;
+    var sec = u.section;
+    ctx.langs[lang] = { sec: sec, canPlay: function(row){
+      if(!withSound) return false;
+      if(!row || !Q.clean(row.text)) return false;
+      if(App.qzBadAudio && App.qzBadAudio[lang]) { /* 오래된 음원은 구간이 어긋날 수 있어 파일 소리는 쓰지 않음 */
+        return !!(Core.ttsConfirmed(lang, row) && Tts.usable(lang));
+      }
+      return !!rowFile(row, sec, lang) || !!(Core.ttsConfirmed(lang, row) && Tts.usable(lang));
+    } };
+  });
+  return ctx;
+}
+function quizDayEntry(data, today){
+  if(!data.days[today]) data.days[today] = { qs: [], res: {}, done: false, paid: 0, ok: 0 };
+  var e = data.days[today];
+  if(!Array.isArray(e.qs)) e.qs = [];
+  if(!e.res || typeof e.res !== 'object') e.res = {};
+  return e;
+}
+/* 오늘의 문제 정하기(없으면 새로 뽑고, 있으면 이어서). 저장까지 함 */
+function quizPlanToday(ctx, pool){
+  var child = App.child, today = Q.dateStr(), data = Gems.load(), e = quizDayEntry(data, today);
+  if(!e.done){
+    var byKey = {}; pool.forEach(function(d){ byKey[d.key] = d; });
+    e.qs = e.qs.filter(function(k){ return e.res[k] !== undefined || byKey[k]; });    // 풀 수 없게 된 문제만 빼고, 이미 푼 것은 유지
+    var need = Q.DAILY - e.qs.length;
+    if(need > 0){
+      var rest = pool.filter(function(d){ return e.qs.indexOf(d.key) < 0; });
+      var fixedDescs = e.qs.map(function(k){ return byKey[k]; }).filter(Boolean);
+      var picks = Q.pick(rest, { n: need, seed: (child ? child.id : 'guest') + '|' + today, hist: data.hist, today: today, wrong: data.wrong, allowRetry: e.qs.length === 0, fixedDescs: fixedDescs });
+      picks.forEach(function(d){ e.qs.push(d.key); data.hist[d.key] = today; });
+    }
+    Gems.save(data);
+  }
+  return { data: data, entry: e, today: today };
+}
+/* 소리 문제를 위해 필요한 소리 파일 불러오기 (연습실에서 언어를 열 때와 같은 방식) */
+async function quizLoadSources(){
+  App.qzBadAudio = {};
+  var langs = ['en', 'zh'];
+  for(var i=0;i<langs.length;i++){
+    var lang = langs[i], u = usableSection(lang);
+    if(u.state !== 'ready') continue;
+    var sec = u.section;
+    if(!sec.own){
+      var a = await ensureAudio(lang, false);
+      if(a && a.status === 'ok' && Core.stampParts(sec.audioStamp).len !== a.len) App.qzBadAudio[lang] = true;
+    }
+    await loadSectionSources(sec, false);
+  }
+  await Tts.init();
+}
+function quizSessionQuestions(ctx, plan){
+  var child = App.child;
+  return plan.entry.qs.map(function(k){
+    // 풀 수 없게 된 문제는 null (이미 푼 기록만 남아 있는 경우)
+    return Q.build(Q.parseKey(k), ctx, (child ? child.id : 'guest') + '|' + plan.today);
+  });
+}
+
+/* ---------- 연습실 홈의 카드 두 장 ---------- */
+function quizMenuHtml(){
+  if(!App.child) return '';
+  if(!Gems._bg){ Gems._bg = true; setTimeout(quizBgPull, 0); }       // 홈이 열리면 서버의 내 기록·교환표를 한 번 확인
+  var ctx = quizCtx(false), pool = Q.pool(ctx), gv = Gems.view(), data = gv.data, today = Q.dateStr(), e = data.days[today];
+  var ready = pool.length > 0, sub, cls = '';
+  if(!ready){ sub = '말씀을 준비하고 있어요'; cls = ' off'; }
+  else if(e && e.done){ sub = '오늘 완료 ✅ 💎 +' + (e.paid || 0); cls = ' done'; }
+  else {
+    var n = e && e.qs && e.qs.length ? e.qs.length : Math.min(Q.DAILY, pool.length), got = e ? Object.keys(e.res || {}).length : 0;
+    sub = got ? '이어서 풀어요 ' + got + '/' + n : '오늘 하루 ' + n + '문제 도전!';
+  }
+  return '<div class="qz-row">' +
+    '<button class="qz-card qz-quiz' + cls + '" data-act="quiz-open"><span class="qz-ico">🧩</span><span class="qz-t">말씀 퀴즈</span><span class="qz-s">' + esc(sub) + '</span></button>' +
+    '<button class="qz-card qz-gems" data-act="gems-open"><span class="qz-ico">💎</span><span class="qz-t">나의 보석함</span><span class="qz-s">보석 ' + gv.sum.balance + '개</span></button>' +
+  '</div>';
+}
+
+function quizBgPull(){
+  Gems.pull().then(function(){
+    if(App.view === 'home'){ var row = document.querySelector('.qz-row'); if(row) row.outerHTML = quizMenuHtml(); }
+  });
+}
+
+/* ---------- 퀴즈 화면 ---------- */
+function quizTop(){
+  var c = App.child;
+  return '<div class="topbar"><button class="back" data-act="home">← 연습실</button><span class="who">' + (c ? esc(avatarOf(c)) + ' ' + esc(c.name) : '') + '</span></div>';
+}
+async function openQuiz(){
+  if(!App.child){ toast('이름을 고른 뒤에 해요'); return; }
+  stopEverything(false);
+  App.view = 'quiz'; App.preview = false;
+  setWide(false);
+  renderLoading('문제를 준비하는 중…');
+  // 다른 기기에서 오늘 이미 끝냈는지 서버 기록을 먼저 확인 (4초 안에 안 되면 이 기기 기록으로 진행)
+  await Promise.race([Gems.pull(), new Promise(function(r){ setTimeout(r, 4000); })]);
+  try{ await quizLoadSources(); }catch(e){ /* 소리를 못 불러와도 글자 문제는 풀 수 있게 */ }
+  if(App.view !== 'quiz') return;
+  var ctx = quizCtx(true), pool = Q.pool(ctx);
+  if(!pool.length){
+    $view.innerHTML = quizTop() + '<div class="center-msg" style="padding-top:60px;"><div style="font-size:54px;">🌱</div><h2 class="display">퀴즈를 준비하고 있어요</h2>선생님이 이번 주 말씀을 준비하면<br>퀴즈가 열려요.<br><br><button class="btn leaf" data-act="home">연습실로 가기</button></div>';
+    return;
+  }
+  var plan = quizPlanToday(ctx, pool);
+  App.qz = { ctx: ctx, plan: plan, qs: quizSessionQuestions(ctx, plan), picked: null, fresh: false };
+  renderQuiz();
+}
+function quizFirstOpen(){
+  var e = App.qz.plan.entry;
+  for(var i=0;i<e.qs.length;i++){ if(e.res[e.qs[i]] === undefined && App.qz.qs[i]) return i; }
+  return -1;
+}
+function quizDots(idx){
+  var e = App.qz.plan.entry;
+  return '<div class="qz-dots">' + e.qs.map(function(k, i){
+    var r = e.res[k];
+    return '<span class="qz-dot ' + (r === 1 ? 'ok' : r === 0 ? 'no' : '') + (i === idx ? ' cur' : '') + '"></span>';
+  }).join('') + '</div>';
+}
+function qzTextHtml(lang, text, py){
+  return lang === 'zh' ? rubyHtml(text, py, App.pinyinOn) : esc(text);
+}
+function qzOptHtml(q, o, i, state){
+  var inner = q.type === 'meaning' ? esc(o.t) : (q.lang === 'zh' ? rubyHtml(o.t, o.py, App.pinyinOn) : esc(o.t));
+  var cls = 'qz-opt' + (q.lang === 'zh' && q.type !== 'meaning' ? ' zh' : '');
+  if(state){
+    if(o.ok) cls += " right"; else if(state.i === i) cls += " wrong";
+  }
+  return '<button class="' + cls + '" data-act="quiz-pick" data-i="' + i + '" ' + (state ? 'disabled' : '') + '>' + inner + '</button>';
+}
+function renderQuiz(){
+  var Z = App.qz;
+  if(!Z){ renderHome(); return; }
+  stopSounds();
+  var e = Z.plan.entry;
+  if(e.done){ renderQuizDone(); return; }
+  var idx = Z.picked ? Z.picked.idx : quizFirstOpen();
+  if(idx < 0){ finishQuiz(); return; }
+  var q = Z.qs[idx], state = Z.picked;
+  var lastQ = e.qs.filter(function(k, i){ return i !== idx && e.res[k] === undefined && Z.qs[i]; }).length === 0;
+  var head, body = '';
+  if(q.type === 'meaning'){
+    head = '이 말은 무슨 뜻일까요?';
+    body = '<div class="qz-big ' + (q.lang === 'zh' ? 'zh' : '') + '">' + qzTextHtml(q.lang, q.text, q.py) + '</div>' +
+      (q.canPlay ? '<button class="pbtn qz-play" data-act="quiz-play" data-pid="q:' + esc(q.key) + '"><span>🔊</span><span class="lab">듣기</span></button>' : '');
+  } else if(q.type === 'reverse'){
+    head = '이 뜻의 말을 찾아요';
+    body = '<div class="qz-big ko">' + esc(q.ko) + '</div>';
+  } else if(q.type === 'listen'){
+    head = '소리를 듣고 알맞은 말을 골라요';
+    body = '<button class="pbtn qz-play big" data-act="quiz-play" data-pid="q:' + esc(q.key) + '"><span>🔊</span><span class="lab">소리 듣기</span></button>';
+  } else {
+    head = '빈칸에 알맞은 말은?';
+    body = '<div class="qz-big sm ' + (q.lang === 'zh' ? 'zh' : '') + '">' + esc(q.before) + '<span class="qz-blank">' + (state ? esc(q.opts.filter(function(o){ return o.ok; })[0].t) : '＿＿＿') + '</span>' + esc(q.after) + '</div>' +
+      (q.ko ? '<div class="qz-hint">뜻: ' + esc(q.ko) + '</div>' : '');
+  }
+  var fb = '';
+  if(state){
+    var rightOpt = q.opts.filter(function(o){ return o.ok; })[0];
+    fb = state.ok
+      ? '<div class="qz-fb good">맞았어요! 👏 참 잘했어요!</div>'
+      : '<div class="qz-fb soso">괜찮아요! 정답은 <b>' + esc(rightOpt.t) + '</b> 이에요. 내일 한 번 더 만나요 🌱</div>';
+  }
+  $view.innerHTML = quizTop() +
+    '<div class="qz-wrap"><div class="qz-title">🧩 오늘의 말씀 퀴즈 <span class="qz-no">' + (idx + 1) + '/' + e.qs.length + '</span></div>' + quizDots(idx) +
+    '<div class="qz-card-q"><div class="qz-flag">' + L10N[q.lang].flag + ' ' + L10N[q.lang].short + '</div><div class="qz-head">' + head + '</div>' + body + '</div>' +
+    '<div class="qz-opts">' + q.opts.map(function(o, i){ return qzOptHtml(q, o, i, state); }).join('') + '</div>' +
+    fb + (state ? '<button class="btn leaf block big qz-next" data-act="quiz-next">' + (lastQ ? '결과 보기 💎' : '다음 문제 ▶') + '</button>' : '') +
+    '</div>';
+}
+function quizPlay(){
+  var Z = App.qz; if(!Z) return;
+  var idx = Z.picked ? Z.picked.idx : quizFirstOpen(); if(idx < 0) return;
+  var q = Z.qs[idx], L = Z.ctx.langs[q.lang], pid = 'q:' + q.key, row = q.row;
+  if(isPlayingAny(pid)){ stopSounds(); return; }
+  stopSounds();
+  var rf = rowFile(row, L.sec, q.lang), opts = { times: 1, gapMs: 600, rate: 1, followMs: 0 };
+  if(rf && !(App.qzBadAudio && App.qzBadAudio[q.lang])){
+    if(rf.player === Player) attachAudio(q.lang);
+    rf.player.play(pid, rf.start, rf.end, opts);
+  } else if(Core.ttsConfirmed(q.lang, row) && Tts.usable(q.lang)){
+    Voice.play(pid, Core.speakText(q.lang, row), q.lang, opts);
+  } else { toast('소리를 준비하고 있어요.'); }
+}
+function quizPick(i){
+  var Z = App.qz; if(!Z || Z.picked) return;
+  var idx = quizFirstOpen(); if(idx < 0) return;
+  var q = Z.qs[idx], o = q.opts[i]; if(!o) return;
+  stopSounds();
+  var data = Gems.load(), e = quizDayEntry(data, Z.plan.today);
+  if(e.done) return;
+  e.res[q.key] = o.ok ? 1 : 0;
+  data.hist[q.key] = Z.plan.today;
+  var wi = data.wrong.indexOf(q.key);
+  if(o.ok){ if(wi >= 0) data.wrong.splice(wi, 1); }
+  else if(wi < 0){ data.wrong.push(q.key); }
+  Gems.save(data);
+  Z.plan.data = data; Z.plan.entry = e;
+  Z.picked = { idx: idx, i: i, ok: !!o.ok };
+  renderQuiz();
+  var fb = document.querySelector('.qz-fb'); if(fb && fb.scrollIntoView){ try{ fb.scrollIntoView({ block: 'center', behavior: 'smooth' }); }catch(err){} }
+}
+/* 마지막 문제까지 다 풀었을 때 한 번만 보석 지급 */
+function finishQuiz(){
+  var Z = App.qz;
+  var data = Gems.load(), e = quizDayEntry(data, Z.plan.today);
+  if(!e.done){
+    var keys = e.qs, okCount = keys.filter(function(k){ return e.res[k] === 1; }).length;
+    var pay = Q.reward(keys.length, okCount);
+    e.done = true; e.ok = okCount; e.paid = pay; e.n = keys.length; e.sync = false;
+    Gems.save(data);
+    Z.fresh = true;
+    Gems.pushPending().then(function(){ quizSyncNote(); });      // 서버(선생님 화면)에도 기록
+  }
+  Z.plan.data = data; Z.plan.entry = e; Z.picked = null;
+  renderQuizDone();
+}
+function renderQuizDone(){
+  var Z = App.qz, e = Z.plan.entry, n = e.n || (e.qs ? e.qs.length : 0), ok = e.ok || 0, paid = e.paid || 0;
+  var bonus = (ok === n && n > 0);
+  var gems = ''; for(var i=0;i<paid;i++) gems += '<span class="qz-gem ' + (Z.fresh ? 'pop' : '') + '" style="animation-delay:' + (i * 0.25) + 's">💎</span>';
+  var msg = bonus ? '모두 맞혔어요! 보너스 보석도 받았어요 ✨' : ok > 0 ? n + '문제 중 ' + ok + '개 맞았어요. 끝까지 해서 참 멋져요!' : '끝까지 해냈어요! 내일은 더 잘할 수 있어요 🌱';
+  $view.innerHTML = quizTop() +
+    '<div class="qz-wrap"><div class="qz-done"><div class="qz-done-t">' + (Z.fresh ? '🎉 오늘 퀴즈 끝!' : '✅ 오늘 퀴즈를 마쳤어요') + '</div>' +
+    '<div class="qz-gem-row">' + gems + '</div>' +
+    '<div class="qz-done-p">' + (paid ? '보석 ' + paid + '개를 받았어요!' : '') + '</div>' +
+    '<div class="qz-done-m">' + esc(msg) + '</div>' + quizDots(-1) +
+    '<div class="qz-done-btns"><button class="btn gold block big" data-act="gems-open">💎 보석함 보러 가기</button><button class="btn ghost block" data-act="home">← 연습실로</button></div>' +
+    '<p class="help" style="text-align:center;margin-top:12px;">내일 또 새로운 문제로 만나요! 보석은 하루에 최대 ' + Q.MAXPAY + '개까지 받을 수 있어요.</p>' +
+    '<p class="help qz-sync" id="qzSync" style="text-align:center;margin:4px 0 0;"></p></div></div>';
+  Z.fresh = false;
+  quizSyncNote();
+}
+function quizSyncNote(){
+  var el = document.getElementById('qzSync'); if(!el) return;
+  var n = Gems.unsynced(Gems.load());
+  el.textContent = n === 0 ? '☁ 선생님도 볼 수 있게 기록됐어요' : '📱 이 기기에 저장했어요. 인터넷이 되면 선생님께 전달돼요';
+}
+
+/* ---------- 나의 보석함 ---------- */
+function openGems(skipPull){
+  stopEverything(false);
+  App.view = 'gems'; App.preview = false; App.qz = null;
+  setWide(false);
+  renderGems();
+  if(!skipPull){ Gems.pull().then(function(){ if(App.view === 'gems') renderGems(); }); }     // 보석함을 연 뒤 서버 기록으로 새로 고침
+}
+function renderGems(){
+  var v = Gems.view(), sum = v.sum, today = Q.dateStr(), te = v.days[today], bal = sum.balance;
+  var shelf = '', show = Math.min(bal, 120), i;
+  for(i=0;i<show;i++) shelf += '<span class="gm-gem" style="filter:hue-rotate(' + ((i * 47) % 360) + 'deg)">💎</span>';
+  if(bal > show) shelf += '<span class="gm-more">… 그리고 ' + (bal - show) + '개 더</span>';
+  // 다음 보상 안내 (교환표는 선생님이 정함)
+  var rs = Q.rewardStatus(bal, v.tiers), reward = '';
+  if(v.tiers.length){
+    if(rs.can.length) reward += '<div class="gm-can">🎁 교환할 수 있어요! 선생님께 말해 주세요<br><span>(' + rs.can.map(function(t){ return esc(t.name) + ' ' + t.n + '개'; }).join(' · ') + ')</span></div>';
+    if(rs.next){
+      var pct = Math.max(4, Math.min(100, Math.round(bal / rs.next.n * 100)));
+      reward += '<div class="gm-next">다음 보상 <b>' + esc(rs.next.name) + '</b> 까지 <b>' + (rs.next.n - bal) + '개</b> 남았어요!<div class="gm-bar"><i style="width:' + pct + '%"></i></div></div>';
+    }
+    reward += '<div class="gm-tiers">' + v.tiers.map(function(t){ return '<span class="gm-tier ' + (t.n <= bal ? 'on' : '') + '">' + t.n + '개 · ' + esc(t.name) + '</span>'; }).join('') + '</div>';
+  }
+  var ex = v.adj.slice().reverse().map(function(a){
+    var label = a.k === 'x' ? '🎁 ' + esc(a.reward || '보상 교환') : '✨ ' + esc(a.memo || '선생님 조정');
+    var sub = (a.k === 'x' && a.memo) ? '<span class="gm-sub">' + esc(a.memo) + '</span>' : '';
+    return '<div class="gm-log ' + (a.off ? 'off' : '') + '"><span class="gm-d">' + Q.mdLabel(a.at) + '</span><span>' + label + sub + (a.off ? ' <i>(취소됨)</i>' : '') + '</span><span class="gm-p">' + (a.d > 0 ? '+' : '') + a.d + '개</span></div>';
+  }).join('');
+  var days = Object.keys(v.days).filter(function(d){ return v.days[d].n > 0; }).sort().reverse().slice(0, 14);
+  var log = days.map(function(d){
+    var e = v.days[d];
+    return '<div class="gm-log"><span class="gm-d">' + (parseInt(d.slice(5, 7), 10)) + '/' + (parseInt(d.slice(8, 10), 10)) + '</span><span>🧩 ' + (e.ok || 0) + '/' + (e.n || 0) + ' 맞힘</span><span class="gm-p">💎 ' + (e.paid || 0) + '</span></div>';
+  }).join('');
+  var note;
+  if(v.unsynced > 0) note = '📱 아직 선생님께 전달되지 않은 기록이 ' + v.unsynced + '일치 있어요. 인터넷이 되면 자동으로 전달돼요.';
+  else if(Gems.online === false) note = '📡 인터넷이 연결되지 않아 마지막으로 확인한 기록이에요.';
+  else note = '☁ 선생님과 함께 보는 기록이에요. 같은 이름으로 들어오면 다른 폰에서도 보여요.';
+  $view.innerHTML = quizTop() +
+    '<div class="gm-hero"><div class="gm-title display">💎 나의 보석함</div><div class="gm-total">남은 보석 <b>' + bal + '</b>개</div>' +
+    '<div class="gm-today">받은 보석 모두 ' + sum.earned + '개' + (sum.exchanged ? ' · 교환 ' + sum.exchanged + '개' : '') + '</div>' +
+    (te && te.n > 0 ? '<div class="gm-today">오늘 받은 보석 💎 ' + (te.paid || 0) + '개</div>' : '<div class="gm-today">오늘 퀴즈를 풀면 보석을 받아요!</div>') + '</div>' +
+    reward +
+    '<div class="gm-shelf">' + (shelf || '<div class="gm-empty">' + (sum.earned ? '보석을 모두 교환했어요! 🎉<br>또 모아 볼까요?' : '🧩 말씀 퀴즈를 풀면 보석이 모여요.<br>첫 보석을 모아 볼까요?') + '</div>') + '</div>' +
+    (ex ? '<h3 class="gm-h">교환 · 선물 기록</h3><div class="gm-logs">' + ex + '</div>' : '') +
+    (log ? '<h3 class="gm-h">지난 퀴즈 기록</h3><div class="gm-logs">' + log + '</div>' : '') +
+    '<div style="margin-top:14px;"><button class="btn leaf block big" data-act="quiz-open">🧩 말씀 퀴즈 하러 가기</button></div>' +
+    '<p class="help" style="text-align:center;margin-top:12px;">' + note + (Gems.stored ? '' : '<br><b>⚠ 이 기기에는 저장이 안 되지만, 인터넷이 되면 서버에는 기록돼요.</b>') + '</p>';
+}
+
+/* ============================================================
+   선생님 화면: 💎 보석 현황 · 교환 기록 · 교환표  (선생님 PIN을 넣은 뒤에만 열림)
+   - 아이 화면은 days 기록만 쓰고, 교환·조정(adj)과 교환표(gemsConfig)는 여기서만 씀
+   ============================================================ */
+App.gadm = { all: null, cfg: null, draft: null, sel: null, err: false, busy: false };
+function gadmChildren(){ return ((App.appState || {}).children) || []; }
+function gadmData(cid){
+  var raw = ((App.gadm.all || {})[cid]) || {}, days = Q.cleanDays(raw.days), adj = Q.cleanAdj(raw.adj);
+  return { raw: raw, days: days, adj: adj, sum: Q.summary(days, adj) };
+}
+async function gadmLoad(){
+  App.gadm.err = false;
+  try{
+    var r = await Promise.all([Fb.readAllGems(), Fb.readGemConfig()]);
+    App.gadm.all = (r[0] && typeof r[0] === 'object') ? r[0] : {};
+    App.gadm.cfg = Q.cleanConfig(r[1]);
+    App.gadm.draft = App.gadm.cfg.tiers.map(function(t){ return { n: t.n, name: t.name }; });
+  }catch(e){ App.gadm.err = true; }
+}
+async function openGemsAdmin(){
+  if(!App.adminOk){ openPin(); return; }
+  stopEverything(false);
+  App.view = 'admin-gems'; App.preview = false;
+  setWide(true);
+  renderLoading('보석 기록을 불러오는 중…');
+  await gadmLoad();
+  if(App.view !== 'admin-gems') return;
+  renderGemsAdmin();
+}
+function gadmTop(){ return '<div class="topbar"><button class="back" data-act="adm-back">← 관리 화면으로</button><span class="who">👩‍🏫 선생님</span></div>'; }
+function renderGemsAdmin(){
+  var G = App.gadm;
+  if(G.err){
+    $view.innerHTML = '<div class="adm">' + gadmTop() + '<div class="adm-card"><h2>💎 보석 현황</h2><p class="help">보석 기록을 불러오지 못했어요. 인터넷을 확인하고 다시 눌러 주세요.</p><div class="actions"><button class="btn leaf" data-act="gadm-reload">다시 불러오기</button></div></div></div>';
+    return;
+  }
+  var today = Q.dateStr(), kids = gadmChildren();
+  var rows = kids.map(function(c){
+    var d = gadmData(c.id), last = Q.lastQuizDay(d.days);
+    return '<tr class="' + (G.sel === c.id ? 'sel' : '') + '"><td>' + esc(avatarOf(c)) + ' ' + esc(c.name) + '</td><td><b>' + d.sum.balance + '</b></td><td>' + d.sum.earned + '</td><td>' + d.sum.exchanged + '</td><td>' + Q.weekPaid(d.days, today) + '</td><td>' + (last ? (parseInt(last.slice(5, 7), 10) + '/' + parseInt(last.slice(8, 10), 10)) : '-') + '</td>' +
+      '<td><button class="btn small ' + (G.sel === c.id ? 'leaf' : 'ghost') + '" data-act="gadm-sel" data-cid="' + esc(c.id) + '">자세히</button></td></tr>';
+  }).join('');
+  var html = '<div class="adm">' + gadmTop() + '<h1 class="display">💎 퀴즈 보석 현황</h1>' +
+    '<div class="adm-card"><h2>아이들 보석 <button class="btn small ghost" data-act="gadm-reload">↻ 새로 불러오기</button></h2>' +
+    '<div class="gadm-wrap"><table class="gadm-t"><thead><tr><th>이름</th><th>남은</th><th>받은 총</th><th>교환</th><th>이번 주</th><th>마지막</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="7">등록된 아이가 없어요</td></tr>') + '</tbody></table></div>' +
+    '<p class="help">남은 = 받은 총 − 교환 ± 조정. 아이가 퀴즈를 끝내면 바로 여기에 반영돼요(인터넷이 안 되던 기기는 연결될 때 반영돼요).</p></div>';
+  if(G.sel && kids.some(function(c){ return c.id === G.sel; })) html += gadmDetailHtml(G.sel);
+  html += gadmConfigHtml() + '</div>';
+  $view.innerHTML = html;
+}
+function gadmConfigHtml(){
+  var G = App.gadm, rows = G.draft.map(function(t, i){
+    return '<div class="gcfg-row"><input type="number" min="1" max="999" data-gcfg="n" data-i="' + i + '" value="' + t.n + '"><span>개 =</span><input type="text" maxlength="20" data-gcfg="name" data-i="' + i + '" value="' + esc(t.name) + '" placeholder="보상 이름 (예: 스티커)"><button class="btn small ghost" data-act="gadm-cfg-del" data-i="' + i + '">삭제</button></div>';
+  }).join('');
+  return '<div class="adm-card"><h2>🎁 교환표 <span class="badge">아이들 보석함에 "다음 보상까지 ○개"로 보여요</span></h2>' +
+    (rows || '<p class="help">아직 교환표가 없어요. [+ 보상 추가]로 만들어 보세요. (예: 5개 = 스티커, 10개 = 간식)</p>') +
+    '<div class="actions"><button class="btn small dusk" data-act="gadm-cfg-add">+ 보상 추가</button><button class="btn small leaf" data-act="gadm-cfg-save">교환표 저장</button></div>' +
+    '<p class="help">교환표를 바꿔도 이미 한 교환 기록은 그때 적은 개수 그대로 남아요. 언제든 다시 고칠 수 있어요.</p></div>';
+}
+function gadmDetailHtml(cid){
+  var c = gadmChildren().filter(function(x){ return x.id === cid; })[0]; if(!c) return '';
+  var d = gadmData(cid), G = App.gadm, tiers = (G.cfg && G.cfg.tiers) || [];
+  var tierOpts = '<option value="">(직접 입력)</option>' + tiers.map(function(t, i){ return '<option value="' + i + '">' + t.n + '개 · ' + esc(t.name) + (t.n > d.sum.balance ? ' (보석 부족)' : '') + '</option>'; }).join('');
+  var adj = d.adj.slice().reverse().map(function(a){
+    var label = a.k === 'x' ? '🎁 교환: ' + esc(a.reward || '') : '✨ 조정';
+    return '<div class="gm-log ' + (a.off ? 'off' : '') + '"><span class="gm-d">' + Q.mdLabel(a.at) + '</span><span>' + label + (a.memo ? ' <span class="gm-sub">' + esc(a.memo) + '</span>' : '') + (a.off ? ' <i>(취소됨 ' + Q.mdLabel(a.offAt) + ')</i>' : '') + '</span><span class="gm-p">' + (a.d > 0 ? '+' : '') + a.d + '개</span>' +
+      (a.off ? '' : '<button class="btn small ghost" data-act="gadm-cancel" data-aid="' + esc(a.id) + '">취소</button>') + '</div>';
+  }).join('');
+  var days = Object.keys(d.days).filter(function(k){ return d.days[k].n > 0; }).sort().reverse().slice(0, 30).map(function(k){
+    var e = d.days[k]; return '<div class="gm-log"><span class="gm-d">' + k.slice(5).replace('-', '/') + '</span><span>🧩 ' + e.ok + '/' + e.n + ' 맞힘</span><span class="gm-p">💎 ' + e.paid + '</span></div>';
+  }).join('');
+  return '<div class="adm-card"><h2>' + esc(avatarOf(c)) + ' ' + esc(c.name) + ' <span class="badge pub">남은 보석 ' + d.sum.balance + '개</span><span class="badge">받은 총 ' + d.sum.earned + ' · 교환 ' + d.sum.exchanged + (d.sum.adjusted ? ' · 조정 ' + (d.sum.adjusted > 0 ? '+' : '') + d.sum.adjusted : '') + '</span></h2>' +
+    '<div class="gadm-form"><div class="sec-title">🎁 보석 교환 기록하기</div>' +
+    '<div class="gcfg-row"><select id="gxTier">' + tierOpts + '</select></div>' +
+    '<div class="gcfg-row"><input type="text" id="gxName" maxlength="20" placeholder="보상 이름 (예: 간식)"><input type="number" id="gxN" min="1" max="999" placeholder="개수" style="max-width:90px;"><span>개</span></div>' +
+    '<div class="gcfg-row"><input type="text" id="gxMemo" maxlength="60" placeholder="메모 (선택)"></div>' +
+    '<div class="actions"><button class="btn gold small" data-act="gadm-xdo" data-cid="' + esc(cid) + '">🎁 교환 기록하기</button></div></div>' +
+    '<div class="gadm-form"><div class="sec-title">✨ 보석 개수 조정 (선물·정정)</div>' +
+    '<div class="gcfg-row"><input type="number" id="gaD" min="-100" max="100" placeholder="+2 / -1" style="max-width:130px;"><input type="text" id="gaMemo" maxlength="60" placeholder="이유 (예: 특별 칭찬)"></div>' +
+    '<div class="actions"><button class="btn dusk small" data-act="gadm-adjdo" data-cid="' + esc(cid) + '">조정 기록하기</button></div></div>' +
+    (adj ? '<h3 class="gm-h">교환 · 조정 기록</h3><div class="gm-logs">' + adj + '</div>' : '<p class="help">아직 교환·조정 기록이 없어요.</p>') +
+    (days ? '<h3 class="gm-h">날짜별 퀴즈 기록 (최근 30일)</h3><div class="gm-logs">' + days + '</div>' : '') + '</div>';
+}
+async function gadmReloadChild(cid){
+  try{ var r = await Fb.readGems(cid); App.gadm.all = App.gadm.all || {}; if(r) App.gadm.all[cid] = r; else delete App.gadm.all[cid]; }catch(e){ toast('저장은 됐지만 새로 불러오지 못했어요. [새로 불러오기]를 눌러 주세요.'); }
+}
+async function gadmExchange(cid){
+  var G = App.gadm; if(G.busy || !App.adminOk) return;
+  var c = gadmChildren().filter(function(x){ return x.id === cid; })[0]; if(!c) return;
+  var name = (document.getElementById('gxName').value || '').trim().slice(0, 20), n = parseInt(document.getElementById('gxN').value, 10), memo = (document.getElementById('gxMemo').value || '').trim().slice(0, 60);
+  var bal = gadmData(cid).sum.balance;
+  if(!name){ toast('보상 이름을 적어 주세요'); return; }
+  if(!(n >= 1 && n <= 999)){ toast('교환할 개수를 적어 주세요'); return; }
+  if(n > bal){ toast('남은 보석(' + bal + '개)보다 많이 교환할 수 없어요'); return; }
+  if(!window.confirm(c.name + ' — "' + name + '" 교환 ' + n + '개를 기록할까요?\n남은 보석: ' + bal + '개 → ' + (bal - n) + '개')) return;
+  G.busy = true;
+  try{
+    await Fb.putGemAdj(cid, Core.newClipId(), { k: 'x', d: -n, reward: name, memo: memo, at: Date.now() });
+    await gadmReloadChild(cid); toast('교환을 기록했어요');
+  }catch(e){ toast('기록하지 못했어요. 인터넷을 확인하고 다시 눌러 주세요.'); }
+  finally{ G.busy = false; renderGemsAdmin(); }
+}
+async function gadmAdjust(cid){
+  var G = App.gadm; if(G.busy || !App.adminOk) return;
+  var d = parseInt(document.getElementById('gaD').value, 10), memo = (document.getElementById('gaMemo').value || '').trim().slice(0, 60), bal = gadmData(cid).sum.balance;
+  if(!d || d < -100 || d > 100){ toast('조정할 개수를 +2 또는 -1처럼 적어 주세요 (±100 이내)'); return; }
+  if(bal + d < 0){ toast('남은 보석(' + bal + '개)이 0보다 적어지게 줄일 수 없어요'); return; }
+  if(!window.confirm('보석 ' + (d > 0 ? '+' : '') + d + '개를 조정할까요?\n남은 보석: ' + bal + '개 → ' + (bal + d) + '개')) return;
+  G.busy = true;
+  try{
+    await Fb.putGemAdj(cid, Core.newClipId(), { k: 'a', d: d, memo: memo, at: Date.now() });
+    await gadmReloadChild(cid); toast('조정을 기록했어요');
+  }catch(e){ toast('기록하지 못했어요. 인터넷을 확인하고 다시 눌러 주세요.'); }
+  finally{ G.busy = false; renderGemsAdmin(); }
+}
+async function gadmCancel(cid, aid){
+  var G = App.gadm; if(G.busy || !App.adminOk) return;
+  var dd = gadmData(cid), a = dd.adj.filter(function(x){ return x.id === aid; })[0];
+  if(!a || a.off) return;
+  if(a.k === 'a' && a.d > 0 && dd.sum.balance - a.d < 0){ toast('이미 교환해서 보석이 모자라요. 교환 기록을 먼저 취소해 주세요.'); return; }
+  if(!window.confirm('이 기록을 취소할까요? (' + (a.k === 'x' ? '교환 ' + a.reward : '조정') + ' ' + (a.d > 0 ? '+' : '') + a.d + '개)\n취소하면 보석이 ' + (a.d < 0 ? '아이 보석함에 돌아와요.' : '다시 줄어들어요.') + ' 기록은 "취소됨"으로 남아요.')) return;
+  G.busy = true;
+  try{
+    await Fb.putGemAdj(cid, aid, { k: a.k, d: a.d, reward: a.reward, memo: a.memo, at: a.at, off: true, offAt: Date.now() });
+    await gadmReloadChild(cid); toast('취소했어요');
+  }catch(e){ toast('취소하지 못했어요. 다시 눌러 주세요.'); }
+  finally{ G.busy = false; renderGemsAdmin(); }
+}
+async function gadmSaveConfig(){
+  var G = App.gadm; if(G.busy || !App.adminOk) return;
+  var cleaned = Q.cleanConfig({ tiers: G.draft }), drop = G.draft.length - cleaned.tiers.length;
+  if(G.draft.some(function(t){ return !String(t.name || '').trim(); })){ toast('보상 이름이 비어 있는 줄이 있어요'); return; }
+  if(G.draft.some(function(t){ return !(t.n >= 1 && t.n <= 999); })){ toast('개수는 1~999 사이로 적어 주세요'); return; }
+  if(drop > 0){ toast('같은 개수가 겹치거나 12개를 넘는 줄이 있어요. 확인해 주세요.'); return; }
+  G.busy = true;
+  try{
+    await Fb.putGemConfig({ tiers: cleaned.tiers, at: Date.now() });
+    G.cfg = cleaned; G.draft = cleaned.tiers.map(function(t){ return { n: t.n, name: t.name }; });
+    toast('교환표를 저장했어요');
+  }catch(e){ toast('저장하지 못했어요. 다시 눌러 주세요.'); }
+  finally{ G.busy = false; renderGemsAdmin(); }
+}
+document.addEventListener('input', function(ev){
+  var el = ev.target; if(!el || !el.getAttribute) return;
+  var f = el.getAttribute('data-gcfg'); if(!f) return;
+  var i = parseInt(el.getAttribute('data-i'), 10), t = App.gadm.draft && App.gadm.draft[i]; if(!t) return;
+  if(f === 'n') t.n = parseInt(el.value, 10) || 0; else t.name = el.value;
+});
+document.addEventListener('change', function(ev){
+  var el = ev.target; if(!el || el.id !== 'gxTier') return;
+  var t = ((App.gadm.cfg && App.gadm.cfg.tiers) || [])[parseInt(el.value, 10)];
+  var nm = document.getElementById('gxName'), nn = document.getElementById('gxN');
+  if(t && nm && nn){ nm.value = t.name; nn.value = t.n; }
+});
+
+/* ---------- 클릭 연결 ---------- */
+function quizClick(act, el){
+  switch(act){
+    case 'quiz-open': openQuiz(); return true;
+    case 'gems-open': openGems(); window.scrollTo(0, 0); return true;
+    case 'quiz-pick': quizPick(parseInt(el.getAttribute('data-i'), 10)); return true;
+    case 'quiz-play': quizPlay(); return true;
+    case 'gadm-open': openGemsAdmin(); return true;
+    case 'gadm-reload': if(App.adminOk){ renderLoading('보석 기록을 불러오는 중…'); gadmLoad().then(function(){ if(App.view === 'admin-gems') renderGemsAdmin(); }); } return true;
+    case 'gadm-sel': if(App.adminOk){ App.gadm.sel = (App.gadm.sel === el.getAttribute('data-cid')) ? null : el.getAttribute('data-cid'); renderGemsAdmin(); } return true;
+    case 'gadm-xdo': gadmExchange(el.getAttribute('data-cid')); return true;
+    case 'gadm-adjdo': gadmAdjust(el.getAttribute('data-cid')); return true;
+    case 'gadm-cancel': if(App.gadm.sel) gadmCancel(App.gadm.sel, el.getAttribute('data-aid')); return true;
+    case 'gadm-cfg-add': if(App.adminOk){ App.gadm.draft.push({ n: 0, name: '' }); renderGemsAdmin(); } return true;
+    case 'gadm-cfg-del': if(App.adminOk){ App.gadm.draft.splice(parseInt(el.getAttribute('data-i'), 10), 1); renderGemsAdmin(); } return true;
+    case 'gadm-cfg-save': gadmSaveConfig(); return true;
+    case 'quiz-next': {
+      var Z = App.qz; if(!Z) return true;
+      Z.picked = null;
+      if(quizFirstOpen() < 0) finishQuiz(); else renderQuiz();
+      window.scrollTo(0, 0);
+      return true;
+    }
+  }
+  return false;
+}
+/* ============================================================
    선생님(관리자) 화면: 자동 생성 → 미리보기/수정 → 승인·게시
    ============================================================ */
-var Adm = { work: { en: null, zh: null }, dirty: { en: false, zh: false }, played: {}, ttsPlayed: {}, busy: false, report: '', requestText: '' };
+var Adm = { work: { en: null, zh: null }, dirty: { en: false, zh: false }, played: {}, ttsPlayed: {}, busy: false, report: '', requestText: '', msg: {}, up: {} };
 
 function setWide(on){ var a = document.getElementById('app'); if(a) a.classList.toggle('wide', !!on); }
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
@@ -1655,9 +2716,21 @@ function checkAdminPin(){
 /* ---------- 상태 ---------- */
 function curVerse(lang){ return verseCard()[lang] || ''; }
 function curAudioAt(lang){ return ((((App.appState || {}).settings || {}).verseAudio || {})[lang] || {}).uploadedAt || ''; }
-function sectionStale(sec, lang){
+/* 선생님이 골라 둔 연습실 전용 음원(없으면 null) */
+function ownMeta(lang){ return Core.cleanMeta((App.docs[lang] || {}).ownAudio); }
+/* 전용 음원을 올릴 때의 말씀과 지금 등록된 말씀이 다르면(= 지난 말씀용 음원) true */
+function ownStale(lang){
+  var o = ownMeta(lang);
+  return !!(o && o.forText && o.forText !== Core.normText(curVerse(lang)));
+}
+function chosenSrcKey(lang){ var o = ownMeta(lang); return o ? 'own:' + o.id : 'main:' + curAudioAt(lang); }
+function secSrcKey(sec){ return sec.own ? 'own:' + sec.own.id : 'main:' + Core.stampParts(sec.audioStamp).at; }
+/* isDraft: 초안은 "지금 고른 음원"과 같은 음원으로 만들어졌는지도 봄. 게시본은 아이들이 보는 기준(전용 음원이면 설정 화면 음원이 바뀌어도 그대로) */
+function sectionStale(sec, lang, isDraft){
   if(!sec) return false;
-  return Core.normText(sec.text) !== Core.normText(curVerse(lang)) || Core.stampParts(sec.audioStamp).at !== curAudioAt(lang);
+  if(Core.normText(sec.text) !== Core.normText(curVerse(lang))) return true;
+  if(isDraft) return secSrcKey(sec) !== chosenSrcKey(lang);
+  return sec.own ? false : Core.stampParts(sec.audioStamp).at !== curAudioAt(lang);
 }
 function badgesFor(lang){
   var doc = App.docs[lang] || {}, w = Adm.work[lang], b = [];
@@ -1667,7 +2740,7 @@ function badgesFor(lang){
   } else b.push('<span class="badge">게시 안 됨</span>');
   if(w){
     b.push('<span class="badge draft">초안 있음' + (w.updatedAt ? ' · ' + dateLabel(w.updatedAt) : '') + '</span>');
-    if(sectionStale(w, lang)) b.push('<span class="badge warn">⚠ 이 초안은 지금 말씀/음원과 달라요 → 다시 자동 생성</span>');
+    if(sectionStale(w, lang, true)) b.push('<span class="badge warn">⚠ 이 초안은 지금 말씀/음원과 달라요 → 다시 자동 생성</span>');
   }
   if(Adm.dirty[lang]) b.push('<span class="dirty">● 저장 안 된 수정이 있어요</span>');
   return b.join(' ');
@@ -1682,14 +2755,15 @@ function renderAdmin(){
   ['en', 'zh'].forEach(function(l){
     if(!Adm.work[l] && App.docs[l] && App.docs[l].draft) Adm.work[l] = clone(App.docs[l].draft);
   });
-  var html = '<div class="adm"><div class="topbar"><button class="back" data-act="home">← 학습실로</button><span class="who">👩‍🏫 선생님</span></div>' +
-    '<h1 class="display">📚 말씀 학습실 관리</h1>' +
+  var html = '<div class="adm"><div class="topbar"><button class="back" data-act="home">← 연습실로</button><span class="who">👩‍🏫 선생님</span></div>' +
+    '<h1 class="display">🎤 말씀 연습실 관리</h1>' +
+    '<div class="adm-card"><h2>💎 퀴즈 보석 현황 · 보상</h2><p class="help">아이들이 퀴즈로 모은 보석을 확인하고, 간식 등으로 교환한 기록을 남겨요. 교환표도 여기서 정해요.</p><div class="actions"><button class="btn gold" data-act="gadm-open">💎 보석 현황 보기</button></div></div>' +
     '<div class="adm-card"><h2>이번 주 말씀 <span class="badge">' + esc(vc.ref || '출처 없음') + '</span></h2>' +
     '<div class="verse-box">🇰🇷 ' + esc(vc.ko || '(한글 없음)') + '</div>' +
     '<div class="verse-box">🇬🇧 ' + esc(vc.en || '(영어 없음)') + '<br><span class="mono">음원: ' + (curAudioAt('en') ? '등록됨 (' + esc(curAudioAt('en')) + ')' : '없음') + '</span></div>' +
     '<div class="verse-box">🇨🇳 ' + esc(vc.zh || '(중국어 없음)') + '<br><span class="mono">음원: ' + (curAudioAt('zh') ? '등록됨 (' + esc(curAudioAt('zh')) + ')' : '없음') + '</span></div>' +
-    '<p class="help">말씀 글자와 전체 음원은 드림씨드 설정 화면에서 평소처럼 등록해요. 등록한 뒤 아래 버튼을 누르면 학습실이 자동으로 만들어져요.</p>' +
-    '<div class="actions"><button class="btn gold big" data-act="adm-gen" data-langs="en,zh">✨ 학습실 자동 생성 (영어 + 중국어)</button></div></div>' +
+    '<p class="help">말씀 글자와 전체 음원은 드림씨드 설정 화면에서 평소처럼 등록해요. 등록한 뒤 아래 버튼을 누르면 연습실이 자동으로 만들어져요.</p>' +
+    '<div class="actions"><button class="btn gold big" data-act="adm-gen" data-langs="en,zh">✨ 연습실 자동 생성 (영어 + 중국어)</button></div></div>' +
     '<div class="adm-card"><h2>🇰🇷 한국어 뜻 · 병음 한 번에 채우기</h2>' +
     '<p class="help">① [요청문 복사]를 눌러 이 채팅창이 아닌 <b>Claude 대화창</b>에 붙여넣고 보내요. ② 받은 JSON 답을 아래 칸에 붙여넣고 [적용]을 눌러요. (직접 하나씩 적어도 돼요)</p>' +
     '<div class="actions"><button class="btn dusk small" data-act="adm-copyreq">📋 요청문 복사</button></div>' +
@@ -1714,7 +2788,7 @@ function verBlockHtml(lang, w){
     '<div class="ver-row"><select data-sf="verSel">' + opts + '</select>' +
     '<input type="text" data-sf="verName" class="' + (custom ? '' : 'hidden') + '" value="' + (custom ? esc(name) : '') + '" placeholder="번역본 이름을 직접 입력" maxlength="60"></div>' +
     '<textarea data-sf="credit" rows="2" maxlength="600" placeholder="출처 표기 문구 (해당 번역본 출처에서 안내한 문구를 그대로 붙여넣어요)">' + esc(w.credit || '') + '</textarea>' +
-    '<div class="help" style="margin-top:4px;">번역본은 선생님이 직접 고르는 값이에요(앱이 추측해 채우지 않아요). 비워 두면 표시하지 않아요. 번역본에 따라 출처 표기가 필요할 수 있어요 — 이 칸에 적은 문구는 학습실 맨 아래에 <b>그대로</b> 나와요. 앱은 저작권 문구를 만들어 주지 않아요.</div>';
+    '<div class="help" style="margin-top:4px;">번역본은 선생님이 직접 고르는 값이에요(앱이 추측해 채우지 않아요). 비워 두면 표시하지 않아요. 번역본에 따라 출처 표기가 필요할 수 있어요 — 이 칸에 적은 문구는 연습실 맨 아래에 <b>그대로</b> 나와요. 앱은 저작권 문구를 만들어 주지 않아요.</div>';
 }
 function updateVoiceBadges(){
   ['en', 'zh'].forEach(function(l){
@@ -1727,16 +2801,16 @@ function updateVoiceBadges(){
 }
 function langCardHtml(lang){
   var L = L10N[lang], w = Adm.work[lang];
-  var h = '<div class="adm-card" id="adm-' + lang + '" data-lang="' + lang + '"><h2>' + L.flag + ' ' + L.short + ' 학습실</h2>' +
+  var h = '<div class="adm-card" id="adm-' + lang + '" data-lang="' + lang + '"><h2>' + L.flag + ' ' + L.short + ' 연습실</h2>' +
     '<div style="margin:2px 0 8px;" id="adm-badges-' + lang + '">' + badgesFor(lang) + '</div>' +
     '<div class="actions" style="margin-top:0;"><button class="btn gold small" data-act="adm-gen" data-langs="' + lang + '">✨ ' + L.short + ' 자동 생성</button></div>' +
-    '<div class="progress-line hidden" id="adm-prog-' + lang + '"></div>';
+    '<div class="progress-line hidden" id="adm-prog-' + lang + '"></div>' + ownBlockHtml(lang);
   if(!w){ h += '<p class="help">아직 초안이 없어요. [자동 생성]을 눌러 주세요.</p></div>'; return h; }
   h += verBlockHtml(lang, w);
   h += (w.notes || []).map(function(n){ return '<div class="banner warn">' + esc(n) + '</div>'; }).join('');
   h += '<div class="help" style="margin-bottom:4px;">첫 번째 낭독: <b>' + w.passStart + '초 ~ ' + w.passEnd + '초</b>. 음원에 말씀이 두 번 반복되거나 앞에 출처 낭독이 있어도 첫 번째 낭독만 사용해요.</div>';
-  h += '<div id="adm-audiobox-' + lang + '"></div>';
-  h += '<div class="banner info" style="margin-top:8px;"><span id="adm-voice-' + lang + '"></span><br>기기 음성은 MP3 구간이 없는 줄에서만 쓰여요. 기기·브라우저마다 소리가 달라서, <b>선생님 기기에서 확인해도 아이들 기기에서는 다를 수 있어요.</b> ' + (lang === 'zh' ? '중국어는 성조·다음자를 잘못 읽을 수 있으니 꼭 끝까지 들어 보고 확인해 주세요.' : '') + '</div>';
+  h += '<div id="adm-audiobox-' + lang + '"></div>' + wordsBlockHtml(lang, w);
+  h += '<div class="banner info" style="margin-top:8px;"><span id="adm-voice-' + lang + '"></span><br>기기 음성은 소리 파일(전체 음원 구간·낭독 파일·올린 파일)이 없는 줄에서만 쓰여요. 기기·브라우저마다 소리가 달라서, <b>선생님 기기에서 확인해도 아이들 기기에서는 다를 수 있어요.</b> ' + (lang === 'zh' ? '중국어는 성조·다음자를 잘못 읽을 수 있으니 꼭 끝까지 들어 보고 확인해 주세요.' : '') + '</div>';
   h += '<div class="sec-title">⭐ 핵심 ' + (lang === 'zh' ? '표현' : '단어') + ' (4~6개 추천)</div><div id="adm-words-' + lang + '">' + w.words.map(function(r, i){ return rowHtml(lang, 'word', r, i, w.words.length); }).join('') + '</div>';
   var used = {}; w.words.forEach(function(x){ used[Core.normText(x.text)] = 1; });
   var cands = (w.candidates || []).filter(function(c){ return !used[Core.normText(c)]; });
@@ -1750,24 +2824,69 @@ function langCardHtml(lang){
     '<button class="btn leaf" data-act="adm-publish">✅ 승인하고 게시</button><button class="btn ghost" data-act="adm-unpublish">게시 내리기</button></div></div>';
   return h;
 }
+function kbText(len){ var kb = Math.round((+len || 0) * 0.75 / 1024); return kb >= 1024 ? (Math.round(kb / 102.4) / 10) + 'MB' : kb + 'KB'; }
+function admMsgHtml(lang, key){ var m = Adm.msg[lang + ':' + key]; return m ? esc(m) : ''; }
+function admSetMsg(lang, key, text){
+  Adm.msg[lang + ':' + key] = text || '';
+  var el = document.getElementById('adm-msg-' + key + '-' + lang); if(el) el.textContent = text || '';
+}
+function ownBlockHtml(lang){
+  var o = ownMeta(lang);
+  var info = o ? '✔ 전용 음원 사용 중: <b>' + esc(o.name || '파일') + '</b> · ' + o.dur + '초 · ' + kbText(o.len)
+               : '지금은 드림씨드 설정 화면에 등록한 기존 음원을 써요.';
+  if(ownStale(lang)) info += '<div class="banner warn" style="margin-top:6px;">⚠ 이 전용 음원은 <b>지난 말씀</b>을 올릴 때의 파일이에요. 지금 등록된 말씀과 다르니, 새 말씀의 음원을 올리거나 [기존 등록 음원으로 되돌리기]를 눌러 주세요. 그 전에는 [자동 생성]이 이 음원으로 만들어지지 않아요.</div>';
+  return '<div class="sec-title">🎙 연습실 전용 소리 (선택)</div><div class="own-box"><div class="own-h">① 연습실 전용 전체 음원</div>' +
+    '<div class="help">더 또렷하고 천천히 읽은 전체 말씀 파일(MP3·M4A·WAV, 3MB 이하)을 올리면 [자동 생성]이 이 파일로 구간을 나누고, 아이들도 이 파일로 들어요. <b>드림씨드 설정 화면에 등록한 음원은 바뀌지 않아요.</b> 구절 사이를 1초쯤 쉬며, 등록한 말씀 글자 그대로 읽은 파일이 가장 정확해요. <b>올리거나 바꾼 뒤에는 [자동 생성]을 다시 눌러야 구간이 맞춰져요.</b></div>' +
+    '<div class="own-info">' + info + '</div>' +
+    '<div class="actions" style="margin-top:6px;"><button class="btn small dusk" data-act="adm-ownup">📁 전용 음원 ' + (o ? '바꾸기' : '올리기') + '</button>' +
+    (o ? '<button class="btn small ghost" data-act="adm-owndel">기존 등록 음원으로 되돌리기</button>' : '') + '</div>' +
+    '<div class="own-msg" id="adm-msg-own-' + lang + '">' + admMsgHtml(lang, 'own') + '</div></div>';
+}
+function wordsBlockHtml(lang, w){
+  var wa = Core.cleanMeta(w.wordsAudio), nm = lang === 'zh' ? '표현' : '단어';
+  var info = wa ? '✔ ' + nm + ' 낭독 파일: <b>' + esc(wa.name || '파일') + '</b> · ' + wa.dur + '초 · ' + kbText(wa.len)
+                : '아직 ' + nm + ' 낭독 파일이 없어요. 줄마다 [📁 이 줄 소리 파일 올리기]로 따로 올릴 수도 있어요.';
+  return '<div class="own-box"><div class="own-h">② 핵심 ' + nm + ' 낭독 파일 (선택)</div>' +
+    '<div class="help">아래 핵심 ' + nm + ' 목록의 <b>순서대로 한 번씩</b>, 사이를 1초쯤 쉬며 읽은 파일(2MB 이하)을 올리면 쉬는 곳을 기준으로 잘라 각 줄에 붙여 드려요. <b>잘린 개수가 줄 수와 같을 때만</b> 자동으로 붙이고, 다르면 알려 드려요. 붙인 뒤에는 줄마다 [▶ 미리듣기]로 꼭 확인해 주세요. 줄을 더하거나 순서를 바꾸면 [✂ 다시 자르기]를 눌러 주세요.</div>' +
+    '<div class="own-info">' + info + '</div>' +
+    '<div class="actions" style="margin-top:6px;"><button class="btn small dusk" data-act="adm-wordsup">📁 ' + nm + ' 낭독 파일 ' + (wa ? '바꾸기' : '올리기') + '</button>' +
+    (wa ? '<button class="btn small ghost" data-act="adm-wordsresplit">✂ 다시 자르기</button><button class="btn small ghost" data-act="adm-wordsdel">낭독 파일 빼기</button>' : '') + '</div>' +
+    '<div class="own-msg" id="adm-msg-words-' + lang + '">' + admMsgHtml(lang, 'words') + '</div></div>';
+}
+function srcBlockHtml(lang, w, r, kind){
+  var clip = Core.cleanMeta(r.clip), wa = (kind === 'word') ? Core.cleanMeta(w.wordsAudio) : null, src = r.src || '';
+  var opts = '<option value=""' + (!src ? ' selected' : '') + '>' + (w.own ? '연습실 전용 음원 구간' : '전체 음원 구간') + '</option>' +
+    (wa ? '<option value="words"' + (src === 'words' ? ' selected' : '') + '>' + (lang === 'zh' ? '표현' : '단어') + ' 낭독 파일 구간</option>' : '') +
+    (clip ? '<option value="clip"' + (src === 'clip' ? ' selected' : '') + '>이 줄에 올린 소리 파일</option>' : '');
+  return '<div class="r4"><span class="tts-lab">🎙 소리 출처</span><select data-f="src">' + opts + '</select>' +
+    '<button class="tiny" data-act="adm-clipup">📁 이 줄 소리 파일 올리기</button>' +
+    (clip ? '<button class="tiny" data-act="adm-clipdel">올린 파일 빼기</button><span class="src-note">' + esc(clip.name || '파일') + ' · ' + clip.dur + '초</span>' : '') + '</div>';
+}
 function numInput(f, v){ return '<input type="number" step="0.05" min="0" data-f="' + f + '" value="' + (v == null ? '' : v) + '">'; }
+/* 시작/끝 칸: 출처에 따라 전체 음원 구간(start,end) · 단어 낭독 파일 구간(wstart,wend) · 올린 파일(시간 없음) */
+function timingHtml(r){
+  if(r.src === 'clip') return '<span class="help" style="margin:0;">올린 소리 파일은 처음부터 끝까지 재생돼요.</span>';
+  var f = r.src === 'words' ? ['wstart', 'wend'] : ['start', 'end'];
+  return '<label>시작 ' + numInput(f[0], r[f[0]]) + '</label><label>끝 ' + numInput(f[1], r[f[1]]) + '</label>' +
+    '<button class="tiny" data-act="adm-now" data-which="start">시작←지금</button><button class="tiny" data-act="adm-now" data-which="end">끝←지금</button>';
+}
 function rowHtml(lang, kind, r, i, total){
   var zh = lang === 'zh', pid = 'adm:' + lang + ':' + kind + ':' + i;
   return '<div class="row' + (Adm.played[r.id] ? ' played' : '') + '" data-kind="' + kind + '" data-idx="' + i + '">' +
     '<div class="r1"><input type="text" data-f="text" value="' + esc(r.text) + '" placeholder="글자">' +
     (zh ? '<input type="text" data-f="pinyin" value="' + esc(r.pinyin || '') + '" placeholder="병음 (글자 수만큼 띄어쓰기)">' : '') +
     '<input type="text" data-f="ko" value="' + esc(r.ko || '') + '" placeholder="한국어 뜻"></div>' +
-    '<div class="r2"><label>시작 ' + numInput('start', r.start) + '</label><label>끝 ' + numInput('end', r.end) + '</label>' +
-    '<button class="tiny" data-act="adm-now" data-which="start">시작←지금</button><button class="tiny" data-act="adm-now" data-which="end">끝←지금</button>' +
+    '<div class="r2">' + timingHtml(r) +
     '<button class="tiny" data-act="adm-play" data-pid="' + pid + '">▶ 미리듣기</button>' +
     '<label><input type="checkbox" data-f="audio" ' + (r.audio ? 'checked' : '') + '> 소리 사용</label>' +
     '<button class="tiny" data-act="adm-up">↑</button><button class="tiny" data-act="adm-down">↓</button><button class="tiny" data-act="adm-del">✕</button></div>' +
+    srcBlockHtml(lang, Adm.work[lang] || {}, r, kind) +
     ttsBlockHtml(lang, r) + '</div>';
 }
 function ttsStateText(lang, r){
-  var mp3 = r.audio && r.end > r.start;
+  var mp3 = !!Core.rowFileKind(Adm.work[lang], r);
   var played = !!Adm.ttsPlayed[(r.id || '') + '|' + Core.ttsSig(lang, r)];
-  if(mp3) return '🎧 MP3 구간이 켜져 있어서 이 줄은 MP3로 들려줘요 (기기 음성은 MP3가 없을 때만 써요)';
+  if(mp3) return '🎧 소리 파일이 켜져 있어서 이 줄은 소리 파일로 들려줘요 (기기 음성은 소리 파일이 없을 때만 써요)';
   if(Core.ttsConfirmed(lang, r)) return '✔ 확인됨 — 아이들 기기에 ' + L10N[lang].short + ' 음성이 있으면 기기 음성이 나와요';
   return played ? '들어 봤어요 → 괜찮으면 [발음 확인함]을 체크해 주세요' : '미확인 — 아이들에게는 아직 소리가 안 나와요("소리 준비 중")';
 }
@@ -1811,16 +2930,27 @@ function origLineHtml(lang){
     : '<div class="banner bad">⚠ 구절 글자를 이어 붙인 내용이 등록한 ' + L10N[lang].short + ' 말씀과 달라요. 구절을 고쳤다면 원문과 같은지 확인해 주세요. (아이들의 "전체 말씀"에는 등록한 원문이 그대로 나와요)</div>';
 }
 async function hydrateAudio(lang){
-  var box = document.getElementById('adm-audiobox-' + lang);
-  if(!box || !Adm.work[lang]) return;
+  var box = document.getElementById('adm-audiobox-' + lang), w = Adm.work[lang];
+  if(!box || !w) return;
   box.innerHTML = '<div class="help">음원을 불러오는 중…</div>';
-  var a = await ensureAudio(lang, false);
-  if(a.status === 'ok'){
-    attachAudio(lang);
-    box.innerHTML = '<div class="help" style="margin:0 0 4px;">🎧 전체 음원 (듣다가 원하는 곳에서 멈추고, 아래 줄의 <b>시작←지금</b> / <b>끝←지금</b>을 누르면 그 위치가 들어가요)</div><audio controls id="adm-audio-' + lang + '" src="' + a.url + '" style="width:100%;"></audio>';
+  var html = '', url = '', bad = '';
+  if(w.own){
+    var c = await loadClip(w.own.id, false);
+    if(c.status === 'ok') url = c.url; else bad = '전용 음원을 불러오지 못했어요. 전용 음원을 다시 올리고 [자동 생성]을 눌러 주세요.';
   } else {
-    box.innerHTML = '<div class="banner bad">음원을 불러오지 못했어요. 설정 화면에서 음원이 등록돼 있는지 확인해 주세요.</div>';
+    var a = await ensureAudio(lang, false);
+    if(a.status === 'ok'){ attachAudio(lang); url = a.url; } else bad = '음원을 불러오지 못했어요. 설정 화면에서 음원이 등록돼 있는지 확인해 주세요.';
   }
+  if(url) html += '<div class="help" style="margin:0 0 4px;">🎧 ' + (w.own ? '연습실 전용 전체 음원' : '전체 음원') + ' (듣다가 원하는 곳에서 멈추고, 아래 줄의 <b>시작←지금</b> / <b>끝←지금</b>을 누르면 그 위치가 들어가요)</div><audio controls id="adm-audio-' + lang + '" src="' + url + '" style="width:100%;"></audio>';
+  else html += '<div class="banner bad">' + bad + '</div>';
+  var wa = Core.cleanMeta(w.wordsAudio);
+  if(wa){
+    var wc = await loadClip(wa.id, false);
+    if(wc.status === 'ok') html += '<div class="help" style="margin:8px 0 4px;">🎧 ' + (lang === 'zh' ? '표현' : '단어') + ' 낭독 파일 ("출처"를 낭독 파일 구간으로 둔 줄의 <b>시작←지금</b> / <b>끝←지금</b>은 이 플레이어를 기준으로 해요)</div><audio controls id="adm-waudio-' + lang + '" src="' + wc.url + '" style="width:100%;"></audio>';
+    else html += '<div class="banner bad">낭독 파일을 불러오지 못했어요. 다시 올려 주세요.</div>';
+  }
+  box.innerHTML = html;
+  loadSectionSources(w, false);      // 줄별 소리 파일도 미리 불러 둠 (미리듣기가 바로 되도록)
 }
 
 /* ---------- 모델 읽고 쓰기 ---------- */
@@ -1866,11 +2996,17 @@ function onAdmInput(ev){
   var f = el.getAttribute('data-f');
   if(f === 'ttsok'){ onTtsOk(el, ctx); return; }
   if(f === 'audio') ctx.m.audio = el.checked;
-  else if(f === 'start' || f === 'end'){ var v = parseFloat(el.value); ctx.m[f] = isNaN(v) ? 0 : Core.r2(v); }
+  else if(f === 'start' || f === 'end' || f === 'wstart' || f === 'wend'){ var v = parseFloat(el.value); ctx.m[f] = isNaN(v) ? 0 : Core.r2(v); }
+  else if(f === 'src'){
+    if(el.value) ctx.m.src = el.value; else delete ctx.m.src;
+    delete Adm.played[ctx.m.id];            // 소리 출처가 바뀌었으니 다시 들어 봐야 함
+    markDirty(ctx.lang); rerenderLang(ctx.lang); return;
+  }
   else ctx.m[f] = el.value;
+  if(f === 'start' || f === 'end' || f === 'wstart' || f === 'wend') delete Adm.played[ctx.m.id];
   // 글자나 읽을 글자를 고치면 그 줄의 기기 음성 확인은 풀림 (다시 들어 보고 확인해야 함)
   if((f === 'text' || f === 'say') && ctx.m.ttsConf && ctx.m.ttsConf !== Core.ttsSig(ctx.lang, ctx.m)) ctx.m.ttsConf = '';
-  if(f === 'text' || f === 'say' || f === 'audio' || f === 'start' || f === 'end') refreshTtsRow(ctx);
+  if(f === 'text' || f === 'say' || f === 'audio' || f === 'start' || f === 'end' || f === 'wstart' || f === 'wend') refreshTtsRow(ctx);
   markDirty(ctx.lang);
   if(f === 'text' && ctx.kind === 'phrase'){ var o = document.getElementById('adm-orig-' + ctx.lang); if(o) o.innerHTML = origLineHtml(ctx.lang); }
 }
@@ -1891,10 +3027,20 @@ function setProg(lang, msg){
 }
 function sanitizeSection(sec){
   var out = clone(sec);
-  function fix(r){
+  out.own = Core.cleanMeta(out.own); if(!out.own) delete out.own;
+  out.wordsAudio = Core.cleanMeta(out.wordsAudio); if(!out.wordsAudio) delete out.wordsAudio;
+  if(out.own) out.audioStamp = 'own:' + out.own.id;
+  function fix(r, kind){
     r.text = String(r.text || '').trim(); r.ko = String(r.ko || '').trim(); r.pinyin = String(r.pinyin || '').trim();
     r.start = Core.r2(+r.start || 0); r.end = Core.r2(+r.end || 0);
-    if(r.audio && !(r.end > r.start)) r.audio = false;
+    // 소리 파일 정보: 줄별 파일 · 단어 낭독 파일 구간
+    var clip = Core.cleanMeta(r.clip); if(clip) r.clip = clip; else delete r.clip;
+    ['wstart', 'wend'].forEach(function(k){ if(typeof r[k] === 'number' && isFinite(r[k])) r[k] = Core.r2(r[k]); else delete r[k]; });
+    var badSrc = (r.src === 'clip' && !r.clip) || (r.src === 'words' && !(kind === 'word' && out.wordsAudio));
+    if(badSrc) delete r.src;
+    if(r.src !== 'clip' && r.src !== 'words') delete r.src;
+    if(badSrc) r.audio = false;      // 가리키던 파일이 없으니, 다른 구간이 저절로 켜지지 않게 소리는 끔
+    if(r.audio && !Core.rowFileKind(out, r)) r.audio = false;
     // 기기 음성: 읽을 글자는 중국어만, 확인 표시는 "지금 글자/읽을 글자"와 맞을 때만 유지
     r.say = (out.lang === 'zh') ? String(r.say || '').trim() : '';
     if(!r.say) delete r.say;
@@ -1902,8 +3048,8 @@ function sanitizeSection(sec){
     if(!r.ttsConf) delete r.ttsConf;
     return r;
   }
-  out.words = (out.words || []).map(fix).filter(function(r){ return r.text; });
-  out.phrases = (out.phrases || []).map(fix).filter(function(r){ return r.text; });
+  out.words = (out.words || []).map(function(r){ return fix(r, 'word'); }).filter(function(r){ return r.text; });
+  out.phrases = (out.phrases || []).map(function(r){ return fix(r, 'phrase'); }).filter(function(r){ return r.text; });
   out.full.start = Core.r2(+out.full.start || 0); out.full.end = Core.r2(+out.full.end || 0);
   out.versionName = String(out.versionName || '').trim().slice(0, 60);
   out.credit = String(out.credit || '').trim().slice(0, 600);
@@ -1928,6 +3074,9 @@ async function generate(langs){
   for(var i=0;i<langs.length;i++){
     var lang = langs[i];
     if(Adm.work[lang] && Adm.dirty[lang] && !window.confirm(L10N[lang].short + ' 초안에 저장하지 않은 수정이 있어요. 새로 만들면 사라져요. 계속할까요?')) return;
+    var dw = Adm.work[lang];
+    if(dw && (dw.wordsAudio || dw.words.concat(dw.phrases).some(function(r){ return r.clip; })) &&
+       !window.confirm(L10N[lang].short + ' 초안에 올려 둔 소리 파일(낭독 파일·줄별 소리)이 연결돼 있어요. 새로 만들면 이 연결이 풀려요(파일은 서버에 남아 있지만 줄에 다시 붙여야 해요). 계속할까요?')) return;
   }
   Adm.busy = true;
   try{
@@ -1938,8 +3087,16 @@ async function generate(langs){
       setProg(lg, '준비 중…');
       var text = curVerse(lg);
       if(!text.trim()){ setProg(lg, '⚠ 등록된 ' + L10N[lg].short + ' 말씀 글자가 없어요. 설정 화면에서 먼저 등록해 주세요.'); continue; }
-      var a = await ensureAudio(lg, true);
-      if(a.status !== 'ok'){ setProg(lg, '⚠ ' + L10N[lg].short + ' 전체 음원이 없어요. 설정 화면에서 먼저 올려 주세요.'); continue; }
+      var own = ownMeta(lg), a;
+      if(own && ownStale(lg)){ setProg(lg, '⚠ ' + L10N[lg].short + ' 전용 음원이 지난 말씀용이에요. 새 말씀의 전용 음원을 올리거나 [기존 등록 음원으로 되돌리기]를 누른 뒤 다시 해 주세요.'); continue; }
+      if(own){
+        var oc = await loadClip(own.id, true);
+        a = (oc.status === 'ok') ? { status: 'ok', blob: oc.blob, stamp: 'own:' + own.id, len: oc.len } : { status: 'error' };
+        if(a.status !== 'ok'){ setProg(lg, '⚠ ' + L10N[lg].short + ' 전용 음원을 불러오지 못했어요. 전용 음원을 다시 올려 주세요.'); continue; }
+      } else {
+        a = await ensureAudio(lg, true);
+        if(a.status !== 'ok'){ setProg(lg, '⚠ ' + L10N[lg].short + ' 전체 음원이 없어요. 설정 화면에서 먼저 올리거나, 이 화면에서 연습실 전용 음원을 올려 주세요.'); continue; }
+      }
       var notes = [], E = null, W = [];
       if(lg === 'zh'){
         try{ setProg(lg, '병음 도구를 불러오는 중…'); await Core.loadPinyin(); }
@@ -1955,11 +3112,12 @@ async function generate(langs){
         E = { fs: 0.02, rms: [], thr: 1, dur: dur, p90: 0 };
       }
       setProg(lg, '구절과 단어를 나누는 중…');
-      var ctx = { text: text, ref: vc.ref, stamp: a.stamp, E: E, whisper: W };
+      var ctx = { text: text, ref: vc.ref, stamp: a.stamp, E: E, whisper: W, own: own || null };
       var sec = lg === 'en' ? Core.buildDraftEn(ctx) : Core.buildDraftZh(ctx);
       sec.notes = notes.concat(sec.notes || []);
       if(W.length === 0 && notes.length){ sec.quality = 'low'; sec.phrases.forEach(function(p){ p.audio = false; }); }
       sec.updatedAt = Date.now();
+      Adm.msg[lg + ':own'] = ''; Adm.msg[lg + ':words'] = '';      // 지난 안내 문구는 지움
       Adm.work[lg] = sec; Adm.dirty[lg] = false; Adm.played = {};
       try{ await saveDoc(lg, function(doc){ doc.draft = sanitizeSection(sec); }); setProg(lg, '✔ 초안을 만들어 저장했어요. 아래에서 확인하고 고쳐 주세요.'); }
       catch(e){ Adm.dirty[lg] = true; setProg(lg, '초안은 만들었지만 서버 저장에 실패했어요. [임시저장]을 다시 눌러 주세요.'); }
@@ -1975,6 +3133,128 @@ function decodeDurationFallback(blob){
   });
 }
 
+/* ---------- 소리 파일 올리기 (전용 음원 · 단어 낭독 파일 · 줄별 소리) ---------- */
+function pickAudioFile(cb){
+  var inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'audio/*,.mp3,.m4a,.wav,.ogg,.webm,.aac'; inp.style.display = 'none';
+  inp.onchange = function(){ var f = inp.files && inp.files[0]; if(inp.parentNode) inp.parentNode.removeChild(inp); if(f) cb(f); };
+  document.body.appendChild(inp); inp.click();
+}
+/* 파일을 검사하고 서버(studyRoom/clips/<id>)에 저장한 뒤, 서버에서 다시 읽어 같은지 확인 */
+async function admStoreClip(file, kind){
+  var mime = Core.audioMime(file);
+  if(!mime) throw new Error('소리 파일(MP3, M4A, WAV 등)만 올릴 수 있어요.');
+  var limit = Core.CLIP_LIMITS[kind];
+  if(file.size > limit) throw new Error('파일이 너무 커요(' + (Math.round(file.size / 1024 / 102.4) / 10) + 'MB). ' + (Math.round(limit / 1024 / 102.4) / 10) + 'MB 이하로 줄여서 올려 주세요. MP3로 바꾸면 훨씬 작아져요.');
+  var blob = new Blob([file], { type: mime }), pr;
+  try{ pr = await Core.probeAudio(blob, kind === 'words'); }
+  catch(e){ throw new Error('이 파일을 읽을 수 없어요. MP3나 M4A로 바꿔서 다시 올려 주세요.'); }
+  if(!(pr.dur > 0.2)) throw new Error('소리 길이를 확인하지 못했어요. 다른 파일로 올려 주세요.');
+  if(pr.dur > Core.CLIP_MAXSEC[kind]) throw new Error('소리가 너무 길어요(' + Math.round(pr.dur) + '초). ' + Core.CLIP_MAXSEC[kind] + '초 이하로 올려 주세요.');
+  var du = await Core.blobToDataUrl(blob), id = Core.newClipId();
+  try{ await Fb.putClip(id, du); }catch(e){ throw new Error('서버에 올리지 못했어요. 인터넷 연결을 확인하고 다시 해 주세요.'); }
+  var back = null;
+  try{ back = await Fb.readClip(id); }catch(e){}
+  if(!back || back.length !== du.length){
+    try{ await Fb.putClip(id, ''); }catch(e){}      // 잘못 저장된 파일은 비워 둠(어디에서도 쓰지 않음)
+    throw new Error('서버에 저장된 파일이 올린 파일과 달라요. 다시 올려 주세요.');
+  }
+  registerClip(id, blob, du.length);      // 이 기기에서 바로 미리듣기 할 수 있게 보관
+  return { meta: { id: id, name: String(file.name || '').slice(0, 80), mime: mime, len: du.length, dur: Core.r2(pr.dur) }, E: pr.E };
+}
+async function admUploadOwn(lang, file){
+  if(Adm.up[lang]) return; Adm.up[lang] = true;
+  admSetMsg(lang, 'own', '올리는 중… 파일을 확인하고 서버에 저장하고 있어요.');
+  try{
+    var r = await admStoreClip(file, 'own');
+    r.meta.forText = Core.normText(curVerse(lang));
+    await saveDoc(lang, function(doc){ doc.ownAudio = r.meta; });
+    Adm.msg[lang + ':own'] = '✔ 올렸어요. 이제 [✨ ' + L10N[lang].short + ' 자동 생성]을 눌러 이 음원으로 구간을 만들어 주세요.';
+    rerenderLang(lang);
+  }catch(e){ admSetMsg(lang, 'own', '⚠ ' + String(e.message || e)); }
+  finally{ Adm.up[lang] = false; }
+}
+async function admRemoveOwn(lang){
+  try{
+    await saveDoc(lang, function(doc){ delete doc.ownAudio; });
+    Adm.msg[lang + ':own'] = '기존 등록 음원으로 되돌렸어요. [✨ 자동 생성]을 다시 눌러 구간을 만들어 주세요.';
+    rerenderLang(lang);
+  }catch(e){ admSetMsg(lang, 'own', '⚠ ' + String(e.message || e)); }
+}
+/* 단어 낭독 파일의 쉬는 곳을 기준으로 단어 줄에 구간 붙이기 */
+function admApplyWordsSplit(lang, w, E){
+  var n = w.words.length, nm = lang === 'zh' ? '표현' : '단어';
+  if(!n){ return '핵심 ' + nm + ' 줄이 하나도 없어요. 줄을 추가한 뒤 [✂ 다시 자르기]를 눌러 주세요.'; }
+  var sp = Core.splitWordsFile(E, n);
+  if(!sp.ok){
+    return '낭독 파일에서 쉬는 곳을 기준으로 자르면 ' + sp.found + '조각이 나와요(핵심 ' + nm + ' 줄은 ' + n + '개). 줄에는 붙이지 않았어요. ' +
+      '단어마다 한 번씩, 사이를 더 길게(1초 이상) 쉬며 다시 녹음하거나, 줄마다 [출처]를 "낭독 파일 구간"으로 두고 시작/끝을 직접 넣어 주세요.';
+  }
+  w.words.forEach(function(row, i){
+    row.src = 'words'; row.wstart = sp.segs[i].s; row.wend = sp.segs[i].e; row.audio = true;
+    delete Adm.played[row.id];
+  });
+  return '✔ ' + n + '조각으로 잘라 각 줄에 붙였어요. 줄마다 [▶ 미리듣기]로 순서와 잘림을 꼭 확인해 주세요.';
+}
+async function admUploadWords(lang, file){
+  var w = Adm.work[lang];
+  if(!w){ toast('먼저 [자동 생성]을 눌러 초안을 만들어 주세요'); return; }
+  if(Adm.up[lang]) return; Adm.up[lang] = true;
+  admSetMsg(lang, 'words', '올리는 중… 파일을 확인하고 서버에 저장하고 있어요.');
+  try{
+    var r = await admStoreClip(file, 'words');
+    w.wordsAudio = r.meta;
+    Adm.msg[lang + ':words'] = admApplyWordsSplit(lang, w, r.E);
+    markDirty(lang); rerenderLang(lang);
+  }catch(e){ admSetMsg(lang, 'words', '⚠ ' + String(e.message || e)); }
+  finally{ Adm.up[lang] = false; }
+}
+async function admResplit(lang){
+  var w = Adm.work[lang], wa = w && Core.cleanMeta(w.wordsAudio);
+  if(!wa) return;
+  admSetMsg(lang, 'words', '다시 자르는 중…');
+  try{
+    var c = await loadClip(wa.id, false);
+    if(c.status !== 'ok') throw new Error('낭독 파일을 불러오지 못했어요. 다시 올려 주세요.');
+    var pr = await Core.probeAudio(c.blob, true);
+    Adm.msg[lang + ':words'] = admApplyWordsSplit(lang, w, pr.E);
+    markDirty(lang); rerenderLang(lang);
+  }catch(e){ admSetMsg(lang, 'words', '⚠ ' + String(e.message || e)); }
+}
+function admRemoveWords(lang){
+  var w = Adm.work[lang]; if(!w) return;
+  delete w.wordsAudio;
+  w.words.forEach(function(r){
+    if(r.src === 'words'){ delete r.src; delete r.wstart; delete r.wend; r.audio = false; delete Adm.played[r.id]; }   // 어림잡은 구간이 저절로 켜지지 않도록 소리는 꺼 둠
+  });
+  Adm.msg[lang + ':words'] = '낭독 파일을 뺐어요. 그 줄들의 "소리 사용"은 꺼 두었어요. 필요하면 다시 켜고 미리듣기로 확인해 주세요.';
+  markDirty(lang); rerenderLang(lang);
+}
+function admRowById(lang, id){
+  var w = Adm.work[lang]; if(!w) return null;
+  var hit = null;
+  (w.words || []).forEach(function(r){ if(r.id === id) hit = { row: r, kind: 'word' }; });
+  (w.phrases || []).forEach(function(r){ if(r.id === id) hit = { row: r, kind: 'phrase' }; });
+  return hit;
+}
+async function admUploadClip(lang, rowId, file){
+  var hit = admRowById(lang, rowId);
+  if(!hit){ toast('줄을 찾지 못했어요'); return; }
+  var key = 'clip:' + rowId;
+  if(Adm.up[key]) return; Adm.up[key] = true;
+  toast('올리는 중…');
+  try{
+    var r = await admStoreClip(file, 'clip');
+    var cur = admRowById(lang, rowId);      // 올리는 동안 줄이 지워졌을 수 있음
+    if(!cur){ toast('줄이 없어져서 붙이지 못했어요'); return; }
+    cur.row.clip = r.meta; cur.row.src = 'clip'; cur.row.audio = true;
+    delete Adm.played[rowId];
+    markDirty(lang); rerenderLang(lang);
+    toast('올렸어요. [▶ 미리듣기]로 확인해 주세요');
+  }catch(e){ toast(String(e.message || e)); }
+  finally{ Adm.up[key] = false; }
+}
+
 /* ---------- 클릭 ---------- */
 function adminClick(act, el, ev){
   if(act.indexOf('adm') !== 0 && act !== 'admin') return false;
@@ -1984,6 +3264,31 @@ function adminClick(act, el, ev){
     case 'adm-pin-ok': checkAdminPin(); return true;
     case 'adm-pin-cancel': var ov = document.getElementById('admOverlay'); if(ov) ov.remove(); return true;
     case 'adm-gen': generate(el.getAttribute('data-langs').split(',')); return true;
+    case 'adm-ownup': case 'adm-wordsup': {
+      var lg1 = (el.closest('[data-lang]') || {}).getAttribute ? el.closest('[data-lang]').getAttribute('data-lang') : null; if(!lg1) return true;
+      pickAudioFile(function(f){ if(act === 'adm-ownup') admUploadOwn(lg1, f); else admUploadWords(lg1, f); });
+      return true;
+    }
+    case 'adm-owndel': case 'adm-wordsdel': case 'adm-wordsresplit': {
+      var lg2 = el.closest('[data-lang]') ? el.closest('[data-lang]').getAttribute('data-lang') : null; if(!lg2) return true;
+      if(act === 'adm-owndel'){ if(window.confirm('기존 등록 음원으로 되돌릴까요? (올려 둔 전용 음원 파일은 서버에 남아 있어요) 되돌린 뒤에는 [자동 생성]을 다시 눌러야 해요.')) admRemoveOwn(lg2); }
+      else if(act === 'adm-wordsdel'){ if(window.confirm('낭독 파일을 뺄까요? 낭독 파일 구간을 쓰던 줄은 "소리 사용"이 꺼져요.')) admRemoveWords(lg2); }
+      else admResplit(lg2);
+      return true;
+    }
+    case 'adm-clipup': {
+      ctx = admModel(el); if(!ctx || !ctx.m || !ctx.m.id || ctx.kind === 'full') return true;
+      var rid = ctx.m.id, lg3 = ctx.lang;
+      pickAudioFile(function(f){ admUploadClip(lg3, rid, f); });
+      return true;
+    }
+    case 'adm-clipdel': {
+      ctx = admModel(el); if(!ctx || !ctx.m || ctx.kind === 'full') return true;
+      delete ctx.m.clip; if(ctx.m.src === 'clip') delete ctx.m.src;
+      ctx.m.audio = false; delete Adm.played[ctx.m.id];      // 다른 출처로 저절로 켜지지 않도록 소리는 꺼 둠
+      markDirty(ctx.lang); rerenderLang(ctx.lang); toast('올린 파일을 뺐어요. "소리 사용"은 꺼 두었어요');
+      return true;
+    }
     case 'adm-back': case 'admin-back': renderAdmin(); return true;
     case 'adm-cand': case 'adm-addword': {
       ctx = admModel(el); if(!ctx || !ctx.w) return true;
@@ -2006,26 +3311,34 @@ function adminClick(act, el, ev){
     }
     case 'adm-now': {
       ctx = admModel(el); if(!ctx || !ctx.m) return true;
-      var au = document.getElementById('adm-audio-' + ctx.lang);
+      var viaWords = ctx.m.src === 'words';
+      var au = document.getElementById((viaWords ? 'adm-waudio-' : 'adm-audio-') + ctx.lang);
       if(!au){ toast('음원이 아직 안 불러와졌어요'); return true; }
-      var which = el.getAttribute('data-which'), t3 = Core.r2(au.currentTime || 0);
-      ctx.m[which] = t3;
-      var inp = ctx.rowEl.querySelector('input[data-f="' + which + '"]'); if(inp) inp.value = t3;
+      var which = el.getAttribute('data-which'), t3 = Core.r2(au.currentTime || 0), fld = viaWords ? 'w' + which : which;
+      ctx.m[fld] = t3;
+      var inp = ctx.rowEl.querySelector('input[data-f="' + fld + '"]'); if(inp) inp.value = t3;
+      delete Adm.played[ctx.m.id]; ctx.rowEl.classList.remove('played');
       markDirty(ctx.lang);
       return true;
     }
     case 'adm-play': {
       ctx = admModel(el); if(!ctx || !ctx.m) return true;
       var pid = el.getAttribute('data-pid');
-      if(Player.isPlaying(pid)){ Player.stop(); return true; }
-      if(!(ctx.m.end > ctx.m.start)){ toast('시작/끝 시간을 확인해 주세요 (끝이 시작보다 커야 해요)'); return true; }
-      var a2 = App.audio[ctx.lang];
-      if(!a2 || a2.status !== 'ok'){ toast('음원이 없어요'); return true; }
-      var vis = document.getElementById('adm-audio-' + ctx.lang); if(vis) vis.pause();
-      attachAudio(ctx.lang);
+      if(isPlayingAny(pid)){ stopSounds(); return true; }
+      var rf = rowFile(ctx.m, ctx.w, ctx.lang);
+      if(!rf){
+        var kd = Core.rowFileKind(ctx.w, ctx.m);
+        toast(ctx.m.src === 'clip' && !ctx.m.clip ? '이 줄에 올린 소리 파일이 없어요' :
+              (!kd && ctx.m.audio === false) ? '"소리 사용"이 꺼져 있어요. 켜면 미리듣기 할 수 있어요' :
+              !kd ? '시작/끝 시간을 확인해 주세요 (끝이 시작보다 커야 해요)' :
+              '소리 파일을 아직 불러오는 중이거나 불러오지 못했어요. 잠시 뒤 다시 눌러 보세요');
+        return true;
+      }
+      ['adm-audio-', 'adm-waudio-'].forEach(function(pre){ var v = document.getElementById(pre + ctx.lang); if(v) v.pause(); });
+      stopSounds();
+      if(rf.player === Player) attachAudio(ctx.lang);
       if(ctx.m.id){ Adm.played[ctx.m.id] = true; ctx.rowEl.classList.add('played'); }
-      Voice.stop();
-      Player.play(pid, ctx.m.start, ctx.m.end, { times: 1, rate: 1 });
+      rf.player.play(pid, rf.start, rf.end, { times: 1, rate: 1 });
       return true;
     }
     case 'adm-tts': {
@@ -2036,7 +3349,7 @@ function adminClick(act, el, ev){
       if(!ttxt){ toast('글자가 비어 있어요'); return true; }
       var tst = Tts.state(ctx.lang);
       if(tst === 'unsupported' || tst === 'novoice'){ toast(Tts.reasonText(ctx.lang) + ' 다른 기기나 브라우저에서 확인해 주세요.'); return true; }
-      var vis3 = document.getElementById('adm-audio-' + ctx.lang); if(vis3) vis3.pause();
+      ['adm-audio-', 'adm-waudio-'].forEach(function(pre){ var v3 = document.getElementById(pre + ctx.lang); if(v3) v3.pause(); });
       stopSounds();
       Voice.play(tpid, ttxt, ctx.lang, { times: 1, rate: 1 });   // 끝까지 정상 재생되면 admTtsPassed()가 "들어 봤음"으로 기록
       return true;
@@ -2072,7 +3385,7 @@ function adminClick(act, el, ev){
     }
     case 'adm-copyreq': {
       var info = { ref: verseCard().ref, ko: verseCard().ko, en: verseCard().en, zh: verseCard().zh, sections: { en: Adm.work.en, zh: Adm.work.zh } };
-      if(!info.sections.en && !info.sections.zh){ toast('먼저 [학습실 자동 생성]을 눌러 주세요'); return true; }
+      if(!info.sections.en && !info.sections.zh){ toast('먼저 [연습실 자동 생성]을 눌러 주세요'); return true; }
       var txt = Core.buildClaudeRequest(info); Adm.requestText = txt;
       var ta = document.getElementById('admReqText'); if(ta){ ta.value = txt; ta.rows = 8; }
       var done = function(){ toast('복사했어요! Claude 대화창에 붙여넣어 보내세요'); };
@@ -2094,7 +3407,7 @@ function adminClick(act, el, ev){
         markDirty(lang); rerenderLang(lang);
       });
       var r = document.getElementById('admReport');
-      if(r) r.innerHTML = any ? esc(lines.join('  /  ')) + '<br>※ 구절 글자가 JSON의 글자와 한 글자라도 다르면 뜻이 들어가지 않아요. 그런 곳은 직접 적어 주세요.' : '적용할 초안이 없어요. 먼저 [학습실 자동 생성]을 눌러 주세요.';
+      if(r) r.innerHTML = any ? esc(lines.join('  /  ')) + '<br>※ 구절 글자가 JSON의 글자와 한 글자라도 다르면 뜻이 들어가지 않아요. 그런 곳은 직접 적어 주세요.' : '적용할 초안이 없어요. 먼저 [연습실 자동 생성]을 눌러 주세요.';
       return true;
     }
   }
@@ -2105,11 +3418,20 @@ async function publishLang(el){
   var lang = ctx.lang, sec = sanitizeSection(ctx.w), L = L10N[lang];
   if(!sec.phrases.length){ toast('구절이 하나도 없어요'); return; }
   await refreshAppState();
-  var a = await ensureAudio(lang, true);   // 게시 직전에 서버의 음원을 다시 확인
-  if(a.status !== 'ok'){ toast('음원을 확인하지 못했어요. 잠시 후 다시 해 주세요.'); return; }
-  if(Core.stampParts(sec.audioStamp).len !== a.len || Core.stampParts(sec.audioStamp).at !== curAudioAt(lang)){
-    toast('음원이 바뀌었어요. [자동 생성]을 다시 눌러 주세요.'); return;
+  if(secSrcKey(sec) !== chosenSrcKey(lang)){
+    toast('고른 음원이 달라졌어요. [자동 생성]을 다시 눌러 주세요.'); return;
   }
+  if(!sec.own){
+    var a = await ensureAudio(lang, true);   // 게시 직전에 서버의 음원을 다시 확인
+    if(a.status !== 'ok'){ toast('음원을 확인하지 못했어요. 잠시 후 다시 해 주세요.'); return; }
+    if(Core.stampParts(sec.audioStamp).len !== a.len || Core.stampParts(sec.audioStamp).at !== curAudioAt(lang)){
+      toast('음원이 바뀌었어요. [자동 생성]을 다시 눌러 주세요.'); return;
+    }
+  }
+  /* 올려 둔 소리 파일(전용 음원 · 낭독 파일 · 줄별 소리)이 서버에 실제로 있는지 게시 직전에 다시 읽어 확인 */
+  await loadSectionSources(sec, true);
+  var lost = sec.words.concat(sec.phrases, [sec.full]).filter(function(r){ return Core.rowFileKind(sec, r) && !rowFile(r, sec, lang); }).length;
+  if(lost){ toast('서버에서 불러오지 못한 소리 파일이 ' + lost + '곳 있어요. 잠시 뒤 다시 해 보거나 파일을 다시 올려 주세요.'); return; }
   if(Core.normText(sec.text) !== Core.normText(curVerse(lang))){
     toast('등록된 말씀 글자가 바뀌었어요. [자동 생성]을 다시 눌러 주세요.'); return;
   }
@@ -2118,10 +3440,10 @@ async function publishLang(el){
   var rows = sec.words.concat(sec.phrases);
   var noKo = rows.filter(function(r){ return !r.ko; }).length;
   if(noKo) problems.push('한국어 뜻이 비어 있는 곳이 ' + noKo + '개 있어요.');
-  var unheard = rows.concat([sec.full]).filter(function(r){ return r.audio !== false && r.end > r.start && !(r.id && Adm.played[r.id]) && r !== sec.full; }).length;
-  if(unheard) problems.push('아직 미리듣기를 하지 않은 소리 구간이 ' + unheard + '개 있어요.');
-  var noVoice = rows.filter(function(r){ return !(r.audio && r.end > r.start) && !Core.ttsConfirmed(lang, r); }).length;
-  if(noVoice) problems.push('MP3 구간도 없고 기기 음성도 확인하지 않은 곳이 ' + noVoice + '개 있어요. 그 곳은 아이들에게 "소리 준비 중"으로 보이고, 확인하지 않은 기기 음성은 켜지지 않아요.');
+  var unheard = rows.filter(function(r){ return Core.rowFileKind(sec, r) && !(r.id && Adm.played[r.id]); }).length;
+  if(unheard) problems.push('아직 미리듣기를 하지 않은 소리가 ' + unheard + '개 있어요(소리 파일 · 구간).');
+  var noVoice = rows.filter(function(r){ return !Core.rowFileKind(sec, r) && !Core.ttsConfirmed(lang, r); }).length;
+  if(noVoice) problems.push('소리 파일도 없고 기기 음성도 확인하지 않은 곳이 ' + noVoice + '개 있어요. 그 곳은 아이들에게 "소리 준비 중"으로 보이고, 확인하지 않은 기기 음성은 켜지지 않아요.');
   if(sec.versionName && !sec.credit) problems.push('번역본(' + sec.versionName + ')은 적었지만 출처 표기 문구는 비어 있어요. 번역본에 따라 표기가 필요할 수 있어요.');
   if(lang === 'zh'){
     var badPy = sec.phrases.concat(sec.words).filter(function(r){ return r.pinyin && r.pinyin.split(/\s+/).length !== Core.hanCount(r.text); }).length;
@@ -2134,14 +3456,14 @@ async function publishLang(el){
     sec.updatedAt = Date.now(); sec.publishedAt = Date.now();
     await saveDoc(lang, function(doc){ doc.draft = clone(sec); doc.published = clone(sec); });
     Adm.work[lang] = clone(sec); Adm.dirty[lang] = false;
-    toast(L.short + ' 학습실을 게시했어요! 🌱');
+    toast(L.short + ' 연습실을 게시했어요! 🌱');
     rerenderLang(lang);
   }catch(e){ toast(String(e.message || e)); }
 }
 /* 관리자 화면의 음원 플레이어를 누르면 구간 미리듣기는 멈춤 */
 document.addEventListener('play', function(ev){
   var t = ev.target;
-  if(t && t.id && t.id.indexOf('adm-audio-') === 0) stopSounds();
+  if(t && t.id && (t.id.indexOf('adm-audio-') === 0 || t.id.indexOf('adm-waudio-') === 0)) stopSounds();
 }, true);
 /* ============================================================
    시작
