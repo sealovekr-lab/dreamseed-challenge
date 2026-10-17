@@ -210,6 +210,21 @@
   .qz-dots{display:flex; justify-content:center; gap:8px; margin-bottom:12px;}
   .qz-dot{width:14px; height:14px; border-radius:50%; background:#fff; border:2px solid var(--muted);}
   .qz-dot.cur{border-color:var(--gold); background:#FFF3C9;} .qz-dot.ok{background:var(--leaf); border-color:var(--leaf);} .qz-dot.no{background:#F5B8B1; border-color:#F5B8B1;}
+  .arch-card{display:flex; align-items:center; gap:12px; width:100%; margin-top:14px; background:linear-gradient(135deg,#FFF3D9,#FFE9C2); border:3px solid #FFD98A; border-radius:24px; padding:12px 14px; box-shadow:var(--shadow); color:var(--ink); font-family:inherit; text-align:left; transition:transform .12s ease;}
+  .arch-card:active{transform:scale(0.98);}
+  .arch-ico{font-size:34px; line-height:1;}
+  .arch-body{display:flex; flex-direction:column; flex:1; min-width:0; gap:2px;}
+  .arch-go{flex-shrink:0; background:var(--gold); color:var(--ink); font-weight:900; font-size:13px; padding:6px 11px; border-radius:999px;}
+  .arch-list{display:flex; flex-direction:column; gap:10px; margin-top:12px;}
+  .arch-item{display:flex; align-items:center; gap:12px; width:100%; background:var(--card); border:3px solid var(--leaf-soft); border-radius:20px; padding:12px 14px; box-shadow:var(--shadow); color:var(--ink); font-family:inherit; text-align:left;}
+  .arch-item.zh{border-color:var(--dawn-soft);}
+  .arch-item:active{transform:scale(0.98);}
+  .ai-flag{font-size:30px; line-height:1;}
+  .ai-body{display:flex; flex-direction:column; flex:1; min-width:0; gap:2px;}
+  .ai-ref{font-size:16px; font-weight:900;}
+  .ai-sub{font-size:13px; color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .ai-date{flex-shrink:0; font-size:12.5px; font-weight:800; color:var(--ink-soft); text-align:right;}
+  .ai-nosound{font-weight:700; color:#8C6B00;}
   .qz-card-q{background:var(--card); border-radius:26px; box-shadow:var(--shadow); padding:16px 14px 18px; text-align:center; border:3px solid #FFEBB0;}
   .qz-flag{display:inline-block; font-size:12.5px; font-weight:900; background:#FFF6D6; border-radius:999px; padding:3px 11px; color:var(--ink-soft);}
   .qz-head{font-size:15px; font-weight:800; margin:10px 0 8px; color:var(--ink-soft);}
@@ -263,7 +278,8 @@
    - 기존 앱(index.html)의 데이터를 "읽기만" 합니다. (app_state, verseAudioFile:*)
    - 새로 쓰는 곳은 오직 studyRoom/ 아래입니다: studyRoom/en, studyRoom/zh(말씀 내용),
      studyRoom/clips/<id>(선생님이 올린 소리 파일: 전용 음원 · 단어 낭독 파일 · 줄별 소리),
-     studyRoom/gems/<아이ID>/…, studyRoom/gemsConfig (퀴즈 보석 기록·교환 기록·교환표).
+     studyRoom/gems/<아이ID>/…, studyRoom/gemsConfig (퀴즈 보석 기록·교환 기록·교환표),
+     studyRoom/archive/…, studyRoom/archiveIdx/… (지난 말씀 보관함).
    ============================================================ */
 var FIREBASE_DB_URL = "https://dreamseed-833e5-default-rtdb.asia-southeast1.firebasedatabase.app";
 var LAST_CHILD_KEY = 'dreamseed_last_child_id';
@@ -292,6 +308,7 @@ var Fb = (function(){
   }
   function okCid(c){ return typeof c === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(c); }
   function okDate(d){ return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d); }
+  function okLang(l){ return l === 'en' || l === 'zh'; }
   function okAid(id){ return typeof id === 'string' && /^[A-Za-z0-9_-]{6,40}$/.test(id); }
   async function withRetry(fn){
     var waits = [0, 500, 1200], last = null;
@@ -327,6 +344,16 @@ var Fb = (function(){
     putGemDay: function(cid, date, obj){ if(!okCid(cid) || !okDate(date)) throw new Error('bad gem path'); return put('studyRoom/gems/' + cid + '/days/' + date, obj); },
     putGemAdj: function(cid, id, obj){ if(!okCid(cid) || !okAid(id)) throw new Error('bad gem path'); return put('studyRoom/gems/' + cid + '/adj/' + id, obj); },
     putGemConfig: function(obj){ return put('studyRoom/gemsConfig', obj); },
+    /* 지난 말씀 보관함 (studyRoom/archive/<언어>/<id> = 말씀 내용, studyRoom/archiveIdx/<언어>/<id> = 목록용 짧은 정보)
+       — 선생님 화면만 씀(게시할 때 자동 · 보관 버튼). 아이 화면은 읽기만 함. 기존 데이터·말씀정원과 무관 */
+    readArchiveIdx: function(){ return withRetry(function(){ return getRaw('studyRoom/archiveIdx'); }); },
+    readArchive: function(lang, id){ return withRetry(async function(){
+      if(!okLang(lang) || !okAid(id)) throw new Error('bad archive path');
+      var v = await getRaw('studyRoom/archive/' + lang + '/' + id);
+      return v ? JSON.parse(v) : null;
+    }); },
+    putArchive: function(lang, id, sec){ if(!okLang(lang) || !okAid(id)) throw new Error('bad archive path'); return put('studyRoom/archive/' + lang + '/' + id, JSON.stringify(sec)); },
+    putArchiveIdx: function(lang, id, obj){ if(!okLang(lang) || !okAid(id)) throw new Error('bad archive path'); return put('studyRoom/archiveIdx/' + lang + '/' + id, obj); },
     readAudioDataUrl: async function(lang){
       var v = await getRaw('verseAudioFile/' + lang);
       if(!v || typeof v !== 'string') return null;
@@ -1270,7 +1297,7 @@ var $view = document.getElementById('view');
 var audioEl = document.getElementById('studyAudio');
 var App = {
   appState: null, child: null, docs: { en: null, zh: null }, audio: {},
-  view: 'home', lang: null, step: 1, section: null, preview: false,
+  view: 'home', lang: null, step: 1, section: null, preview: false, archive: false, archFromAdmin: false,
   pinyinOn: true, slow: false, masked: false, repeat3: 3, adminOk: false
 };
 var L10N = {
@@ -1502,7 +1529,7 @@ function verLineHtml(sec){
 function creditHtml(sec){ var c = String(sec.credit || '').trim(); return c ? '<div class="credit">' + esc(c) + '</div>' : ''; }
 function renderHome(){
   stopEverything();
-  App.view = 'home'; App.preview = false;
+  App.view = 'home'; App.preview = false; App.archive = false; App.archFromAdmin = false;
   var vc = verseCard(), c = App.child;
   setWide(false);
   var who = c ? (avatarOf(c) + ' ' + esc(c.name)) : '';
@@ -1511,7 +1538,7 @@ function renderHome(){
     '<div class="hero"><div class="hero-title display">🎤 말씀 연습실</div>' +
       (vc.ref ? '<div class="hero-ref">' + esc(vc.ref) + '</div>' : '') +
       (vc.ko ? '<p class="hero-ko">' + esc(vc.ko) + '</p>' : '<p class="hero-ko">이번 주 말씀을 선생님이 준비하고 있어요</p>') +
-    '</div>' + cardState('en') + cardState('zh') + quizMenuHtml() + homeCredits() +
+    '</div>' + cardState('en') + cardState('zh') + quizMenuHtml() + archMenuHtml() + homeCredits() +
     '<p class="help" style="text-align:center; margin-top:16px;">여러 번 들어도, 틀려도 괜찮아요. 천천히 따라 해요! 🌱</p>' +
     '<div class="foot"><button class="linkbtn" data-act="admin">👩‍🏫 선생님</button></div>';
 }
@@ -1520,9 +1547,10 @@ function renderHome(){
 async function openLang(lang, section, opts){
   opts = opts || {};
   App.preview = !!opts.preview;
+  App.archive = !!opts.archive; App.archFromAdmin = !!opts.fromAdmin;
   App.lang = lang; App.section = section; App.view = 'lang'; App.step = opts.step || 1;
   renderLoading('소리를 불러오는 중…');
-  var a = section.own ? null : await ensureAudio(lang, false);     // 전용 음원이 없을 때만 기존 등록 음원을 씀
+  var a = (section.own || App.archive) ? null : await ensureAudio(lang, false);     // 전용 음원이 없을 때만 기존 등록 음원을 씀 · 지난 말씀은 보관한 사본만 사용
   if(a) attachAudio(lang);
   await loadSectionSources(section, false);
   await Tts.init();
@@ -1551,14 +1579,17 @@ function renderLang(){
   var banner = '';
   if(App.preview) banner += '<div class="banner info">👀 미리보기예요. 아이들에게는 아직 안 보이고, 진행 기록도 남지 않아요. <button class="btn small ghost" data-act="admin-back">← 편집으로</button></div>';
   var a = App.audio[App.lang], miss = missingFileRows();
-  if(sec.own ? miss > 0 : !langAudioOk()){
+  if(App.archive) banner += '<div class="banner info">📖 지난 말씀이에요.</div>';
+  if(App.archive && !sec.own && Arch.usesMain(sec)){
+    banner += '<div class="banner warn">이 지난 말씀은 전체 음원이 보관되지 않았어요. 글자로 배워요.</div>';
+  } else if(sec.own ? miss > 0 : !langAudioOk()){
     var why = sec.own ? '소리 파일 일부를 불러오지 못했어요.' : ((a && a.status === 'error') ? '소리를 불러오지 못했어요.' : '아직 소리 파일이 없어요.');
     banner += '<div class="banner warn">' + why + ' 글자로 먼저 배워요. <button class="btn small ghost" data-act="retry-audio">다시 불러오기</button></div>';
   } else if(miss > 0){
     banner += '<div class="banner warn">일부 줄의 소리 파일을 불러오지 못했어요. <button class="btn small ghost" data-act="retry-audio">다시 불러오기</button></div>';
   }
   $view.innerHTML =
-    '<div class="topbar"><button class="back" data-act="' + (App.preview ? 'admin-back' : 'home') + '">← ' + (App.preview ? '편집으로' : '연습실') + '</button><span class="who">' + (App.child && !App.preview ? esc(avatarOf(App.child)) + ' ' + esc(App.child.name) : '') + '</span></div>' +
+    '<div class="topbar"><button class="back" data-act="' + (App.preview || App.archFromAdmin ? 'admin-back' : App.archive ? 'arch-back' : 'home') + '">← ' + (App.preview || App.archFromAdmin ? '선생님 화면으로' : App.archive ? '지난 말씀' : '연습실') + '</button><span class="who">' + (App.child && !App.preview ? esc(avatarOf(App.child)) + ' ' + esc(App.child.name) : '') + '</span></div>' +
     '<div class="lang-title"><span style="font-size:36px;">' + L.flag + '</span><h1 class="display">' + L.name + '</h1></div>' + verLineHtml(sec) +
     banner + '<div class="steps">' + tabs + '</div><div id="stepBody"></div>' + creditHtml(sec);
   renderStep();
@@ -1587,6 +1618,7 @@ function rowFile(row, sec, lang){
     var os = App.srcs['c:' + sec.own.id], op = ClipPlayers[sec.own.id];
     return (os && os.status === 'ok' && op) ? { kind: 'main', start: row.start, end: row.end, player: op } : null;
   }
+  if(App.archive) return null;      // 지난 말씀: 지금 등록된 음원은 다른 말씀의 음원일 수 있어 쓰지 않음
   var a = App.audio[lang];
   return (a && a.status === 'ok') ? { kind: 'main', start: row.start, end: row.end, player: Player } : null;
 }
@@ -1816,6 +1848,7 @@ document.addEventListener('click', function(ev){
   var act = el.getAttribute('data-act');
   if(typeof adminClick === 'function' && adminClick(act, el, ev)) return;
   if(typeof quizClick === 'function' && quizClick(act, el, ev)) return;
+  if(typeof archClick === 'function' && archClick(act, el, ev)) return;
   switch(act){
     case 'reload': boot(); break;
     case 'home': renderHome(); window.scrollTo(0, 0); break;
@@ -1852,7 +1885,7 @@ document.addEventListener('click', function(ev){
     case 'rec-reset': recCleanup(true); bindRecUi(); break;
     case 'retry-audio': (async function(){
       renderLoading('소리를 불러오는 중…');
-      if(!App.section.own){ await ensureAudio(App.lang, true); attachAudio(App.lang); }
+      if(!App.section.own && !App.archive){ await ensureAudio(App.lang, true); attachAudio(App.lang); }
       await loadSectionSources(App.section, false);      // 이미 불러온 파일은 그대로, 실패한 파일만 다시
       renderLang();
     })(); break;
@@ -2679,6 +2712,209 @@ function quizClick(act, el){
   return false;
 }
 /* ============================================================
+   📖 지난 말씀 보관함  (연습실 안에서만 쓰는 기능)
+   - 선생님이 말씀을 "게시"할 때마다 그 말씀을 자동으로 보관함에 한 부 더 저장해요.
+     (같은 말씀을 다시 게시하면 새 칸이 생기지 않고 같은 칸이 최신 내용으로 바뀜)
+   - 전체 음원을 쓰는 말씀은, 다음 음원이 올라와도 소리가 사라지지 않게 그 음원의 사본을 함께 보관해요.
+   - 아이들은 보관함에서 보고·듣고·따라 하기만 해요. 퀴즈·보석·말씀정원과는 무관해요.
+   - 쓰는 곳: studyRoom/archive/<en|zh>/<id> (내용), studyRoom/archiveIdx/<en|zh>/<id> (목록용 짧은 정보)
+   ============================================================ */
+var Arch = { idx: null, busy: false, autoDone: false, note: '' };
+Core.Arch = Arch;
+
+/* 같은 언어·같은 말씀 글자면 같은 id (대소문자·띄어쓰기 차이는 무시) */
+Arch.idOf = function(lang, sec){
+  var h = Core.Q.hash(lang + '|' + Core.normText(sec.text)).toString(36);
+  return 'v' + ('0000000' + h).slice(-7);
+};
+Arch.okSection = function(sec){
+  return !!sec && typeof sec === 'object' && typeof sec.text === 'string' && sec.text.length > 0 &&
+    Array.isArray(sec.words) && Array.isArray(sec.phrases) && sec.full && typeof sec.full === 'object';
+};
+Arch.usesMain = function(sec){
+  return (sec.words || []).concat(sec.phrases || [], [sec.full]).some(function(r){ return Core.rowFileKind(sec, r) === 'main'; });
+};
+/* 목록용 짧은 정보 */
+Arch.idxOf = function(lang, sec, entry){
+  var vc = verseCard(), same = Core.normText(vc[lang] || '') === Core.normText(sec.text);
+  var o = { ref: String(sec.verseRef || (same ? vc.ref : '') || '').slice(0, 60), at: +sec.publishedAt || Date.now(),
+    snip: String(sec.text).slice(0, 60), sound: !!(entry.own || !Arch.usesMain(entry)) };
+  if(sec.versionName) o.ver = String(sec.versionName).slice(0, 30);
+  if(same && vc.ko) o.ko = String(vc.ko).slice(0, 120);
+  return o;
+};
+/* 지금 등록된 전체 음원의 사본을 서버(studyRoom/clips/<새 id>)에 저장해 소리 파일 정보를 돌려줌. 못 하면 null */
+Arch.freezeAudio = async function(lang, sec){
+  var a = await ensureAudio(lang, true);
+  if(!a || a.status !== 'ok' || !a.blob) return null;
+  var sp = Core.stampParts(sec.audioStamp);
+  if(sp.at !== curAudioAt(lang) || sp.len !== a.len) return null;          // 지금 음원이 이 말씀의 음원이 아니면 복사하지 않음
+  var du = await Core.blobToDataUrl(a.blob);
+  if(du.length > 6 * 1024 * 1024) return null;
+  var pr = await Core.probeAudio(a.blob, false);
+  if(!(pr && pr.dur > 0.2)) return null;
+  var id = Core.newClipId();
+  await Fb.putClip(id, du);
+  var back = null;
+  try{ back = await Fb.readClip(id); }catch(e){}
+  if(!back || back.length !== du.length){ try{ await Fb.putClip(id, ''); }catch(e){} return null; }
+  return { id: id, name: '등록 음원 사본', mime: (a.blob.type || 'audio/mpeg'), len: du.length, dur: Core.r2(pr.dur), forText: Core.normText(sec.text) };
+};
+/* 말씀 한 부를 보관함에 저장. 결과: 'saved' | 'kept'(이미 더 좋은 보관본이 있어 그대로 둠) */
+Arch.save = async function(lang, sec){
+  if(!Arch.okSection(sec)) throw new Error('보관할 말씀이 올바르지 않아요');
+  var id = Arch.idOf(lang, sec), entry = clone(sec), prev = null;
+  try{ prev = await Fb.readArchive(lang, id); }catch(e){ throw new Error('보관함을 읽지 못했어요'); }
+  entry.arch = { at: Date.now() };
+  if(!entry.own && Arch.usesMain(entry)){
+    var reuse = prev && prev.arch && prev.arch.srcStamp === sec.audioStamp ? Core.cleanMeta(prev.own) : null;
+    var meta = reuse || await Arch.freezeAudio(lang, entry).catch(function(){ return null; });
+    if(meta){ entry.arch.srcStamp = sec.audioStamp; entry.own = meta; entry.audioStamp = 'own:' + meta.id; }
+    else {
+      /* 소리 사본을 못 만든 경우: 이미 소리가 있는 보관본이 있으면 그걸 지키고, 없으면 글자만이라도 보관 */
+      if(prev && (prev.own || !Arch.usesMain(prev))) return 'kept';
+      entry.arch.noMain = true;
+    }
+  }
+  await Fb.putArchive(lang, id, entry);
+  await Fb.putArchiveIdx(lang, id, Arch.idxOf(lang, sec, entry));
+  Arch.idx = null;
+  return 'saved';
+};
+Arch.loadIdx = async function(){
+  var raw = await Fb.readArchiveIdx(), out = [];
+  ['en', 'zh'].forEach(function(lang){
+    var g = (raw && raw[lang]) || {};
+    Object.keys(g).forEach(function(id){
+      var v = g[id];
+      if(!v || typeof v !== 'object' || !/^[A-Za-z0-9_-]{6,40}$/.test(id)) return;
+      out.push({ lang: lang, id: id, ref: String(v.ref || '').slice(0, 60), at: +v.at || 0, snip: String(v.snip || '').slice(0, 60),
+        ko: String(v.ko || '').slice(0, 120), ver: String(v.ver || '').slice(0, 30), sound: v.sound !== false });
+    });
+  });
+  out.sort(function(a, b){ return b.at - a.at; });
+  return (Arch.idx = out);
+};
+Arch.dateText = function(at){
+  if(!(at > 0)) return '';
+  var d = new Date(at); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일';
+};
+
+/* ---------- 연습실 홈의 카드 ---------- */
+function archMenuHtml(){
+  return '<button class="arch-card" data-act="arch-open"><span class="arch-ico">📖</span><span class="arch-body"><span class="qz-t">지난 말씀</span><span class="qz-s">지난 말씀을 다시 보고 들어요</span></span><span class="arch-go">보기 ▶</span></button>';
+}
+
+/* ---------- 목록 화면 ---------- */
+function archItemsHtml(list, from){
+  return list.map(function(it){
+    var L = L10N[it.lang];
+    return '<button class="arch-item ' + L.cls + '" data-act="arch-item" data-lang="' + it.lang + '" data-id="' + esc(it.id) + '"' + (from ? ' data-from="' + from + '"' : '') + '>' +
+      '<span class="ai-flag">' + L.flag + '</span><span class="ai-body"><span class="ai-ref">' + esc(it.ref || '말씀') + (it.ver ? ' · ' + esc(it.ver) : '') + '</span>' +
+      '<span class="ai-sub">' + esc(it.ko || it.snip) + '</span></span><span class="ai-date">' + esc(Arch.dateText(it.at)) + (it.sound ? '' : '<br><span class="ai-nosound">🔇 글자만</span>') + '</span></button>';
+  }).join('');
+}
+function archVisibleList(){
+  /* 지금 연습실 홈에 "이번 주 말씀"으로 보이는 말씀은 목록에서 뺌 */
+  return (Arch.idx || []).filter(function(it){
+    var u = usableSection(it.lang);
+    return !(u.state === 'ready' && Arch.idOf(it.lang, u.section) === it.id);
+  });
+}
+function archShowList(){
+  App.view = 'arch'; App.archive = false; setWide(false); stopEverything(false);
+  var c = App.child, list = archVisibleList();
+  $view.innerHTML =
+    '<div class="topbar"><button class="back" data-act="home">← 연습실</button><span class="who">' + (c ? esc(avatarOf(c)) + ' ' + esc(c.name) : '') + '</span></div>' +
+    '<div class="hero"><div class="hero-title display">📖 지난 말씀</div><p class="hero-ko">지난 말씀을 다시 보고, 듣고, 따라 해 봐요</p></div>' +
+    (list.length ? '<div class="arch-list">' + archItemsHtml(list, '') + '</div>'
+      : '<div class="center-msg" style="min-height:0; padding:30px 10px;"><div style="font-size:48px;">🌱</div>아직 보관된 지난 말씀이 없어요.<br>새 말씀이 올라오면 이곳에 차곡차곡 쌓여요.</div>') +
+    '<p class="help" style="text-align:center; margin-top:14px;">지난 말씀은 퀴즈·보석과 따로예요. 마음껏 연습해요!</p>';
+}
+async function archOpenList(){
+  renderLoading('지난 말씀을 불러오는 중…');
+  try{ await Arch.loadIdx(); }
+  catch(e){
+    $view.innerHTML = '<div class="center-msg">지난 말씀을 불러오지 못했어요.<br>인터넷을 확인하고 다시 해 주세요.<br><br><button class="btn leaf" data-act="arch-open">다시 시도</button><br><br><button class="linkbtn" data-act="home">← 연습실</button></div>';
+    return;
+  }
+  archShowList();
+}
+async function archOpenItem(lang, id, fromAdmin){
+  renderLoading('말씀을 불러오는 중…');
+  var sec = null;
+  try{ sec = await Fb.readArchive(lang, id); }catch(e){}
+  if(!Arch.okSection(sec)){
+    toast('이 말씀을 불러오지 못했어요');
+    if(fromAdmin) renderAdmin(); else archShowList();
+    return;
+  }
+  /* 서버 값은 믿지 않고 소리 파일 정보를 다시 검사 */
+  sec.own = Core.cleanMeta(sec.own); if(!sec.own) delete sec.own;
+  sec.wordsAudio = Core.cleanMeta(sec.wordsAudio); if(!sec.wordsAudio) delete sec.wordsAudio;
+  openLang(lang, sec, { archive: true, fromAdmin: !!fromAdmin });
+}
+
+/* ---------- 선생님 화면의 카드 ---------- */
+function archAdminHtml(){
+  var n = Arch.idx ? Arch.idx.length : null;
+  return '<div class="adm-card" id="archAdm"><h2>📖 지난 말씀 보관함</h2>' +
+    '<p class="help">말씀을 [게시]할 때마다 자동으로 보관돼요. 아이들은 연습실 홈의 [📖 지난 말씀]에서 볼 수 있어요. <b>새 음원을 올리기 전에</b> 이 화면을 한 번 열어 두면, 지금 게시된 말씀도 자동으로 보관돼요.</p>' +
+    '<div id="archAdmBody" class="help">' + archAdminBodyHtml() + '</div>' +
+    '<div class="actions"><button class="btn leaf small" data-act="arch-save-now">📥 지금 게시된 말씀 보관하기</button></div></div>';
+}
+function archAdminBodyHtml(){
+  if(Arch.note) return esc(Arch.note) + (Arch.idx ? '<br>' : '') + archAdminListHtml();
+  return archAdminListHtml();
+}
+function archAdminListHtml(){
+  if(!Arch.idx) return '보관함을 확인하는 중…';
+  if(!Arch.idx.length) return '아직 보관된 말씀이 없어요.';
+  return '보관된 말씀 ' + Arch.idx.length + '개 (눌러서 아이들이 보는 대로 미리 볼 수 있어요)<div class="arch-list" style="margin-top:8px;">' + archItemsHtml(Arch.idx, 'admin') + '</div>';
+}
+function archAdminRefresh(){
+  var b = document.getElementById('archAdmBody');
+  if(b && App.view === 'admin') b.innerHTML = archAdminBodyHtml();
+}
+/* 지금 게시된 말씀(영어·중국어)을 보관함에 넣음. quiet=true 면 이미 있는 말씀은 건드리지 않음 */
+Arch.saveCurrent = async function(quiet){
+  if(Arch.busy) return;
+  Arch.busy = true;
+  var done = 0, kept = 0, fail = 0, had = 0;
+  try{
+    try{ await Arch.loadIdx(); }catch(e){ Arch.note = '보관함을 불러오지 못했어요. 인터넷을 확인해 주세요.'; return; }
+    await refreshAppState();
+    var langs = ['en', 'zh'];
+    for(var i=0;i<langs.length;i++){
+      var lang = langs[i], doc = App.docs[lang], pub = doc && doc.published;
+      if(!pub || !Arch.okSection(pub)) continue;
+      var id = Arch.idOf(lang, pub), exists = (Arch.idx || []).some(function(x){ return x.lang === lang && x.id === id; });
+      if(quiet && exists){ had++; continue; }
+      try{ var r = await Arch.save(lang, pub); if(r === 'saved') done++; else kept++; }
+      catch(e){ fail++; }
+    }
+    try{ await Arch.loadIdx(); }catch(e){}
+    Arch.note = fail ? ('일부는 저장하지 못했어요(' + fail + '개). 잠시 뒤 [지금 게시된 말씀 보관하기]를 다시 눌러 주세요.')
+      : done ? ('✔ 지금 게시된 말씀 ' + done + '개를 보관했어요.')
+      : (kept || had) ? '지금 게시된 말씀은 이미 보관돼 있어요.' : '지금 게시된 말씀이 없어요.';
+  } finally { Arch.busy = false; archAdminRefresh(); }
+};
+function archAdminOpened(){
+  if(!Arch.idx){ Arch.loadIdx().then(archAdminRefresh, function(){ Arch.note = '보관함을 불러오지 못했어요.'; archAdminRefresh(); }); }
+  if(!Arch.autoDone){ Arch.autoDone = true; Arch.saveCurrent(true); }
+}
+
+/* ---------- 클릭 연결 ---------- */
+function archClick(act, el){
+  switch(act){
+    case 'arch-open': archOpenList(); window.scrollTo(0, 0); return true;
+    case 'arch-back': if(Arch.idx) archShowList(); else archOpenList(); window.scrollTo(0, 0); return true;
+    case 'arch-item': archOpenItem(el.getAttribute('data-lang'), el.getAttribute('data-id'), el.getAttribute('data-from') === 'admin' && App.adminOk); return true;
+    case 'arch-save-now': if(App.adminOk){ Arch.note = '저장하는 중…'; archAdminRefresh(); Arch.saveCurrent(false); } return true;
+  }
+  return false;
+}
+/* ============================================================
    선생님(관리자) 화면: 자동 생성 → 미리보기/수정 → 승인·게시
    ============================================================ */
 var Adm = { work: { en: null, zh: null }, dirty: { en: false, zh: false }, played: {}, ttsPlayed: {}, busy: false, report: '', requestText: '', msg: {}, up: {} };
@@ -2758,6 +2994,7 @@ function renderAdmin(){
   var html = '<div class="adm"><div class="topbar"><button class="back" data-act="home">← 연습실로</button><span class="who">👩‍🏫 선생님</span></div>' +
     '<h1 class="display">🎤 말씀 연습실 관리</h1>' +
     '<div class="adm-card"><h2>💎 퀴즈 보석 현황 · 보상</h2><p class="help">아이들이 퀴즈로 모은 보석을 확인하고, 간식 등으로 교환한 기록을 남겨요. 교환표도 여기서 정해요.</p><div class="actions"><button class="btn gold" data-act="gadm-open">💎 보석 현황 보기</button></div></div>' +
+    archAdminHtml() +
     '<div class="adm-card"><h2>이번 주 말씀 <span class="badge">' + esc(vc.ref || '출처 없음') + '</span></h2>' +
     '<div class="verse-box">🇰🇷 ' + esc(vc.ko || '(한글 없음)') + '</div>' +
     '<div class="verse-box">🇬🇧 ' + esc(vc.en || '(영어 없음)') + '<br><span class="mono">음원: ' + (curAudioAt('en') ? '등록됨 (' + esc(curAudioAt('en')) + ')' : '없음') + '</span></div>' +
@@ -2775,6 +3012,7 @@ function renderAdmin(){
   $view.innerHTML = html;
   ['en', 'zh'].forEach(function(l){ hydrateAudio(l); });
   Tts.init().then(updateVoiceBadges);
+  archAdminOpened();
 }
 var VERS = {
   en: ['NIV', 'ESV', 'KJV', 'NKJV', 'NLT', 'NASB', 'CSB'],
@@ -3456,7 +3694,11 @@ async function publishLang(el){
     sec.updatedAt = Date.now(); sec.publishedAt = Date.now();
     await saveDoc(lang, function(doc){ doc.draft = clone(sec); doc.published = clone(sec); });
     Adm.work[lang] = clone(sec); Adm.dirty[lang] = false;
-    toast(L.short + ' 연습실을 게시했어요! 🌱');
+    /* 게시한 말씀을 지난 말씀 보관함에도 저장 (실패해도 게시는 그대로 성공) */
+    var archMsg = '';
+    try{ await Arch.save(lang, sec); }catch(e){ archMsg = ' (지난 말씀 보관함 저장은 실패했어요. 선생님 화면의 [지금 게시된 말씀 보관하기]를 눌러 주세요)'; }
+    Arch.idx = null; Arch.autoDone = true;
+    toast(L.short + ' 연습실을 게시했어요! 🌱' + archMsg);
     rerenderLang(lang);
   }catch(e){ toast(String(e.message || e)); }
 }
