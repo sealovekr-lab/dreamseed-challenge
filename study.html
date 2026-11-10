@@ -280,6 +280,10 @@
   .rp-flip img{-webkit-touch-callout:none; -webkit-user-drag:none; user-select:none; pointer-events:none;}
   .room-pet .breathe{transform-origin:50% 100%;} .room-pet img{filter:drop-shadow(0 4px 3px rgba(0,0,0,.18));}
   .room-snd{position:absolute; top:10px; right:10px; z-index:4; width:40px; height:40px; border-radius:50%; border:0; background:rgba(255,255,255,.9); box-shadow:var(--shadow); font-size:20px; line-height:1; cursor:pointer; padding:0; -webkit-tap-highlight-color:transparent;}
+  .room-it[data-act]{cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; user-select:none; -webkit-user-select:none;}
+  .room-it[data-act]::after{content:''; position:absolute; left:-8px; right:-8px; top:-8px; bottom:-8px;}
+  .room-it .ri-in{display:block; transform-origin:50% 100%;}
+  .room-it img{-webkit-touch-callout:none; -webkit-user-drag:none;}
   .room-name{background:rgba(255,255,255,.92); border-radius:999px; padding:2px 12px; font-size:15px; font-weight:900; box-shadow:var(--shadow);}
   .room-pet.empty .room-q{width:96px; height:96px; border:4px dashed #fff; border-radius:50%; font-size:40px; display:flex; align-items:center; justify-content:center; opacity:.85;}
   .room-shelf{background:var(--card); border:3px solid #FFEBB0; border-radius:22px; box-shadow:var(--shadow); padding:10px 12px; margin-top:12px;}
@@ -1863,7 +1867,7 @@ async function recStart(){
 function recStop(){ try{ if(Rec.rec && Rec.rec.state !== 'inactive') Rec.rec.stop(); }catch(e){} }
 
 function stopEverything(keepRec){
-  stopSounds(); if(typeof HomePet !== 'undefined') HomePet.stop();
+  stopSounds(); if(typeof HomePet !== 'undefined') HomePet.stop(); if(typeof RoomLife !== 'undefined') RoomLife.stop();
   if(!keepRec || App.view !== 'lang' || App.step !== 3) recCleanup(true);
 }
 
@@ -2944,8 +2948,9 @@ function renderRoom(){
   var things = Q.ITEMS.filter(function(it){ return it.g === 'home' && own[it.id] && ROOM_SLOTS[it.id]; }).map(function(it){
     var s = ROOM_SLOTS[it.id];
     var sway = ROOM_SWAY[it.id];
-    return '<div class="room-it' + (it.id === 'balloon' ? ' pet-anim float' : '') + '" style="left:' + s[0] + '%;bottom:' + s[1] + '%;">' +
-      (sway ? '<div class="pet-anim sway" style="animation-duration:' + sway[0] + 's;--sw:' + sway[1] + 'deg;animation-delay:-' + sway[2] + 's;">' + roomArt(it, s[2]) + '</div>' : roomArt(it, s[2])) + '</div>';
+    var play = !!(pet && ITEM_PLAY[it.id]);
+    return '<div class="room-it' + (it.id === 'balloon' ? ' pet-anim float' : '') + '"' + (play ? ' data-act="room-item" data-id="' + it.id + '"' : '') + ' style="left:' + s[0] + '%;bottom:' + s[1] + '%;">' +
+      (sway ? '<div class="pet-anim sway" style="animation-duration:' + sway[0] + 's;--sw:' + sway[1] + 'deg;animation-delay:-' + sway[2] + 's;">' + roomArt(it, s[2]) + '</div>' : (play ? '<div class="ri-in">' + roomArt(it, s[2]) + '</div>' : roomArt(it, s[2]))) + '</div>';
   }).join('');
   var petHtml = pet
     ? '<div class="room-pet"><div class="rp-walk"><div class="rp-flip" data-act="pet-poke"><div class="rp-tap"><div class="rp-tilt"><div class="pet-anim breathe">' + roomArt(pet, 156) + '</div></div></div></div><div class="room-name">' + esc(Q.petName(pet.id, v.names)) + '</div></div></div>'
@@ -3074,10 +3079,11 @@ var ROOM_ACT = {
 };
 var ROOM_POKES = ['hop', 'dance', 'multihop', 'stretch', 'surprise'];
 var RoomLife = {
-  on: false, timer: null, anims: [], cx: 0, facing: 1, fast: false, manual: false, count: 0, poking: false, lastPoke: '', lastPokeAt: 0, pokeId: 0,
+  on: false, timer: null, anims: [], cx: 0, facing: 1, fast: false, manual: false, count: 0, poking: false, lastPoke: '', lastPokeAt: 0, pokeId: 0, busy: false,
   reduced: function(){ try{ return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }catch(e){ return false; } },
   stop: function(){
-    RoomLife.on = false; RoomLife.poking = false; clearTimeout(RoomLife.timer); RoomLife.timer = null;
+    RoomLife.on = false; RoomLife.poking = false; RoomLife.busy = false; clearTimeout(RoomLife.timer); RoomLife.timer = null;
+    if(typeof ItemLife !== 'undefined') ItemLife.stop();
     RoomLife.anims.forEach(function(a){ try{ a.cancel(); }catch(e){} }); RoomLife.anims = [];
   },
   start: function(){
@@ -3086,6 +3092,7 @@ var RoomLife = {
     if(!pet || !pet.querySelector('.rp-walk') || !pet.querySelector('.rp-walk').animate || RoomLife.reduced()) return;
     RoomLife.on = true; RoomLife.cx = 0; RoomLife.facing = 1;
     RoomLife.plan(RoomLife.fast ? 60 : 1500);
+    ItemLife.start();
   },
   alive: function(){ return RoomLife.on && App.view === 'room' && !!document.querySelector('.room-pet:not(.empty) .rp-walk'); },
   plan: function(ms){
@@ -3124,6 +3131,20 @@ var RoomLife = {
     }
     RoomLife.run(E.walk, kf, dur, function(){ RoomLife.cx = to; E.walk.style.transform = 'translate(' + to + 'px,0)'; if(done) done(); }, true);
   },
+  /* 정해진 자리(가운데 기준 px)까지 또박또박 걸어가기 — 먹으러 갈 때 */
+  walkTo: function(to, done){
+    var E = RoomLife.els(); if(!E) return;
+    var from = RoomLife.cx, dist = Math.abs(to - from);
+    if(dist < 4){ if(done) done(); return; }
+    var dur = Math.max(500, dist / 110 * 1000);
+    RoomLife.facing = to > from ? 1 : -1; E.flip.style.transform = RoomLife.facing < 0 ? 'scaleX(-1)' : 'none';
+    var kf = [], n = Math.round(dur / 50);
+    for(var i = 0; i <= n; i++){
+      var p = i / n, e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2, x = from + (to - from) * e, y = -Math.abs(Math.sin(2 * Math.PI * (i * 50 / 380))) * 7 * Math.min(1, Math.sin(Math.PI * p) * 6);
+      kf.push({ offset: p, transform: 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)' });
+    }
+    RoomLife.run(E.walk, kf, dur, function(){ RoomLife.cx = to; E.walk.style.transform = 'translate(' + to + 'px,0)'; if(done) done(); }, true);
+  },
   /* 눌렀을 때: 하던 동작은 바로 마무리(걷던 중이면 그 자리에 멈춤)하고, 직전과 다른 반응을 하나 보여 줌 */
   interrupt: function(){
     RoomLife.anims.slice().forEach(function(a){
@@ -3136,7 +3157,7 @@ var RoomLife = {
     });
   },
   poke: function(force){
-    if(!RoomLife.alive() || document.hidden) return;
+    if(!RoomLife.alive() || document.hidden || RoomLife.busy) return;
     var nowT = Date.now(); if(!force && nowT - RoomLife.lastPokeAt < 220) return;   // 아주 빠른 연타는 한 번으로
     var E = RoomLife.els(); if(!E) return;
     RoomLife.lastPokeAt = nowT;
@@ -3150,15 +3171,96 @@ var RoomLife = {
   tick: function(){
     if(!RoomLife.alive()){ RoomLife.stop(); return; }
     if(document.hidden){ RoomLife.plan(2000); return; }               // 탭이 숨겨져 있으면 쉬었다가 다시 확인
-    if(RoomLife.poking){ RoomLife.plan(600); return; }                // 눌러서 반응하는 중이면 끝난 뒤에
+    if(RoomLife.poking || RoomLife.busy){ RoomLife.plan(600); return; }                // 눌러서 반응하는 중이면 끝난 뒤에
     var r = Math.random(), again = function(){ RoomLife.plan(RoomLife.gap()); };
     var name = r < 0.15 ? 'tilt' : r < 0.32 ? 'hop' : r < 0.56 ? 'walk' : r < 0.70 ? 'dance' : r < 0.84 ? 'multihop' : r < 0.94 ? 'stretch' : 'doze';
     RoomLife.perform(name, again);
   }
 };
+
+/* 단짝 방 물건 놀이: 공·곰인형·풍선은 가끔 혼자서도 움직이고 누르면 크게 움직임 / 케이크·딸기·쿠키는 눌렀을 때만 단짝이 와서 냠냠.
+   눈에 보이는 연출일 뿐: 산 물건·보석·서버 기록은 그대로 */
+var ITEM_PLAY = { ball: 'move', teddy: 'move', balloon: 'move', cake: 'eat', strawberry: 'eat', cookie: 'eat' };
+function itemSample(n, fn){ var kf = []; for(var i = 0; i <= n; i++){ var t = i / n; kf.push({ offset: t, transform: fn(t) }); } return kf; }
+var ITEM_KF = {
+  ball: function(dir, big){ var d = big ? 70 : 38, nb = big ? 4 : 2, h = big ? 32 : 18, tr = big ? 2 : 1;
+    return itemSample(40, function(t){ var x = dir * d * Math.sin(Math.PI * t), y = -Math.abs(Math.sin(Math.PI * t * nb)) * h * (1 - .4 * t), r = dir * 360 * tr * Math.sin(Math.PI * t); return 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) rotate(' + r.toFixed(1) + 'deg)'; }); },
+  teddy: function(dir, big){ var h = big ? 24 : 0, w = big ? 11 : 7, k = big ? 8 : 8;
+    return itemSample(40, function(t){ var y = -Math.abs(Math.sin(Math.PI * t * 2)) * h, r = Math.sin(t * Math.PI * k) * w * (1 - t * .7); return 'translateY(' + y.toFixed(1) + 'px) rotate(' + r.toFixed(1) + 'deg)'; }); },
+  balloon: function(dir, big){ var h = big ? 26 : 10, w = big ? 12 : 6, k = big ? 4 : 3;
+    return itemSample(40, function(t){ var y = -Math.sin(Math.PI * t) * h, r = Math.sin(t * Math.PI * k) * w * (1 - .3 * t); return 'translateY(' + y.toFixed(1) + 'px) rotate(' + r.toFixed(1) + 'deg)'; }); }
+};
+var ITEM_DUR = { ball: [1600, 2300], teddy: [1400, 1700], balloon: [2200, 2600] };
+var ItemLife = {
+  anims: [], timers: [], busy: false, gone: {}, running: {}, last: '', manual: false,
+  later: function(fn, ms){ var h = setTimeout(function(){ var i = ItemLife.timers.indexOf(h); if(i >= 0) ItemLife.timers.splice(i, 1); fn(); }, ms); ItemLife.timers.push(h); },
+  stop: function(){
+    ItemLife.timers.forEach(function(h){ clearTimeout(h); }); ItemLife.timers = [];
+    ItemLife.anims.forEach(function(a){ try{ a.cancel(); }catch(e){} }); ItemLife.anims = [];
+    ItemLife.busy = false; ItemLife.gone = {}; ItemLife.running = {};
+  },
+  run: function(el, kf, dur, done, keep){
+    var a = el.animate(kf, { duration: dur, easing: 'linear', fill: keep ? 'forwards' : 'none' });
+    ItemLife.anims.push(a);
+    a.onfinish = function(){ var i = ItemLife.anims.indexOf(a); if(i >= 0) ItemLife.anims.splice(i, 1); if(done) done(a); if(!keep){ try{ a.cancel(); }catch(e){} } };
+    return a;
+  },
+  el: function(id){ return document.querySelector('.room-it[data-id="' + id + '"] .ri-in'); },
+  start: function(){
+    if(ItemLife.manual) return;
+    ItemLife.later(ItemLife.idle, 2800);
+  },
+  idle: function(){
+    if(!RoomLife.alive()){ return; }
+    if(document.hidden || ItemLife.busy || RoomLife.busy || RoomLife.poking){ ItemLife.later(ItemLife.idle, 1500); return; }
+    var ids = ['ball', 'teddy', 'balloon'].filter(function(id){ return ItemLife.el(id) && id !== ItemLife.last; });
+    if(ids.length){ var id = ids[Math.floor(Math.random() * ids.length)]; ItemLife.last = id; ItemLife.move(id, false); }
+    if(!ItemLife.manual) ItemLife.later(ItemLife.idle, 4000 + Math.random() * 4000);
+  },
+  move: function(id, big){
+    var el = ItemLife.el(id); if(!el) return;
+    var cur = ItemLife.running[id];
+    if(cur){ if(!big || cur.big) return; try{ cur.a.cancel(); }catch(e){} var ix = ItemLife.anims.indexOf(cur.a); if(ix >= 0) ItemLife.anims.splice(ix, 1); }   // 작게 움직이던 중에 누르면 큰 움직임으로 바꿈
+    var slot = ROOM_SLOTS[id] || [50], dir = slot[0] < 50 ? 1 : -1, rec = { big: !!big, a: null };
+    ItemLife.running[id] = rec;
+    rec.a = ItemLife.run(el, ITEM_KF[id](dir, big), ITEM_DUR[id][big ? 1 : 0], function(){ if(ItemLife.running[id] === rec) ItemLife.running[id] = null; });
+  },
+  tap: function(id){
+    if(!RoomLife.alive() || document.hidden) return;
+    var kind = ITEM_PLAY[id]; if(!kind) return;
+    if(kind === 'move'){ ItemLife.move(id, true); return; }
+    ItemLife.eat(id);
+  },
+  eat: function(id){
+    if(ItemLife.busy || ItemLife.gone[id]) return;
+    var E = RoomLife.els(), item = ItemLife.el(id), room = document.querySelector('.room'); if(!E || !item || !room) return;
+    ItemLife.busy = true; RoomLife.busy = true; clearTimeout(RoomLife.timer);
+    RoomLife.interrupt();
+    var W = room.clientWidth, slot = ROOM_SLOTS[id], ix = (slot[0] / 100 - .5) * W, side = ix >= RoomLife.cx ? 1 : -1;
+    var stand = Math.max(-(W / 2 - 50), Math.min(W / 2 - 50, ix - side * 90));
+    RoomLife.walkTo(stand, function(){
+      RoomLife.facing = side; E.flip.style.transform = side < 0 ? 'scaleX(-1)' : 'none';
+      // 냠냠: 몸을 들썩이는 동안 먹을 것이 조금씩 작아짐
+      var chew = itemSample(40, function(t){ var k = Math.abs(Math.sin(t * Math.PI * 5)); return 'translateY(' + (k * 3).toFixed(1) + 'px) scale(' + (1 + k * .05).toFixed(3) + ',' + (1 - k * .07).toFixed(3) + ') rotate(' + (side * k * 4).toFixed(1) + 'deg)'; });
+      var gone = ItemLife.run(item, [{ offset: 0, transform: 'scale(1)' }, { offset: .25, transform: 'scale(.78)' }, { offset: .5, transform: 'scale(.55)' }, { offset: .75, transform: 'scale(.3)' }, { offset: 1, transform: 'scale(0)' }], 1500, null, true);
+      ItemLife.gone[id] = true;
+      RoomLife.run(E.tap, chew, 1700, function(){
+        RoomLife.run(E.tap, ROOM_ACT.hop.kf(), 900, function(){
+          ItemLife.busy = false; RoomLife.busy = false; RoomLife.plan(RoomLife.fast ? 80 : 2000 + Math.random() * 2000);
+        });
+      });
+      // 잠깐 뒤 다시 나타남(산 물건은 그대로)
+      ItemLife.later(function(){
+        try{ gone.cancel(); }catch(e){}
+        ItemLife.gone[id] = false;
+        var el2 = ItemLife.el(id); if(el2) ItemLife.run(el2, [{ offset: 0, transform: 'scale(0)' }, { offset: .6, transform: 'scale(1.18)' }, { offset: 1, transform: 'scale(1)' }], 500);
+      }, 3600);
+    });
+  }
+};
 try{ document.addEventListener('visibilitychange', function(){
   document.documentElement.classList.toggle('tab-hidden', !!document.hidden);
-  RoomLife.anims.forEach(function(a){ try{ if(document.hidden) a.pause(); else a.play(); }catch(e){} });
+  RoomLife.anims.concat(typeof ItemLife !== 'undefined' ? ItemLife.anims : []).forEach(function(a){ try{ if(document.hidden) a.pause(); else a.play(); }catch(e){} });
 }); }catch(e){}
 
 /* ============================================================
@@ -3346,6 +3448,7 @@ function quizClick(act, el){
     case 'shop-tab': App.shopTab = el.getAttribute('data-tab'); App.shopSel = null; if(App.view === 'shop') renderShop(); return true;
     case 'room-open': openRoom(el.getAttribute('data-from') === 'locker' ? 'locker' : (App.view === 'home' ? 'home' : 'locker')); window.scrollTo(0, 0); return true;
     case 'home-pet': if(HomePet.poke()){ var hv = Gems.view().pet; if(hv) RoomSound.play(hv.id); } return true;
+    case 'room-item': ItemLife.tap(el.dataset.id); return true;
     case 'pet-poke': if(RoomLife.poke()){ var pk = Gems.view().pet; if(pk) RoomSound.play(pk.id); } return true;
     case 'room-sound': RoomSound.set(!RoomSound.isOn()); var sb = document.querySelector('.room-snd'); if(sb){ var on = RoomSound.isOn(); sb.textContent = on ? '🔊' : '🔇'; sb.setAttribute('aria-label', on ? '소리 끄기' : '소리 켜기'); if(on && App.child){ var p2 = Gems.view().pet; if(p2) RoomSound.play(p2.id); } } return true;
     case 'locker-open': openLocker(false); window.scrollTo(0, 0); return true;
